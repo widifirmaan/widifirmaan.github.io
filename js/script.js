@@ -33,8 +33,13 @@ function updateDynamicTexts() {
 }
 function optimizeImageUrl(e, t = 600) {
   if (!e) return "";
-  if (e.includes("github") || e.includes("githubassets.com")) {
-    return `https://images.weserv.nl/?url=${encodeURIComponent(e)}&w=${t}&output=webp&q=80&v=1.2`;
+  if (e.includes("opengraph.githubassets.com")) return e;
+  if (
+    e.includes("github") ||
+    e.includes("githubassets.com") ||
+    e.includes("raw.githubusercontent.com")
+  ) {
+    return `https://wsrv.nl/?url=${encodeURIComponent(e)}&w=${t}&output=webp&q=80`;
   }
   return e;
 }
@@ -111,7 +116,7 @@ async function initPortfolio() {
       (e.projects.list.forEach((e, o) => {
         const n = document.createElement("div");
         ((n.className = "project-card reveal"),
-          (n.innerHTML = `\n                <div class="project-image" id="project-image-${o}" style="background-color: ${e.color};">\n                    ${e.images && e.images.length > 0 ? `<img src="${e.images[0]}" alt="${e.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : ""}\n                </div>\n                <div class="project-info">\n                    <h3>${e.title.toUpperCase()}</h3>\n                    <button class="btn btn-primary project-btn" data-index="${o}">${t("viewDetails")}</button>\n                </div>\n            `),
+          (n.innerHTML = `\n                <div class="project-image" id="project-image-${o}" style="background-color: ${e.color};">\n                    ${e.images && e.images.length > 0 ? `<img src="${e.images[0]}" alt="${e.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">` : ""}\n                </div>\n                <div class="project-info">\n                    <h3>${e.title.toUpperCase()}</h3>\n                    <button class="btn btn-primary project-btn" data-index="${o}">${t("viewDetails")}</button>\n                </div>\n            `),
           a.appendChild(n));
       }),
       requestAnimationFrame(() => setupHorizontalScroll()),
@@ -131,7 +136,7 @@ async function initPortfolio() {
           const n = Math.min(e.images.length, 4);
           let r = "";
           for (let t = 0; t < n; t++)
-            r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy">`;
+            r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">`;
           o.innerHTML = r;
         }
       });
@@ -189,7 +194,7 @@ async function initPortfolio() {
                 const o = Math.min(e.images.length, 4);
                 let r = "";
                 for (let t = 0; t < o; t++)
-                  r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy">`;
+                  r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">`;
                 n.innerHTML = r;
               }
             }
