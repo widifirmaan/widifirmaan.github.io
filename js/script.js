@@ -31,17 +31,20 @@ function updateDynamicTexts() {
     e.textContent = t("viewDetails");
   });
 }
-function optimizeImageUrl(e, t = 600) {
-  if (!e) return "";
-  if (e.includes("opengraph.githubassets.com")) return e;
-  if (
-    e.includes("github") ||
-    e.includes("githubassets.com") ||
-    e.includes("raw.githubusercontent.com")
-  ) {
-    return `https://wsrv.nl/?url=${encodeURIComponent(e)}&w=${t}&output=webp&q=80`;
+function optimizeImageUrl(e) {
+  return e || "";
+}
+async function getReadmeResponse(repo, branch) {
+  const variations = ["README.md", "Readme.md", "readme.md", "ReadMe.md"];
+  for (const file of variations) {
+    try {
+      const response = await fetch(
+        `https://raw.githubusercontent.com/${repo}/${branch}/${file}`,
+      );
+      if (response.ok) return response;
+    } catch (e) {}
   }
-  return e;
+  return null;
 }
 async function initPortfolio() {
   try {
@@ -116,7 +119,7 @@ async function initPortfolio() {
       (e.projects.list.forEach((e, o) => {
         const n = document.createElement("div");
         ((n.className = "project-card reveal"),
-          (n.innerHTML = `\n                <div class="project-image" id="project-image-${o}" style="background-color: ${e.color};">\n                    ${e.images && e.images.length > 0 ? `<img src="${e.images[0]}" alt="${e.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">` : ""}\n                </div>\n                <div class="project-info">\n                    <h3>${e.title.toUpperCase()}</h3>\n                    <button class="btn btn-primary project-btn" data-index="${o}">${t("viewDetails")}</button>\n                </div>\n            `),
+          (n.innerHTML = `\n                <div class="project-image" id="project-image-${o}" style="background-color: ${e.color};">\n                    ${e.images && e.images.length > 0 ? `<img src="${e.images[0]}" alt="${e.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : ""}\n                </div>\n                <div class="project-info">\n                    <h3>${e.title.toUpperCase()}</h3>\n                    <button class="btn btn-primary project-btn" data-index="${o}">${t("viewDetails")}</button>\n                </div>\n            `),
           a.appendChild(n));
       }),
       requestAnimationFrame(() => setupHorizontalScroll()),
@@ -136,7 +139,7 @@ async function initPortfolio() {
           const n = Math.min(e.images.length, 4);
           let r = "";
           for (let t = 0; t < n; t++)
-            r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">`;
+            r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy">`;
           o.innerHTML = r;
         }
       });
@@ -144,24 +147,8 @@ async function initPortfolio() {
       const t = e.projects.list.map(async (e, t) => {
         if (e.repo)
           try {
-            const o = await fetch(
-              `https://raw.githubusercontent.com/${e.repo}/${e.branch}/README.md`,
-            )
-              .then((t) =>
-                t.ok
-                  ? t
-                  : fetch(
-                      `https://raw.githubusercontent.com/${e.repo}/${e.branch}/Readme.md`,
-                    ),
-              )
-              .then((t) =>
-                t.ok
-                  ? t
-                  : fetch(
-                      `https://raw.githubusercontent.com/${e.repo}/${e.branch}/readme.md`,
-                    ),
-              );
-            if (!o.ok) throw new Error("README not found");
+            const o = await getReadmeResponse(e.repo, e.branch);
+            if (!o || !o.ok) throw new Error("README not found");
             const n = await o.text(),
               r =
                 /!\[.*?\]\(((?:[^)(]+|\([^)(]*\))+)\)|<img.*?src=["'](.*?)["']/g;
@@ -194,7 +181,7 @@ async function initPortfolio() {
                 const o = Math.min(e.images.length, 4);
                 let r = "";
                 for (let t = 0; t < o; t++)
-                  r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy" onerror="if(this.src.includes('wsrv.nl')){this.src=decodeURIComponent(this.src.split('url=')[1].split('&')[0]);}">`;
+                  r += `<img src="${e.images[t]}" alt="${e.title}" loading="lazy">`;
                 n.innerHTML = r;
               }
             }
@@ -236,26 +223,12 @@ async function initPortfolio() {
         ) {
           const e = s.querySelector("#modal-desc-container");
           ((e.innerHTML = `<p>${t("loadingReadme")}</p>`),
-            fetch(
-              `https://raw.githubusercontent.com/${r.repo}/${r.branch}/README.md`,
-            )
-              .then((e) =>
-                e.ok
-                  ? e
-                  : fetch(
-                      `https://raw.githubusercontent.com/${r.repo}/${r.branch}/Readme.md`,
-                    ).then((e) =>
-                      e.ok
-                        ? e
-                        : fetch(
-                            `https://raw.githubusercontent.com/${r.repo}/${r.branch}/readme.md`,
-                          ),
-                    ),
-              )
-              .then((e) => {
-                if (!e.ok) throw new Error("README not found");
-                return e.text();
-              })
+          getReadmeResponse(r.repo, r.branch)
+            .then((e) => {
+              if (!e || !e.ok) throw new Error("README not found");
+              return e.text();
+            })
+
               .then((t) => {
                 let o = t.replace(
                   /!\[([^\]]*)\]\((?!http|https)((?:[^)(]+|\([^)(]*\))+)\)/g,
@@ -458,6 +431,17 @@ function updateHorizontalScroll() {
       document.addEventListener("click", (e) => {
         e.target.closest(".lang-switcher") || o.classList.remove("active");
       }));
+    const refreshBtn = document.getElementById("refresh-projects");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", async () => {
+        refreshBtn.classList.add("spinning");
+        localStorage.removeItem("portfolioGithubData_v1.2");
+        const grid = document.getElementById("project-grid");
+        if (grid) grid.innerHTML = "";
+        await initPortfolio();
+        setTimeout(() => refreshBtn.classList.remove("spinning"), 500);
+      });
+    }
     const n = document.getElementById("hamburger"),
       r = document.getElementById("nav-links");
     n &&
