@@ -1,1 +1,50 @@
-const CACHE_NAME = "portfolio-v1.1", urlsToCache = ["./", "./css/style.css", "./js/data.js", "./js/script.js", "./1690163389614.jpeg", "./favicon.png", "./icons/javascript.svg", "./icons/react.svg", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"]; self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE_NAME).then(e => e.addAll(urlsToCache)).then(() => self.skipWaiting())) }), self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(e => Promise.all(e.filter(e => e !== CACHE_NAME).map(e => caches.delete(e)))).then(() => self.clients.claim())) }), self.addEventListener("fetch", e => { e.respondWith(caches.match(e.request).then(t => t || fetch(e.request).then(t => { if (t.ok) { const s = t.clone(); caches.open(CACHE_NAME).then(t => t.put(e.request, s)) } return t })).catch(() => caches.match("./"))) });
+const CACHE_NAME = "portfolio-v1.2",
+  urlsToCache = [
+    "./",
+    "./css/style.css",
+    "./js/data.js",
+    "./js/script.js",
+    "./1690163389614.jpeg",
+    "./favicon.png",
+    "./icons/javascript.svg",
+    "./icons/react.svg",
+    "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+  ];
+(self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((e) => e.addAll(urlsToCache))
+      .then(() => self.skipWaiting()),
+  );
+}),
+  self.addEventListener("activate", (e) => {
+    e.waitUntil(
+      caches
+        .keys()
+        .then((e) =>
+          Promise.all(
+            e.filter((e) => e !== CACHE_NAME).map((e) => caches.delete(e)),
+          ),
+        )
+        .then(() => self.clients.claim()),
+    );
+  }),
+  self.addEventListener("fetch", (e) => {
+    e.respondWith(
+      caches
+        .match(e.request)
+        .then(
+          (t) =>
+            t ||
+            fetch(e.request).then((t) => {
+              if (t.ok) {
+                const s = t.clone();
+                caches.open(CACHE_NAME).then((t) => t.put(e.request, s));
+              }
+              return t;
+            }),
+        )
+        .catch(() => caches.match("./")),
+    );
+  }));
