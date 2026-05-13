@@ -81,6 +81,7 @@ async function initPortfolio() {
               "widifirmaan.github.io",
               "nextjs-telefish",
               "bash-android-aio-bypass-kit",
+              "expressjs-server-manager-lightweight",
               "clover-asus-vivobookflip-tp410ua",
             ];
           e.projects.list = o

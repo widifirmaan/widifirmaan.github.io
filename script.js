@@ -98,7 +98,7 @@ async function fetchGitHubProjects() {
         const repos = await response.json();
 
         // Filter out specific repos and forks
-        const excludedRepos = ['widifirmaan.github.io', 'nextjs-telefish', 'bash-android-aio-bypass-kit'];
+        const excludedRepos = ['widifirmaan.github.io', 'nextjs-telefish', 'bash-android-aio-bypass-kit', 'expressjs-server-manager-lightweight', 'clover-asus-vivobookflip-tp410ua'];
         const filteredRepos = repos.filter(repo => !repo.fork && !excludedRepos.includes(repo.name.toLowerCase()));
 
         // Clear existing static projects
