@@ -131,7 +131,7 @@ async function fetchGitHubProjects() {
                         let url = match[1] || match[2];
                         if (url) {
                             if (!url.startsWith('http')) {
-                                url = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch || 'main'}/${url.replace(/^\.\//, '')}`;
+                                url = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch || 'main'}/${url.replace(/^[.\/]+/, '')}`;
                             }
 
                             if (url.includes('shields.io') || url.includes('badge')) {
@@ -152,10 +152,10 @@ async function fetchGitHubProjects() {
                     const branch = repo.default_branch || 'main';
                     fullReadme = fullReadme.replace(
                         /!\[([^\]]*)\]\((?!http|https)((?:[^)(]+|\([^)(]*\))+)\)/g,
-                        `![$1](https://raw.githubusercontent.com/${repo.full_name}/${branch}/$2)`
+                        (m, alt, path) => `![${alt}](https://raw.githubusercontent.com/${repo.full_name}/${branch}/${path.replace(/^[.\/]+/, '')})`
                     ).replace(
                         /<img[^>]+src=["'](?!http|https)([^"']+)["'][^>]*>/g,
-                        (match, src) => match.replace(src, `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${src}`)
+                        (match, src) => match.replace(src, `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${src.replace(/^[.\/]+/, '')}`)
                     );
                 }
             } catch (e) {
