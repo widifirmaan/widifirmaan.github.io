@@ -1,32 +1,11 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WDPORT | Creative Portfolio</title>
         <meta name="description" data-i18n-content="meta-desc" content="" />
-        <meta name="color-scheme" content="dark light" />
-        <meta name="theme-color" content="#050505" />
-        <script>
-            // Anti-FOUC: set theme before first paint from localStorage or OS
-            (function () {
-                try {
-                    var stored = localStorage.getItem('theme');
-                    var theme =
-                        stored === 'light' || stored === 'dark'
-                            ? stored
-                            : window.matchMedia('(prefers-color-scheme: light)').matches
-                              ? 'light'
-                              : 'dark';
-                    document.documentElement.setAttribute('data-theme', theme);
-                    document.documentElement.style.backgroundColor =
-                        theme === 'light' ? '#ffffff' : '#050505';
-                    var meta = document.querySelector('meta[name="theme-color"]');
-                    if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#050505');
-                } catch (e) {}
-            })();
-        </script>
-        <link rel="stylesheet" href="style.css?v=3.1" />
+        <link rel="stylesheet" href="style.css" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -46,11 +25,6 @@
                 <li><a href="#about" data-i18n="nav-about">About</a></li>
                 <li><a href="#works" data-i18n="nav-works">Works</a></li>
                 <li><a href="#contact" data-i18n="nav-contact">Contact</a></li>
-                <li class="theme-switcher-container">
-                    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
-                        <span class="theme-icon visible" id="theme-icon-active">🌙</span>
-                    </button>
-                </li>
                 <li class="lang-switcher-container">
                     <div class="lang-switcher">
                         <button class="lang-btn active" data-lang="id">
@@ -201,6 +175,6 @@
         <!-- Custom Script & Translation -->
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="translations.js"></script>
-        <script src="script.js?v=3.1"></script>
+        <script src="script.js"></script>
     </body>
 </html>
