@@ -1,11 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WDPORT | Creative Portfolio</title>
         <meta name="description" data-i18n-content="meta-desc" content="" />
-        <link rel="stylesheet" href="style.css" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#050505" />
+        <script>
+            // Anti-FOUC: apply theme (dark/light/system) before first paint
+            (function () {
+                try {
+                    var stored = localStorage.getItem('theme');
+                    var mode =
+                        stored === 'light' || stored === 'dark' || stored === 'system'
+                            ? stored
+                            : 'system';
+                    var effective =
+                        mode === 'light' || mode === 'dark'
+                            ? mode
+                            : window.matchMedia('(prefers-color-scheme: light)').matches
+                              ? 'light'
+                              : 'dark';
+                    document.documentElement.setAttribute('data-theme', effective);
+                    document.documentElement.style.backgroundColor =
+                        effective === 'light' ? '#ffffff' : '#050505';
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta)
+                        meta.setAttribute(
+                            'content',
+                            effective === 'light' ? '#ffffff' : '#050505'
+                        );
+                } catch (e) {}
+            })();
+        </script>
+        <link rel="stylesheet" href="style.css?v=4.0" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -25,6 +54,17 @@
                 <li><a href="#about" data-i18n="nav-about">About</a></li>
                 <li><a href="#works" data-i18n="nav-works">Works</a></li>
                 <li><a href="#contact" data-i18n="nav-contact">Contact</a></li>
+                <li class="theme-switcher-container">
+                    <button
+                        type="button"
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Theme: system"
+                        title="Theme: system (click for light)"
+                    >
+                        <span class="theme-icon visible" id="theme-icon-active">💻</span>
+                    </button>
+                </li>
                 <li class="lang-switcher-container">
                     <div class="lang-switcher">
                         <button class="lang-btn active" data-lang="id">
@@ -175,6 +215,6 @@
         <!-- Custom Script & Translation -->
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="translations.js"></script>
-        <script src="script.js"></script>
+        <script src="script.js?v=4.0"></script>
     </body>
 </html>

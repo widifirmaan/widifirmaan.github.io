@@ -966,3 +966,264 @@ footer {
         cursor: auto;
     }
 }
+
+/* ============================================================
+   THEME TOGGLE (3-state: dark / light / system)
+   New elements only — existing dark-mode rules above untouched.
+   ============================================================ */
+.theme-switcher-container {
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: rotate(15deg);
+}
+
+.theme-toggle .theme-icon {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    line-height: 1;
+}
+
+.theme-toggle .theme-icon.hidden {
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+}
+
+.theme-toggle .theme-icon.visible {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* ============================================================
+   LIGHT MODE
+   Only matches html[data-theme="light"]. Placed last so these
+   rules always win for light mode. Dark mode above untouched.
+   ============================================================ */
+html[data-theme="light"] {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+html[data-theme="light"] body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Text elements: pure black */
+html[data-theme="light"] .logo,
+html[data-theme="light"] .nav-links a,
+html[data-theme="light"] .hero-content p,
+html[data-theme="light"] .about-text,
+html[data-theme="light"] .reveal-text,
+html[data-theme="light"] .scroll-indicator span,
+html[data-theme="light"] footer,
+html[data-theme="light"] footer p,
+html[data-theme="light"] .markdown-body,
+html[data-theme="light"] .modal-description {
+    color: #000000;
+}
+
+html[data-theme="light"] .nav-links a::after {
+    background: #000000;
+}
+
+html[data-theme="light"] .hamburger .bar {
+    background: #000000;
+}
+
+/* Frosted-white panels */
+html[data-theme="light"] .glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
+}
+
+html[data-theme="light"] .glass-panel:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="light"] nav.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .project-card.glass-panel {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Controls */
+html[data-theme="light"] .cursor-follower {
+    border-color: rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="light"] .lang-switcher {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .lang-btn {
+    color: #000000;
+}
+
+html[data-theme="light"] .lang-btn.active,
+html[data-theme="light"] .lang-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+html[data-theme="light"] .theme-toggle {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+html[data-theme="light"] .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Hero */
+html[data-theme="light"] .glitch {
+    color: #000000;
+}
+
+html[data-theme="light"] .glitch::before,
+html[data-theme="light"] .glitch::after {
+    background: #ffffff;
+    color: #000000;
+}
+
+html[data-theme="light"] .scroll-indicator .line {
+    background: linear-gradient(to bottom, #000000, transparent);
+}
+
+html[data-theme="light"] .cta-btn {
+    border-color: #000000;
+    color: #000000;
+}
+
+html[data-theme="light"] .cta-btn:hover {
+    color: #ffffff;
+}
+
+html[data-theme="light"] .cta-btn::before {
+    background: #000000;
+}
+
+/* Sections */
+html[data-theme="light"] .section-title {
+    color: #000000;
+    text-shadow: none !important;
+}
+
+html[data-theme="light"] .experience-item h3 {
+    color: #000000;
+}
+
+html[data-theme="light"] .experience-item p {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+html[data-theme="light"] .experience-item .year {
+    color: var(--accent-color);
+}
+
+html[data-theme="light"] .project-info {
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.75), transparent);
+}
+
+html[data-theme="light"] .project-info h3,
+html[data-theme="light"] .project-info p {
+    color: #000000;
+}
+
+html[data-theme="light"] .email-link {
+    color: #000000;
+    text-shadow: none !important;
+}
+
+/* Modal + markdown */
+html[data-theme="light"] .modal-overlay {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="light"] .modal-content.glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="light"] .modal-close {
+    color: #000000;
+}
+
+html[data-theme="light"] .markdown-body h1 {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .markdown-body code {
+    background: rgba(0, 0, 0, 0.06);
+    color: #000000;
+}
+
+html[data-theme="light"] .markdown-body td,
+html[data-theme="light"] .markdown-body th {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+html[data-theme="light"] .markdown-body p,
+html[data-theme="light"] .markdown-body li {
+    color: #000000;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    html[data-theme="light"] .nav-links {
+        background: rgba(255, 255, 255, 0.98);
+    }
+
+    html[data-theme="light"] .modal-close {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-toggle {
+        width: 48px;
+        height: 48px;
+        font-size: 1.4rem;
+    }
+}

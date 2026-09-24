@@ -707,3 +707,187 @@ window.addEventListener('keydown', (e) => {
         closeModal();
     }
 });
+
+// ============================================
+// Theme Manager — 3 states: system / light / dark
+// - Default & fallback: system (follows OS)
+// - html[data-theme] is ALWAYS explicit "light" or "dark",
+//   so CSS never depends on media queries.
+// - Dark appearance is unchanged (see style.css base rules).
+// ============================================
+const ThemeManager = (() => {
+    const STORAGE_KEY = 'theme';
+    const CYCLE = ['system', 'light', 'dark']; // click order
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIconEl = document.getElementById('theme-icon-active');
+    const root = document.documentElement;
+
+    const META = {
+        system: { icon: '💻', label: 'system', next: 'light' },
+        light: { icon: '☀️', label: 'light', next: 'dark' },
+        dark: { icon: '🌙', label: 'dark', next: 'system' }
+    };
+
+    let currentMode = 'system'; // system | light | dark
+    let lastToggleAt = 0;
+
+    function getSystemEffective() {
+        try {
+            return window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+        } catch (e) {
+            return 'dark';
+        }
+    }
+
+    function getStoredMode() {
+        try {
+            const v = localStorage.getItem(STORAGE_KEY);
+            return v === 'light' || v === 'dark' || v === 'system' ? v : 'system';
+        } catch (e) {
+            return 'system';
+        }
+    }
+
+    function resolveEffective(mode) {
+        if (mode === 'light' || mode === 'dark') return mode;
+        return getSystemEffective();
+    }
+
+    function updateButton(mode) {
+        const meta = META[mode] || META.system;
+        if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('aria-label', 'Theme: ' + meta.label);
+            themeToggleBtn.setAttribute(
+                'title',
+                'Theme: ' + meta.label + ' (click for ' + META[meta.next].label + ')'
+            );
+        }
+        if (!themeIconEl) return;
+        themeIconEl.classList.remove('visible');
+        themeIconEl.classList.add('hidden');
+        setTimeout(() => {
+            themeIconEl.textContent = meta.icon;
+            themeIconEl.classList.remove('hidden');
+            themeIconEl.classList.add('visible');
+        }, 150);
+    }
+
+    function updateMetaTheme(effective) {
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', 'theme-color');
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', effective === 'light' ? '#ffffff' : '#050505');
+        try {
+            root.style.colorScheme = effective;
+        } catch (e) {}
+    }
+
+    function updateThreeJS(effective) {
+        try {
+            if (typeof particlesMaterial !== 'undefined' && typeof THREE !== 'undefined') {
+                if (effective === 'light') {
+                    // Darker pink + normal blending: stays visible on white
+                    particlesMaterial.color.setHex(0xcc1848);
+                    particlesMaterial.opacity = 0.55;
+                    particlesMaterial.blending = THREE.NormalBlending;
+                } else {
+                    // Original dark-mode look — untouched
+                    particlesMaterial.color.setHex(0xff3366);
+                    particlesMaterial.opacity = 0.8;
+                    particlesMaterial.blending = THREE.AdditiveBlending;
+                }
+                particlesMaterial.needsUpdate = true;
+            }
+            if (typeof renderer !== 'undefined' && renderer && renderer.setClearColor) {
+                renderer.setClearColor(0x000000, 0); // transparent: body bg shows through
+            }
+        } catch (e) {}
+    }
+
+    function applyMode(mode) {
+        if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
+        currentMode = mode;
+        const effective = resolveEffective(mode);
+
+        // Explicit attribute drives all CSS (light rules only match data-theme="light")
+        root.setAttribute('data-theme', effective);
+
+        if (effective === 'light') {
+            document.documentElement.style.backgroundColor = '#ffffff';
+            document.body.style.backgroundColor = '#ffffff';
+            document.body.style.color = '#000000';
+        } else {
+            document.documentElement.style.backgroundColor = '#050505';
+            document.body.style.backgroundColor = '#050505';
+            document.body.style.color = '#ffffff';
+        }
+
+        updateButton(mode);
+        updateMetaTheme(effective);
+        updateThreeJS(effective);
+    }
+
+    function init() {
+        applyMode(getStoredMode());
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', (e) => {
+                if (e && e.preventDefault) e.preventDefault();
+                if (e && e.stopPropagation) e.stopPropagation();
+                const now =
+                    typeof performance !== 'undefined' && performance.now
+                        ? performance.now()
+                        : Date.now();
+                if (now - lastToggleAt < 350) return; // ignore accidental double-fire
+                lastToggleAt = now;
+
+                const next = META[currentMode] ? META[currentMode].next : 'system';
+                try {
+                    localStorage.setItem(STORAGE_KEY, next);
+                } catch (err) {}
+                applyMode(next);
+            });
+        }
+
+        // In system mode, follow OS changes live
+        try {
+            const mq = window.matchMedia('(prefers-color-scheme: light)');
+            const onChange = () => {
+                if (currentMode === 'system') applyMode('system');
+            };
+            if (mq.addEventListener) mq.addEventListener('change', onChange);
+            else if (mq.addListener) mq.addListener(onChange);
+        } catch (e) {}
+    }
+
+    return {
+        init,
+        applyMode,
+        get mode() {
+            return currentMode;
+        },
+        get effective() {
+            return resolveEffective(currentMode);
+        }
+    };
+})();
+
+ThemeManager.init();
+
+// Debug helper: window.__theme.mode / .effective / .set('light'|'dark'|'system')
+try {
+    window.__theme = {
+        get mode() {
+            return ThemeManager.mode;
+        },
+        get effective() {
+            return ThemeManager.effective;
+        },
+        set: (m) => ThemeManager.applyMode(m)
+    };
+} catch (e) {}
