@@ -280,6 +280,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0); // transparent so body bg (white/black) shows through
 
 // Objects - Particles / Stars
 const particlesGeometry = new THREE.BufferGeometry();
@@ -709,7 +710,9 @@ window.addEventListener('keydown', (e) => {
 });
 
 // ============================================
-// Theme Manager (Dark / Light / System)
+// Theme Manager (Dark / Light, explicit data-theme)
+// Single source of truth: html[data-theme="light"|"dark"]
+// No CSS media-query reliance. Defaults to OS on first visit.
 // ============================================
 const ThemeManager = (() => {
     const STORAGE_KEY = 'theme';
@@ -723,20 +726,20 @@ const ThemeManager = (() => {
     };
 
     function getSystemTheme() {
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-    }
-
-    function getStoredPreference() {
         try {
-            return localStorage.getItem(STORAGE_KEY);
+            return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         } catch (e) {
-            return null;
+            return 'dark';
         }
     }
 
-    function getEffectiveTheme(preference) {
-        if (preference === 'light' || preference === 'dark') return preference;
-        return getSystemTheme();
+    function getStoredTheme() {
+        try {
+            const v = localStorage.getItem(STORAGE_KEY);
+            return (v === 'light' || v === 'dark') ? v : null;
+        } catch (e) {
+            return null;
+        }
     }
 
     function updateIcon(effectiveTheme) {
@@ -750,11 +753,25 @@ const ThemeManager = (() => {
         }, 150);
     }
 
+    function updateMetaTheme(effectiveTheme) {
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', 'theme-color');
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', effectiveTheme === 'light' ? '#ffffff' : '#050505');
+        try {
+            root.style.colorScheme = effectiveTheme;
+        } catch (e) {}
+    }
+
     function updateThreeJS(effectiveTheme) {
         if (typeof particlesMaterial !== 'undefined') {
             if (effectiveTheme === 'light') {
-                particlesMaterial.color.setHex(0xff3366);
-                particlesMaterial.opacity = 0.45;
+                // Darker pink + normal blending so particles stay visible on white
+                particlesMaterial.color.setHex(0xcc1848);
+                particlesMaterial.opacity = 0.55;
                 particlesMaterial.blending = THREE.NormalBlending;
                 particlesMaterial.needsUpdate = true;
             } else {
@@ -764,18 +781,18 @@ const ThemeManager = (() => {
                 particlesMaterial.needsUpdate = true;
             }
         }
+        if (typeof renderer !== 'undefined' && renderer.setClearColor) {
+            renderer.setClearColor(0x000000, 0);
+        }
     }
 
-    function applyTheme(preference) {
-        const effective = getEffectiveTheme(preference);
+    function applyTheme(theme) {
+        const effective = (theme === 'light' || theme === 'dark') ? theme : getSystemTheme();
 
-        if (preference === 'light' || preference === 'dark') {
-            root.setAttribute('data-theme', preference);
-        } else {
-            root.removeAttribute('data-theme');
-        }
+        // Always set explicit attribute — CSS only needs html[data-theme="light"]
+        root.setAttribute('data-theme', effective);
 
-        // Directly enforce pure background and text colors to prevent any CSS leaking
+        // Enforce pure bg/text inline as safety net (beats any leaked translucent layers)
         if (effective === 'light') {
             document.documentElement.style.backgroundColor = '#ffffff';
             document.body.style.backgroundColor = '#ffffff';
@@ -787,17 +804,18 @@ const ThemeManager = (() => {
         }
 
         updateIcon(effective);
+        updateMetaTheme(effective);
         updateThreeJS(effective);
     }
 
     function init() {
-        const stored = getStoredPreference();
-        applyTheme(stored);
+        const stored = getStoredTheme();
+        applyTheme(stored || getSystemTheme());
 
-        // Toggle click handler
+        // Toggle click handler: simple flip dark <-> light
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
-                const current = getEffectiveTheme(getStoredPreference());
+                const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
                 const next = current === 'dark' ? 'light' : 'dark';
 
                 try {
@@ -808,23 +826,23 @@ const ThemeManager = (() => {
             });
         }
 
-        // Listen for OS theme changes (applies only when in system mode)
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleOSChange = () => {
-            const stored = getStoredPreference();
-            if (!stored) {
-                applyTheme(null);
+        // Follow OS only when user has no explicit choice
+        try {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            const handleOSChange = () => {
+                if (!getStoredTheme()) {
+                    applyTheme(getSystemTheme());
+                }
+            };
+            if (mediaQuery.addEventListener) {
+                mediaQuery.addEventListener('change', handleOSChange);
+            } else if (mediaQuery.addListener) {
+                mediaQuery.addListener(handleOSChange);
             }
-        };
-
-        if (mediaQuery.addEventListener) {
-            mediaQuery.addEventListener('change', handleOSChange);
-        } else if (mediaQuery.addListener) {
-            mediaQuery.addListener(handleOSChange);
-        }
+        } catch (e) {}
     }
 
-    return { init };
+    return { init, applyTheme };
 })();
 
 ThemeManager.init();

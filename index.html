@@ -1,11 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WDPORT | Creative Portfolio</title>
         <meta name="description" data-i18n-content="meta-desc" content="" />
-        <link rel="stylesheet" href="style.css?v=2.0" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#050505" />
+        <script>
+            // Anti-FOUC: set theme before first paint from localStorage or OS
+            (function () {
+                try {
+                    var stored = localStorage.getItem('theme');
+                    var theme =
+                        stored === 'light' || stored === 'dark'
+                            ? stored
+                            : window.matchMedia('(prefers-color-scheme: light)').matches
+                              ? 'light'
+                              : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    document.documentElement.style.backgroundColor =
+                        theme === 'light' ? '#ffffff' : '#050505';
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#050505');
+                } catch (e) {}
+            })();
+        </script>
+        <link rel="stylesheet" href="style.css?v=3.0" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -180,6 +201,6 @@
         <!-- Custom Script & Translation -->
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="translations.js"></script>
-        <script src="script.js?v=2.0"></script>
+        <script src="script.js?v=3.0"></script>
     </body>
 </html>
