@@ -707,3 +707,112 @@ window.addEventListener('keydown', (e) => {
         closeModal();
     }
 });
+
+// ============================================
+// Theme Manager (Dark / Light / System)
+// ============================================
+const ThemeManager = (() => {
+    const STORAGE_KEY = 'theme';
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIconEl = document.getElementById('theme-icon-active');
+    const root = document.documentElement;
+
+    // Icons for each mode
+    const icons = {
+        dark: '🌙',
+        light: '☀️',
+        system: '💻'
+    };
+
+    // Cycle order: system → light → dark → system
+    const cycle = ['system', 'light', 'dark'];
+
+    function getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+
+    function getStoredPreference() {
+        return localStorage.getItem(STORAGE_KEY); // null = system
+    }
+
+    function getEffectiveTheme(preference) {
+        if (preference === 'light' || preference === 'dark') return preference;
+        return getSystemTheme(); // system or null
+    }
+
+    function updateIcon(preference) {
+        if (!themeIconEl) return;
+        const mode = preference || 'system';
+        // Animate icon change
+        themeIconEl.classList.remove('visible');
+        themeIconEl.classList.add('hidden');
+        setTimeout(() => {
+            themeIconEl.textContent = icons[mode];
+            themeIconEl.classList.remove('hidden');
+            themeIconEl.classList.add('visible');
+        }, 150);
+    }
+
+    function updateThreeJS(effectiveTheme) {
+        // Update particle color for visibility
+        if (typeof particlesMaterial !== 'undefined') {
+            if (effectiveTheme === 'light') {
+                particlesMaterial.color.setHex(0xe6264d);
+                particlesMaterial.opacity = 0.6;
+            } else {
+                particlesMaterial.color.setHex(0xff3366);
+                particlesMaterial.opacity = 0.8;
+            }
+        }
+    }
+
+    function applyTheme(preference) {
+        const effective = getEffectiveTheme(preference);
+
+        if (preference === 'light' || preference === 'dark') {
+            root.setAttribute('data-theme', preference);
+        } else {
+            // System mode: remove data-theme so CSS media queries take over
+            root.removeAttribute('data-theme');
+        }
+
+        updateIcon(preference);
+        updateThreeJS(effective);
+    }
+
+    function init() {
+        const stored = getStoredPreference();
+        applyTheme(stored);
+
+        // Toggle click handler
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                const current = getStoredPreference() || 'system';
+                const currentIndex = cycle.indexOf(current);
+                const nextIndex = (currentIndex + 1) % cycle.length;
+                const next = cycle[nextIndex];
+
+                if (next === 'system') {
+                    localStorage.removeItem(STORAGE_KEY);
+                } else {
+                    localStorage.setItem(STORAGE_KEY, next);
+                }
+
+                applyTheme(next === 'system' ? null : next);
+            });
+        }
+
+        // Listen for OS theme changes (applies only when in system mode)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            const stored = getStoredPreference();
+            if (!stored) {
+                // In system mode, just update Three.js since CSS handles the rest
+                updateThreeJS(getSystemTheme());
+            }
+        });
+    }
+
+    return { init };
+})();
+
+ThemeManager.init();
