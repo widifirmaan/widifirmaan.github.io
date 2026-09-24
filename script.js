@@ -717,44 +717,40 @@ const ThemeManager = (() => {
     const themeIconEl = document.getElementById('theme-icon-active');
     const root = document.documentElement;
 
-    // Icons for each mode
     const icons = {
         dark: '🌙',
-        light: '☀️',
-        system: '💻'
+        light: '☀️'
     };
-
-    // Cycle order: system → light → dark → system
-    const cycle = ['system', 'light', 'dark'];
 
     function getSystemTheme() {
         return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
 
     function getStoredPreference() {
-        return localStorage.getItem(STORAGE_KEY); // null = system
+        try {
+            return localStorage.getItem(STORAGE_KEY);
+        } catch (e) {
+            return null;
+        }
     }
 
     function getEffectiveTheme(preference) {
         if (preference === 'light' || preference === 'dark') return preference;
-        return getSystemTheme(); // system or null
+        return getSystemTheme();
     }
 
-    function updateIcon(preference) {
+    function updateIcon(effectiveTheme) {
         if (!themeIconEl) return;
-        const mode = preference || 'system';
-        // Animate icon change
         themeIconEl.classList.remove('visible');
         themeIconEl.classList.add('hidden');
         setTimeout(() => {
-            themeIconEl.textContent = icons[mode];
+            themeIconEl.textContent = effectiveTheme === 'light' ? icons.light : icons.dark;
             themeIconEl.classList.remove('hidden');
             themeIconEl.classList.add('visible');
         }, 150);
     }
 
     function updateThreeJS(effectiveTheme) {
-        // Update particle color and blending for visibility against background
         if (typeof particlesMaterial !== 'undefined') {
             if (effectiveTheme === 'light') {
                 particlesMaterial.color.setHex(0xff3366);
@@ -776,11 +772,21 @@ const ThemeManager = (() => {
         if (preference === 'light' || preference === 'dark') {
             root.setAttribute('data-theme', preference);
         } else {
-            // System mode: remove data-theme so CSS media queries take over
             root.removeAttribute('data-theme');
         }
 
-        updateIcon(preference);
+        // Directly enforce pure background and text colors to prevent any CSS leaking
+        if (effective === 'light') {
+            document.documentElement.style.backgroundColor = '#ffffff';
+            document.body.style.backgroundColor = '#ffffff';
+            document.body.style.color = '#000000';
+        } else {
+            document.documentElement.style.backgroundColor = '#050505';
+            document.body.style.backgroundColor = '#050505';
+            document.body.style.color = '#ffffff';
+        }
+
+        updateIcon(effective);
         updateThreeJS(effective);
     }
 
@@ -791,29 +797,31 @@ const ThemeManager = (() => {
         // Toggle click handler
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
-                const current = getStoredPreference() || 'system';
-                const currentIndex = cycle.indexOf(current);
-                const nextIndex = (currentIndex + 1) % cycle.length;
-                const next = cycle[nextIndex];
+                const current = getEffectiveTheme(getStoredPreference());
+                const next = current === 'dark' ? 'light' : 'dark';
 
-                if (next === 'system') {
-                    localStorage.removeItem(STORAGE_KEY);
-                } else {
+                try {
                     localStorage.setItem(STORAGE_KEY, next);
-                }
+                } catch (e) {}
 
-                applyTheme(next === 'system' ? null : next);
+                applyTheme(next);
             });
         }
 
         // Listen for OS theme changes (applies only when in system mode)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleOSChange = () => {
             const stored = getStoredPreference();
             if (!stored) {
-                // In system mode, just update Three.js since CSS handles the rest
-                updateThreeJS(getSystemTheme());
+                applyTheme(null);
             }
-        });
+        };
+
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener('change', handleOSChange);
+        } else if (mediaQuery.addListener) {
+            mediaQuery.addListener(handleOSChange);
+        }
     }
 
     return { init };

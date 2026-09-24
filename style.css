@@ -4,6 +4,10 @@
     --accent-color: #ff3366;
 }
 
+html {
+    background-color: var(--bg-color);
+}
+
 /* Light Mode Theme Override (explicit toggle) */
 [data-theme="light"] {
     --bg-color: #ffffff;
@@ -11,12 +15,23 @@
     --accent-color: #ff3366;
 }
 
+html[data-theme="light"],
+html[data-theme="light"] body,
+[data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
 /* System preference: light mode when not explicitly dark */
 @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
+    :root:not([data-theme="dark"]),
+    html:not([data-theme="dark"]),
+    html:not([data-theme="dark"]) body {
         --bg-color: #ffffff;
         --text-color: #000000;
         --accent-color: #ff3366;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
 }
 
@@ -392,6 +407,7 @@ body {
     height: 100vh;
     z-index: -1;
     pointer-events: none;
+    background: transparent !important;
 }
 
 /* Glassmorphism Utility */
