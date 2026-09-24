@@ -754,14 +754,18 @@ const ThemeManager = (() => {
     }
 
     function updateThreeJS(effectiveTheme) {
-        // Update particle color for visibility
+        // Update particle color and blending for visibility against background
         if (typeof particlesMaterial !== 'undefined') {
             if (effectiveTheme === 'light') {
-                particlesMaterial.color.setHex(0xe6264d);
-                particlesMaterial.opacity = 0.6;
+                particlesMaterial.color.setHex(0xff3366);
+                particlesMaterial.opacity = 0.45;
+                particlesMaterial.blending = THREE.NormalBlending;
+                particlesMaterial.needsUpdate = true;
             } else {
                 particlesMaterial.color.setHex(0xff3366);
                 particlesMaterial.opacity = 0.8;
+                particlesMaterial.blending = THREE.AdditiveBlending;
+                particlesMaterial.needsUpdate = true;
             }
         }
     }
