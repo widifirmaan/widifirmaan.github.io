@@ -17,6 +17,7 @@ html[data-theme="light"] {
 
 html {
     background-color: var(--bg-color);
+    transition: background-color 0.3s ease;
 }
 
 html[data-theme="dark"],
@@ -285,6 +286,7 @@ body {
     color: var(--text-color);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom Cursor */

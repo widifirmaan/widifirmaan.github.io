@@ -788,9 +788,13 @@ const ThemeManager = (() => {
 
     function applyTheme(theme) {
         const effective = (theme === 'light' || theme === 'dark') ? theme : getSystemTheme();
+        currentTheme = effective;
 
         // Always set explicit attribute — CSS only needs html[data-theme="light"]
         root.setAttribute('data-theme', effective);
+        if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('aria-pressed', effective === 'light' ? 'true' : 'false');
+        }
 
         // Enforce pure bg/text inline as safety net (beats any leaked translucent layers)
         if (effective === 'light') {
@@ -806,21 +810,32 @@ const ThemeManager = (() => {
         updateIcon(effective);
         updateMetaTheme(effective);
         updateThreeJS(effective);
+        try { console.log('[theme] applied:', effective); } catch (e) {}
     }
+
+    // Single source of truth in JS (avoids DOM-read races on rapid clicks)
+    let currentTheme = 'dark';
+    let lastToggleAt = 0;
 
     function init() {
         const stored = getStoredTheme();
-        applyTheme(stored || getSystemTheme());
+        currentTheme = stored || getSystemTheme();
+        applyTheme(currentTheme);
 
-        // Toggle click handler: simple flip dark <-> light
+        // Toggle click handler: simple flip dark <-> light (debounced)
         if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-                const next = current === 'dark' ? 'light' : 'dark';
+            themeToggleBtn.addEventListener('click', (e) => {
+                if (e && e.preventDefault) e.preventDefault();
+                if (e && e.stopPropagation) e.stopPropagation();
+                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+                if (now - lastToggleAt < 350) return; // ignore accidental double-fire
+                lastToggleAt = now;
+
+                const next = currentTheme === 'dark' ? 'light' : 'dark';
 
                 try {
                     localStorage.setItem(STORAGE_KEY, next);
-                } catch (e) {}
+                } catch (err) {}
 
                 applyTheme(next);
             });
@@ -842,7 +857,15 @@ const ThemeManager = (() => {
         } catch (e) {}
     }
 
-    return { init, applyTheme };
+    return { init, applyTheme, get current() { return currentTheme; } };
 })();
 
 ThemeManager.init();
+
+// Debug helper: window.__theme.get() / window.__theme.set('light'|'dark')
+try {
+    window.__theme = {
+        get: () => ThemeManager.current,
+        set: (t) => ThemeManager.applyTheme(t)
+    };
+} catch (e) {}
