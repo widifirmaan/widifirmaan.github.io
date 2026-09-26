@@ -1001,8 +1001,18 @@ footer {
 
 .theme-toggle .theme-icon {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: opacity 0.3s ease, transform 0.3s ease;
     line-height: 1;
+    color: inherit;
+}
+
+.theme-toggle .theme-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 .theme-toggle .theme-icon.hidden {
@@ -1239,5 +1249,10 @@ html[data-theme="light"] .markdown-body li {
         width: 48px;
         height: 48px;
         font-size: 1.4rem;
+    }
+
+    .theme-toggle .theme-icon svg {
+        width: 22px;
+        height: 22px;
     }
 }
