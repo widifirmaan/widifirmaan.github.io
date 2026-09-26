@@ -720,6 +720,7 @@ const ThemeManager = (() => {
     const CYCLE = ['system', 'light', 'dark']; // click order
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIconEl = document.getElementById('theme-icon-active');
+    const themeLabelEl = document.getElementById('theme-label');
     const root = document.documentElement;
 
     // Monochrome (B&W) SVG icons — inherit button color via currentColor,
@@ -779,6 +780,9 @@ const ThemeManager = (() => {
                 'title',
                 'Theme: ' + meta.label + ' (click for ' + META[meta.next].label + ')'
             );
+        }
+        if (themeLabelEl) {
+            themeLabelEl.textContent = meta.label;
         }
         if (!themeIconEl) return;
         themeIconEl.classList.remove('visible');
