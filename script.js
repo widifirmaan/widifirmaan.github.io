@@ -219,6 +219,28 @@ async function fetchGitHubProjects() {
 // Initialize projects
 fetchGitHubProjects();
 
+// Ring follower (decorative only — system cursor stays visible)
+const follower = document.querySelector('.cursor-follower');
+
+let ringTargetX = 0, ringTargetY = 0;
+let followerX = 0, followerY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    ringTargetX = e.clientX;
+    ringTargetY = e.clientY;
+});
+
+// Smooth follower update
+gsap.ticker.add(() => {
+    followerX += (ringTargetX - followerX) * 0.1;
+    followerY += (ringTargetY - followerY) * 0.1;
+
+    gsap.set(follower, {
+        x: followerX,
+        y: followerY
+    });
+});
+
 // THREE.JS Background Animation
 const canvas = document.querySelector('#webgl');
 const scene = new THREE.Scene();
