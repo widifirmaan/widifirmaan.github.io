@@ -219,43 +219,6 @@ async function fetchGitHubProjects() {
 // Initialize projects
 fetchGitHubProjects();
 
-// Custom Cursor
-const cursor = document.querySelector('.cursor');
-const follower = document.querySelector('.cursor-follower');
-const links = document.querySelectorAll('a, .cta-btn, .project-card');
-
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    // Immediate cursor update
-    gsap.to(cursor, {
-        x: mouseX,
-        y: mouseY,
-        duration: 0.1
-    });
-});
-
-// Smooth follower update
-gsap.ticker.add(() => {
-    followerX += (mouseX - followerX) * 0.1;
-    followerY += (mouseY - followerY) * 0.1;
-
-    gsap.set(follower, {
-        x: followerX,
-        y: followerY
-    });
-});
-
-// Hover effect
-links.forEach(link => {
-    link.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-    link.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-});
-
 // THREE.JS Background Animation
 const canvas = document.querySelector('#webgl');
 const scene = new THREE.Scene();
@@ -680,21 +643,6 @@ document.addEventListener('click', (e) => {
             readme: clickable.dataset.readme
         };
         openModal(data);
-    }
-});
-
-// Update custom cursor on hover (Event Delegation)
-document.addEventListener('mouseover', (e) => {
-    const clickable = e.target.closest('.experience-item, .project-card, a, button');
-    if (clickable) {
-        cursor.classList.add('hovered');
-    }
-});
-
-document.addEventListener('mouseout', (e) => {
-    const clickable = e.target.closest('.experience-item, .project-card, a, button');
-    if (clickable) {
-        cursor.classList.remove('hovered');
     }
 });
 

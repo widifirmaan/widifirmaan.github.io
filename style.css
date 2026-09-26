@@ -8,8 +8,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    cursor: none;
-    /* Hide default cursor for custom one */
 }
 
 body {
@@ -1130,10 +1128,6 @@ html[data-theme="light"] .project-card.glass-panel {
 }
 
 /* Controls */
-html[data-theme="light"] .cursor-follower {
-    border-color: rgba(0, 0, 0, 0.4);
-}
-
 html[data-theme="light"] .lang-switcher {
     background: rgba(0, 0, 0, 0.05);
     border-color: rgba(0, 0, 0, 0.1);
