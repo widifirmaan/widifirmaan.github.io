@@ -515,6 +515,9 @@ function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lang', lang);
 
+    // Update HTML lang attribute for accessibility & SEO
+    document.documentElement.setAttribute('lang', lang);
+
     // Update active button state
     langBtns.forEach(btn => {
         if (btn.dataset.lang === lang) {

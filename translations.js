@@ -20,14 +20,14 @@ const translations = {
         "exp1-desc": "Membangun aplikasi mirecruit menggunakan springboot. Fokus pada optimasi performa dan arsitektur komponen yang skalabel.",
         "exp2-year": "2022 - 2025",
         "exp2-role": "Backend Developer",
-        "exp2-company": "Indonesia Fincancial Group (IFG)",
+        "exp2-company": "Indonesia Financial Group (IFG)",
         "exp2-desc": "Membangun aplikasi internal menggunakan springboot, codeigniter. Fokus pada optimasi performa dan arsitektur komponen yang skalabel.",
         "exp3-year": "2020 - 2022",
         "exp3-role": "Backend Developer",
         "exp3-company": "Geekgarden Indonesia",
         "exp3-desc": "Membangun berbagai website klien mulai dari profil perusahaan hingga e-commerce. Menguasai pengembangan berbasis CMS dan integrasi API pihak ketiga.",
         "contact-title": "LET'S TALK",
-        "meta-desc": "Portofolio pengembang kreatif",
+        "meta-desc": "Portfolio resmi Widi Firmansyah - Web & Backend Developer berpengalaman dalam Spring Boot, Java, PHP, dan modern web technologies.",
         "loading-projects": "Memuat proyek...",
         "footer-copy": "© 2026 WDPORT. Hak cipta dilindungi undang-undang."
     },
@@ -59,7 +59,7 @@ const translations = {
         "exp3-company": "Geekgarden Indonesia",
         "exp3-desc": "Building various client websites from company profiles to e-commerce. Proficient in CMS-based development and third-party API integration.",
         "contact-title": "LET'S TALK",
-        "meta-desc": "Creative Developer Portfolio",
+        "meta-desc": "Official portfolio of Widi Firmansyah - Creative Web & Backend Developer specializing in Spring Boot, Java, PHP, and scalable web architectures.",
         "loading-projects": "Loading projects...",
         "footer-copy": "© 2026 WDPORT. All rights reserved."
     },
@@ -91,7 +91,7 @@ const translations = {
         "exp3-company": "Geekgarden Indonesia",
         "exp3-desc": "构建从公司简介到电子商务的各种客户网站。精通基于 CMS 的开发和第三方 API 集成。",
         "contact-title": "联系我",
-        "meta-desc": "创意开发人员作品集",
+        "meta-desc": "Widi Firmansyah 官方作品集 - 专注于 Spring Boot、Java、PHP 和现代 Web 架构的全栈与后端开发人员。",
         "loading-projects": "正在加载项目...",
         "footer-copy": "© 2026 WDPORT。保留所有权利。"
     }

@@ -1,0 +1,5 @@
+# robots.txt for https://widifirmaan.web.id
+User-agent: *
+Allow: /
+
+Sitemap: https://widifirmaan.web.id/sitemap.xml
