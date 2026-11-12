@@ -86,117 +86,132 @@ document.querySelectorAll('.nav-links a:not(.lang-btn)').forEach(link => {
     });
 });
 
-// GitHub Projects Fetching
+// GitHub Projects Fetching with Static projects.json & LocalStorage Fallback
 async function fetchGitHubProjects() {
     const projectsGrid = document.querySelector('.projects-grid');
     if (!projectsGrid) return;
 
+    let projects = [];
+
+    // 1. Try fetching static projects.json
     try {
-        const response = await fetch('https://api.github.com/users/widifirmaan/repos?sort=updated&type=owner&per_page=30');
-        if (!response.ok) throw new Error('Failed to fetch repos');
-
-        const repos = await response.json();
-
-        // Filter out specific repos and forks
-        const excludedRepos = ['widifirmaan.github.io', 'nextjs-telefish', 'bash-android-aio-bypass-kit', 'expressjs-server-manager-lightweight', 'clover-asus-vivobookflip-tp410ua'];
-        const filteredRepos = repos.filter(repo => !repo.fork && !excludedRepos.includes(repo.name.toLowerCase()));
-
-        // Clear existing static projects
-        projectsGrid.innerHTML = '';
-
-        // Render projects in order
-        for (const repo of filteredRepos) {
-            const card = document.createElement('div');
-            card.className = 'project-card glass-panel';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-
-            const tech = repo.language || 'Web Technology';
-            const ogImage = `https://opengraph.githubassets.com/1/${repo.full_name}`;
-            const title = repo.name.replace(/[-_]/g, ' ').toUpperCase();
-            const description = repo.description || 'No description available.';
-
-            // Try to fetch images from README
-            let images = [ogImage];
-            let fullReadme = '';
-            try {
-                const readmeRes = await fetch(`https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch || 'main'}/README.md`);
-                if (readmeRes.ok) {
-                    fullReadme = await readmeRes.text();
-                    const imgRegex = /!\[.*?\]\(((?:[^)(]+|\([^)(]*\))+)\)|<img.*?src=["'](.*?)["']/g;
-                    let match;
-                    let extracted = [];
-                    let badges = [];
-                    while ((match = imgRegex.exec(fullReadme)) !== null) {
-                        let url = match[1] || match[2];
-                        if (url) {
-                            if (!url.startsWith('http')) {
-                                url = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch || 'main'}/${url.replace(/^[.\/]+/, '')}`;
-                            }
-
-                            if (url.includes('shields.io') || url.includes('badge')) {
-                                if (badges.length < 5) badges.push(url);
-                            } else if (extracted.length < 4) {
-                                extracted.push(url);
-                            }
-                        }
-                    }
-                    if (extracted.length > 0) images = extracted;
-
-                    const badgeHtml = badges.length > 0
-                        ? `<div class="card-badges" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">${badges.map(b => `<img src="${b}" alt="badge">`).join('')}</div>`
-                        : `<p>${tech}</p>`;
-                    card.dataset.badgeHtml = badgeHtml;
-
-                    // Fix relative paths in the full README text for the modal
-                    const branch = repo.default_branch || 'main';
-                    fullReadme = fullReadme.replace(
-                        /!\[([^\]]*)\]\((?!http|https)((?:[^)(]+|\([^)(]*\))+)\)/g,
-                        (m, alt, path) => `![${alt}](https://raw.githubusercontent.com/${repo.full_name}/${branch}/${path.replace(/^[.\/]+/, '')})`
-                    ).replace(
-                        /<img[^>]+src=["'](?!http|https)([^"']+)["'][^>]*>/g,
-                        (match, src) => match.replace(src, `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${src.replace(/^[.\/]+/, '')}`)
-                    );
-                }
-            } catch (e) {
-                console.warn('Could not fetch README for', repo.name);
+        const response = await fetch('projects.json?v=' + Date.now());
+        if (response.ok) {
+            const data = await response.json();
+            projects = Array.isArray(data) ? data : (data.projects || []);
+            if (projects.length > 0) {
+                try {
+                    localStorage.setItem('widifirmaan_cached_projects', JSON.stringify(projects));
+                } catch (e) {}
             }
+        }
+    } catch (e) {
+        console.warn('Could not fetch projects.json, trying cache or live API:', e);
+    }
 
-            // Set data attributes for modal
-            card.dataset.title = title;
-            card.dataset.subtitle = tech;
-            card.dataset.image = images[0];
+    // 2. Fallback to localStorage cache
+    if (!projects || projects.length === 0) {
+        try {
+            const cached = localStorage.getItem('widifirmaan_cached_projects');
+            if (cached) {
+                projects = JSON.parse(cached);
+            }
+        } catch (e) {}
+    }
 
-            // Store README text for later use in modal
-            card.dataset.readme = fullReadme;
+    // 3. Fallback to live GitHub API if static file and cache are unavailable
+    if (!projects || projects.length === 0) {
+        try {
+            const response = await fetch('https://api.github.com/users/widifirmaan/repos?sort=updated&type=owner&per_page=30');
+            if (response.ok) {
+                const repos = await response.json();
+                const excludedRepos = ['widifirmaan.github.io', 'nextjs-telefish', 'bash-android-aio-bypass-kit', 'expressjs-server-manager-lightweight', 'clover-asus-vivobookflip-tp410ua'];
+                const filteredRepos = repos.filter(repo => !repo.fork && !excludedRepos.includes(repo.name.toLowerCase()));
+                projects = filteredRepos.map(repo => {
+                    const tech = repo.language || 'Web Technology';
+                    const title = repo.name.replace(/[-_]/g, ' ').toUpperCase();
+                    const ogImage = `https://opengraph.githubassets.com/1/${repo.full_name}`;
+                    return {
+                        name: repo.name,
+                        title,
+                        tech,
+                        description: repo.description || 'No description available.',
+                        html_url: repo.html_url,
+                        homepage: repo.homepage || '',
+                        images: [ogImage],
+                        badgeHtml: `<p>${tech}</p>`,
+                        fullReadme: '',
+                        desc: `
+                            <div class="readme-content">${repo.description || 'No description available.'}</div>
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <a href="${repo.html_url}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Source Code</a>
+                                ${repo.homepage ? `<a href="${repo.homepage}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem; background: var(--accent-color);">Live Demo</a>` : ''}
+                            </div>
+                        `
+                    };
+                });
+            }
+        } catch (err) {
+            console.error('Failed live GitHub API fallback:', err);
+        }
+    }
 
-            // Initial short description for the card if needed
-            card.dataset.desc = `
-                <div class="readme-content">
-                    ${fullReadme ? 'Loading detail...' : description}
-                </div>
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <a href="${repo.html_url}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Source Code</a>
-                    ${repo.homepage ? `<a href="${repo.homepage}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem; background: var(--accent-color);">Live Demo</a>` : ''}
-                </div>
-            `;
+    if (!projects || projects.length === 0) {
+        projectsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Gagal memuat proyek dari GitHub.</p>';
+        return;
+    }
 
-            const gridClass = images.length > 1 ? `grid-${Math.min(images.length, 4)}` : '';
-            const imagesHtml = images.slice(0, 4).map(src => `<img src="${src}" alt="${title}" loading="lazy">`).join('');
+    // Clear loading placeholder
+    projectsGrid.innerHTML = '';
 
-            card.innerHTML = `
-                <div class="project-image ${gridClass}">
-                    ${imagesHtml}
-                </div>
-                <div class="project-info">
-                    <h3>${title}</h3>
-                    ${card.dataset.badgeHtml || `<p>${tech}</p>`}
-                </div>
-            `;
+    // Render projects in order
+    for (const project of projects) {
+        const card = document.createElement('div');
+        card.className = 'project-card glass-panel';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
 
-            projectsGrid.appendChild(card);
+        const tech = project.tech || project.language || 'Web Technology';
+        const title = project.title || project.name.replace(/[-_]/g, ' ').toUpperCase();
+        const description = project.description || 'No description available.';
+        const images = (project.images && project.images.length > 0) ? project.images : [`https://opengraph.githubassets.com/1/widifirmaan/${project.name}`];
+        const fullReadme = project.fullReadme || '';
+        const badgeHtml = project.badgeHtml || (project.badges && project.badges.length > 0
+            ? `<div class="card-badges" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">${project.badges.map(b => `<img src="${b}" alt="badge">`).join('')}</div>`
+            : `<p>${tech}</p>`);
 
-            // Animate reveal using GSAP
+        card.dataset.title = title;
+        card.dataset.subtitle = tech;
+        card.dataset.image = images[0];
+        card.dataset.readme = fullReadme;
+        card.dataset.badgeHtml = badgeHtml;
+        card.dataset.desc = project.desc || `
+            <div class="readme-content">
+                ${fullReadme ? 'Loading detail...' : description}
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a href="${project.html_url}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Source Code</a>
+                ${project.homepage ? `<a href="${project.homepage}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem; background: var(--accent-color);">Live Demo</a>` : ''}
+            </div>
+        `;
+
+        const gridClass = images.length > 1 ? `grid-${Math.min(images.length, 4)}` : '';
+        const imagesHtml = images.slice(0, 4).map(src => `<img src="${src}" alt="${title}" loading="lazy">`).join('');
+
+        card.innerHTML = `
+            <div class="project-image ${gridClass}">
+                ${imagesHtml}
+            </div>
+            <div class="project-info">
+                <h3>${title}</h3>
+                ${badgeHtml}
+            </div>
+        `;
+
+        projectsGrid.appendChild(card);
+
+        // Animate reveal using GSAP
+        if (typeof gsap !== 'undefined') {
             gsap.to(card, {
                 scrollTrigger: {
                     trigger: card,
@@ -208,11 +223,10 @@ async function fetchGitHubProjects() {
                 delay: 0.1,
                 ease: "power3.out"
             });
+        } else {
+            card.style.opacity = '1';
+            card.style.transform = 'none';
         }
-
-    } catch (error) {
-        console.error('Error fetching GitHub projects:', error);
-        projectsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Gagal memuat proyek dari GitHub.</p>';
     }
 }
 
