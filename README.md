@@ -49,7 +49,7 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | Category | Technologies | Purpose |
 | :--- | :--- | :--- |
 | **Core Architecture** | Semantic HTML5, CSS3 Custom Properties, Vanilla ES6+ | Lightweight foundation with zero compilation overhead |
-| **3D & Graphics** | Three.js `r128`, WebGL Canvas | 3D GLTF asset rendering and responsive particle physics |
+| **3D & Graphics** | Three.js `r128`, WebGL Canvas | 3D model rendering and interactive particle field |
 | **Scroll & Motion** | Lenis Smooth Scroll, GSAP, ScrollTrigger | Momentum scrolling and scroll-linked element choreography |
 | **Data & Content** | JSON (`projects.json`), Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering |
 | **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
