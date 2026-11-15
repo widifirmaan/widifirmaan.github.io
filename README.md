@@ -1,12 +1,13 @@
 # widifirmaan.web.id
 
-> Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, bilingual i18n localization, and an interactive project catalog.
+> Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, Lenis smooth scrolling, bilingual i18n localization, and an interactive project catalog.
 
-This repository powers the production deployment of [https://widifirmaan.web.id](https://widifirmaan.web.id), built entirely with zero frontend build tools or framework overhead. It implements high-performance Vanilla JavaScript, CSS custom properties, asynchronous project indexing via `projects.json`, client-side i18n routing, and an interactive 3D WebGL animoji canvas.
+This repository powers the production deployment of [https://widifirmaan.web.id](https://widifirmaan.web.id), engineered with zero build tools or framework overhead. Built with high-performance Vanilla ES6+ JavaScript, Studio Freight Lenis smooth scrolling, GSAP ScrollTrigger timeline synchronization, dynamic asynchronous project indexing via `projects.json`, client-side i18n localization, and an interactive 3D WebGL animoji canvas.
 
 [![Live Demo](https://img.shields.io/badge/Demo-widifirmaan.web.id-10B981?style=flat-square&logo=googlechrome&logoColor=white)](https://widifirmaan.web.id)
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#features)
 [![3D Engine](https://img.shields.io/badge/3D_Engine-Three.js_r128-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![Motion](https://img.shields.io/badge/Scroll-Lenis_%26_GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)](https://gsap.com/)
 [![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#features)
 [![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#features)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
@@ -22,7 +23,7 @@ This repository powers the production deployment of [https://widifirmaan.web.id]
 
 ## Showcase
 
-| Desktop Interface | Mobile Interface |
+| Desktop Interface (MacBook Pro M4) | Mobile Interface (iPhone 16 Pro) |
 | :---: | :---: |
 | **Hero Stage & 3D Memoji Desktop**<br>![Hero Stage Desktop](screenshots/Portfolio%20Hero%20Desktop.png) | **Hero Stage Mobile**<br>![Hero Stage Mobile](screenshots/Portfolio%20Hero%20Mobile.png) |
 | **Selected Works Filterable Grid Desktop**<br>![Selected Works Desktop](screenshots/Portfolio%20Works%20Desktop.png) | **Selected Works Mobile**<br>![Selected Works Mobile](screenshots/Portfolio%20Works%20Mobile.png) |
@@ -32,43 +33,46 @@ This repository powers the production deployment of [https://widifirmaan.web.id]
 
 ---
 
-## Core Features
+## Features
 
-- **Zero-Dependency Vanilla Stack**: Pure semantic HTML5, modern CSS3 (Custom Properties & Flex/Grid), and Vanilla ES6+ modules with zero build step requirements.
-- **Interactive 3D WebGL Canvas**: Embedded Three.js r128 viewport rendering a customized GLTF 3D model with mouse tracking, touch responsiveness, and ambient lighting.
-- **Dynamic Project Catalog**: Dynamic asynchronous project rendering loaded from `projects.json`, supporting instant category filtering (All, Web Apps, Mobile, UI/UX, Open Source).
-- **Interactive Case Study Modal**: Deep-dive project modal showcasing live links, source repositories, tech tags, and detailed engineering architecture write-ups.
-- **Bilingual i18n Localization**: Instant client-side language toggle supporting Bahasa Indonesia (`id`) and English (`en`) backed by `translations.js`.
-- **System Theme Auto-Detection**: Supports Dark Mode, Light Mode, and System Theme preference with persistent `localStorage` synchronization.
+- **Zero-Dependency Native Runtime**: 100% pure semantic HTML5, modern CSS3 custom design tokens, and Vanilla ES6+ modules running directly in browsers with zero bundler or compilation step required.
+- **Synchronized Lenis & GSAP Scroll Engine**: Integrated `@studio-freight/lenis` smooth vertical scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` updates for 60fps kinetic parallax animations.
+- **Dynamic Three.js WebGL Particle System**: Real-time 3D canvas viewport rendering custom particle geometry with dynamic opacity and material blending (`NormalBlending` for light mode vs `AdditiveBlending` for dark mode).
+- **Asynchronous Case Study Catalog (`projects.json`)**: Non-blocking client-side project fetching with instantaneous category filtering across Web Applications, Mobile, UI/UX, and Open Source software.
+- **Interactive Deep-Dive Modal**: Dynamic case study overlay featuring architectural overviews, stack tags, live URLs, repository links, and keyboard `Escape` dismissal.
+- **Bilingual i18n Localization Engine (`translations.js`)**: Real-time client-side language switching between Bahasa Indonesia (`id`) and English (`en`) with zero layout shift or page reloads.
+- **Tri-State Theme Manager**: Tactile switcher cycling between Dark, Light, and System themes with 350ms click debouncing, dynamic meta theme color injection, and persistent `localStorage` synchronization.
+- **Verified Industry Track Record**: Interactive career roadmap detailing production backend and Spring Boot engineering roles at Manulife Indonesia, Indonesia Financial Group (IFG), and Geekgarden.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Details |
+| Category | Technologies | Purpose |
 | :--- | :--- | :--- |
-| **Markup & Semantics** | HTML5 | Accessible landmark roles, meta tags, and structured microdata |
-| **Styling & Design** | CSS3 | Custom properties, responsive CSS grid, glassmorphism UI |
-| **3D Rendering** | Three.js `r128` | WebGL canvas with GLTFLoader and OrbitControls integration |
-| **Client Scripting** | Vanilla ES6+ | Native DOM operations, intersection observers, and event delegation |
-| **Data Architecture** | JSON | Decoupled project metadata storage (`projects.json`) |
-| **Deployment** | GitHub Pages | Fast CDN delivery with custom DNS routing via Cloudflare |
+| **Core Architecture** | Semantic HTML5, CSS3 Custom Properties, Vanilla ES6+ | Lightweight foundation with zero compilation overhead |
+| **3D & Graphics** | Three.js `r128`, WebGL Canvas | 3D GLTF asset rendering and responsive particle physics |
+| **Scroll & Motion** | Lenis Smooth Scroll, GSAP, ScrollTrigger | Momentum scrolling and scroll-linked element choreography |
+| **Data & Content** | JSON (`projects.json`), Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering |
+| **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
+| **Deployment & Hosting** | GitHub Pages, Cloudflare DNS | Edge CDN static delivery with custom domain SSL routing |
 
 ---
 
 ## Project Structure
 
-```text
-widifirmaan.github.io/
-├── index.html            # Main portfolio layout and semantic markup
-├── style.css             # Unified stylesheets and responsive design tokens
-├── script.js             # Core DOM interactions, Three.js runtime, and catalog logic
-├── translations.js       # Indonesian & English i18n locale dictionary
-├── projects.json         # Structured project case studies and repository metadata
-├── animoji.glb           # 3D GLTF binary model asset for WebGL canvas
-├── memoji.png            # Fallback 2D portrait asset
-├── raw_screenshots/      # High-resolution production screen captures
-└── screenshots/          # MacBook Pro M4 & iPhone 16 Pro showcase mockups
+```bash
+/
+├── index.html            # Main portfolio layout and semantic landmark markup
+├── style.css             # Unified CSS variables, dark/light tokens, and animations
+├── script.js             # Lenis scroll, Three.js canvas, GSAP triggers, and modal logic
+├── translations.js       # Indonesian & English bilingual locale dictionary
+├── projects.json         # Decoupled case studies, live links, and repository metadata
+├── animoji.glb           # 3D GLTF binary model for WebGL canvas
+├── memoji.png            # Optimized 2D fallback portrait graphic
+├── screenshots/          # High-resolution MacBook Pro M4 & iPhone 16 Pro mockups
+├── CNAME                 # Custom apex domain routing (widifirmaan.web.id)
+└── README.md
 ```
 
 ---
@@ -77,28 +81,30 @@ widifirmaan.github.io/
 
 ### Prerequisites
 
-No compilers, package managers, or build steps required. All dependencies are loaded natively.
+No compilers, Node modules, or build configurations required. All libraries are self-contained.
 
-### Running Locally
+### Local Development
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/widifirmaan/widifirmaan.github.io.git
-   cd widifirmaan.github.io
-   ```
+> **Environment Variables:** No `.env` file or external API keys are required. All asset loading, 3D rendering, and project indexing run 100% locally in the browser.
 
-2. **Start a local development server**:
-   Any lightweight static server will work:
-   ```bash
-   # Using Python 3
-   python3 -m http.server 8000
+```bash
+# 1. Clone the repository
+git clone https://github.com/widifirmaan/widifirmaan.github.io.git
+cd widifirmaan.github.io
 
-   # Or using Node.js npx
-   npx serve .
-   ```
+# 2. Start any local static web server
+python3 -m http.server 8000
+# or using Node.js:
+npx serve .
+```
 
-3. **Open in browser**:
-   Navigate to [http://localhost:8000](http://localhost:8000).
+Open [http://localhost:8000](http://localhost:8000) in your web browser.
+
+---
+
+## Author
+
+Developed by **[Widi Firmansyah](https://widifirmaan.web.id)**.
 
 ---
 
