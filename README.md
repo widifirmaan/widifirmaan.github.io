@@ -1,71 +1,74 @@
-# Widi Firmansyah — Personal Portfolio
+# widifirmaan.web.id
 
-> Official personal portfolio and software engineering project showcase of Widi Firmansyah.
+> Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, bilingual i18n localization, and an interactive project catalog.
 
-A fast, lightweight, and responsive personal portfolio website built with modern semantic HTML5, CSS3, and vanilla JavaScript. Deployed on GitHub Pages with custom domain edge delivery, featuring dynamic bilingual content (ID/EN), light and dark themes, and an interactive project catalog.
+This repository powers the production deployment of [https://widifirmaan.web.id](https://widifirmaan.web.id), built entirely with zero frontend build tools or framework overhead. It implements high-performance Vanilla JavaScript, CSS custom properties, asynchronous project indexing via `projects.json`, client-side i18n routing, and an interactive 3D WebGL animoji canvas.
 
-[![Live Demo](https://img.shields.io/badge/Demo-widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white)](https://widifirmaan.web.id)
-[![Architecture](https://img.shields.io/badge/Architecture-Zero--Build_Static-8B5CF6?style=flat-square)](#tech-stack)
-[![Deployment](https://img.shields.io/badge/Deployment-GitHub_Pages-181717?style=flat-square&logo=github)](https://pages.github.com/)
-[![HTML5](https://img.shields.io/badge/HTML5-Semantic_Web-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/)
-[![CSS3](https://img.shields.io/badge/CSS3-Custom_Properties-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/)
-[![License](https://img.shields.io/badge/License-MIT-3B82F6?style=flat-square)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Demo-widifirmaan.web.id-10B981?style=flat-square&logo=googlechrome&logoColor=white)](https://widifirmaan.web.id)
+[![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#features)
+[![3D Engine](https://img.shields.io/badge/3D_Engine-Three.js_r128-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#features)
+[![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#features)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 ---
 
 ## Live Production
 
 - **URL:** [https://widifirmaan.web.id](https://widifirmaan.web.id)
-- **Deployment:** GitHub Pages (Custom apex domain `widifirmaan.web.id` via Cloudflare DNS)
+- **Deployment:** GitHub Pages + Custom Domain CDN (`CNAME: widifirmaan.web.id`)
 
 ---
 
 ## Showcase
 
-| Desktop (MacBook Pro) | Mobile (iPhone 16 Pro) |
+| Desktop Interface | Mobile Interface |
 | :---: | :---: |
-| **Portfolio Homepage Desktop**<br>![Portfolio Desktop](screenshots/Portfolio%20Desktop.png) | **Portfolio Homepage Mobile**<br>![Portfolio Mobile](screenshots/Portfolio%20Mobile.png) |
+| **Hero Stage & 3D Memoji Desktop**<br>![Hero Stage Desktop](screenshots/Portfolio%20Hero%20Desktop.png) | **Hero Stage Mobile**<br>![Hero Stage Mobile](screenshots/Portfolio%20Hero%20Mobile.png) |
+| **Selected Works Filterable Grid Desktop**<br>![Selected Works Desktop](screenshots/Portfolio%20Works%20Desktop.png) | **Selected Works Mobile**<br>![Selected Works Mobile](screenshots/Portfolio%20Works%20Mobile.png) |
+| **Project Case Study Modal Desktop**<br>![Project Modal Desktop](screenshots/Portfolio%20Case%20Study%20Modal%20Desktop.png) | **Project Case Study Modal Mobile**<br>![Project Modal Mobile](screenshots/Portfolio%20Case%20Study%20Modal%20Mobile.png) |
+| **About & Engineering Background Desktop**<br>![About Desktop](screenshots/Portfolio%20About%20Desktop.png) | **About & Engineering Background Mobile**<br>![About Mobile](screenshots/Portfolio%20About%20Mobile.png) |
+| **Direct Contact & Socials Desktop**<br>![Contact Desktop](screenshots/Portfolio%20Contact%20Desktop.png) | **Direct Contact & Socials Mobile**<br>![Contact Mobile](screenshots/Portfolio%20Contact%20Mobile.png) |
 
 ---
 
-## Features
+## Core Features
 
-- **Zero-Build Architecture**: Pure vanilla HTML5, CSS3, and ES6+ JavaScript running directly in any modern browser without bundlers or transpilation overhead.
-- **Dynamic Project Directory**: Projects and technical case studies are dynamically loaded from `projects.json`, with real-time category filtering, live demo links, source code links, and modal details.
-- **Bilingual Internationalization (i18n)**: Instant client-side language toggle between Bahasa Indonesia and English (`translations.js`) with persistent user preference in `localStorage`.
-- **Tactile Light & Dark Theme**: Custom CSS variable design system adapting to system preferences (`prefers-color-scheme`) with manual toggle and smooth transitions.
-- **Performance & SEO Optimized**: Complete Open Graph protocol metadata, canonical links, semantic tags, Twitter Card cards, and clean sitemap for search indexing.
+- **Zero-Dependency Vanilla Stack**: Pure semantic HTML5, modern CSS3 (Custom Properties & Flex/Grid), and Vanilla ES6+ modules with zero build step requirements.
+- **Interactive 3D WebGL Canvas**: Embedded Three.js r128 viewport rendering a customized GLTF 3D model with mouse tracking, touch responsiveness, and ambient lighting.
+- **Dynamic Project Catalog**: Dynamic asynchronous project rendering loaded from `projects.json`, supporting instant category filtering (All, Web Apps, Mobile, UI/UX, Open Source).
+- **Interactive Case Study Modal**: Deep-dive project modal showcasing live links, source repositories, tech tags, and detailed engineering architecture write-ups.
+- **Bilingual i18n Localization**: Instant client-side language toggle supporting Bahasa Indonesia (`id`) and English (`en`) backed by `translations.js`.
+- **System Theme Auto-Detection**: Supports Dark Mode, Light Mode, and System Theme preference with persistent `localStorage` synchronization.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technologies | Description |
+| Layer | Technology | Details |
 | :--- | :--- | :--- |
-| **Markup** | HTML5 Semantic Elements | Accessible and responsive document structure |
-| **Styling** | Modern CSS3 | Custom properties (CSS variables), Flexbox, CSS Grid, media queries |
-| **Interactivity** | Vanilla JavaScript (ES6+) | DOM manipulation, async fetch API, theme & language state engines |
-| **Data Store** | JSON (`projects.json`) | Centralized portfolio item metadata, badges, and project specs |
-| **Hosting & DNS** | GitHub Pages + Cloudflare | Edge CDN delivery with custom domain SSL/TLS |
+| **Markup & Semantics** | HTML5 | Accessible landmark roles, meta tags, and structured microdata |
+| **Styling & Design** | CSS3 | Custom properties, responsive CSS grid, glassmorphism UI |
+| **3D Rendering** | Three.js `r128` | WebGL canvas with GLTFLoader and OrbitControls integration |
+| **Client Scripting** | Vanilla ES6+ | Native DOM operations, intersection observers, and event delegation |
+| **Data Architecture** | JSON | Decoupled project metadata storage (`projects.json`) |
+| **Deployment** | GitHub Pages | Fast CDN delivery with custom DNS routing via Cloudflare |
 
 ---
 
 ## Project Structure
 
-```bash
-/
-├── index.html          # Main homepage layout and semantic markup
-├── style.css           # Core stylesheet, theme variables, and responsive rules
-├── script.js           # Interactive controller, project card rendering, modals
-├── translations.js     # Bilingual dictionary (Indonesian & English)
-├── projects.json       # Structured project catalog and badge data
-├── screenshots/        # High-resolution Retina showcase mockups
-├── raw_screenshots/    # Raw browser screen captures
-├── CNAME               # Custom apex domain routing (widifirmaan.web.id)
-├── sitemap.xml         # XML sitemap for search engines
-├── robots.txt          # Crawler instructions
-└── README.md
+```text
+widifirmaan.github.io/
+├── index.html            # Main portfolio layout and semantic markup
+├── style.css             # Unified stylesheets and responsive design tokens
+├── script.js             # Core DOM interactions, Three.js runtime, and catalog logic
+├── translations.js       # Indonesian & English i18n locale dictionary
+├── projects.json         # Structured project case studies and repository metadata
+├── animoji.glb           # 3D GLTF binary model asset for WebGL canvas
+├── memoji.png            # Fallback 2D portrait asset
+├── raw_screenshots/      # High-resolution production screen captures
+└── screenshots/          # MacBook Pro M4 & iPhone 16 Pro showcase mockups
 ```
 
 ---
@@ -73,24 +76,32 @@ A fast, lightweight, and responsive personal portfolio website built with modern
 ## Getting Started & Local Development
 
 ### Prerequisites
-- Any modern web browser (Google Chrome, Firefox, Safari, Edge)
-- Python 3, Node.js (npx serve), or VS Code Live Server for local testing
+
+No compilers, package managers, or build steps required. All dependencies are loaded natively.
 
 ### Running Locally
-```bash
-# 1. Clone the repository
-git clone https://github.com/widifirmaan/widifirmaan.github.io.git
-cd widifirmaan.github.io
 
-# 2. Start a local static file server
-python3 -m http.server 8000
-# or using npx:
-# npx serve .
-```
-Open `http://localhost:8000` in your browser.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/widifirmaan/widifirmaan.github.io.git
+   cd widifirmaan.github.io
+   ```
+
+2. **Start a local development server**:
+   Any lightweight static server will work:
+   ```bash
+   # Using Python 3
+   python3 -m http.server 8000
+
+   # Or using Node.js npx
+   npx serve .
+   ```
+
+3. **Open in browser**:
+   Navigate to [http://localhost:8000](http://localhost:8000).
 
 ---
 
-## Author
+## License
 
-Developed with ❤️ by **Widi Firmansyah**.
+This project is licensed under the [MIT License](LICENSE).
