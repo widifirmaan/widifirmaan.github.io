@@ -53,7 +53,6 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | **Scroll & Motion** | Lenis Smooth Scroll, GSAP, ScrollTrigger | Momentum scrolling and scroll-linked element choreography |
 | **Data & Content** | JSON (`projects.json`), Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering |
 | **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
-| **Deployment & Hosting** | GitHub Pages, Cloudflare DNS | Edge CDN static delivery with custom domain SSL routing |
 
 ---
 
