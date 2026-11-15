@@ -10,7 +10,6 @@ This repository powers the production deployment of [https://widifirmaan.web.id]
 [![Motion](https://img.shields.io/badge/Scroll-Lenis_%26_GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)](https://gsap.com/)
 [![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#features)
 [![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#features)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 ---
 
@@ -35,14 +34,14 @@ This repository powers the production deployment of [https://widifirmaan.web.id]
 
 ## Features
 
-- **Zero-Dependency Native Runtime**: 100% pure semantic HTML5, modern CSS3 custom design tokens, and Vanilla ES6+ modules running directly in browsers with zero bundler or compilation step required.
-- **Synchronized Lenis & GSAP Scroll Engine**: Integrated `@studio-freight/lenis` smooth vertical scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` updates for 60fps kinetic parallax animations.
-- **Dynamic Three.js WebGL Particle System**: Real-time 3D canvas viewport rendering custom particle geometry with dynamic opacity and material blending (`NormalBlending` for light mode vs `AdditiveBlending` for dark mode).
-- **Asynchronous Case Study Catalog (`projects.json`)**: Non-blocking client-side project fetching with instantaneous category filtering across Web Applications, Mobile, UI/UX, and Open Source software.
-- **Interactive Deep-Dive Modal**: Dynamic case study overlay featuring architectural overviews, stack tags, live URLs, repository links, and keyboard `Escape` dismissal.
-- **Bilingual i18n Localization Engine (`translations.js`)**: Real-time client-side language switching between Bahasa Indonesia (`id`) and English (`en`) with zero layout shift or page reloads.
-- **Tri-State Theme Manager**: Tactile switcher cycling between Dark, Light, and System themes with 350ms click debouncing, dynamic meta theme color injection, and persistent `localStorage` synchronization.
-- **Verified Industry Track Record**: Interactive career roadmap detailing production backend and Spring Boot engineering roles at Manulife Indonesia, Indonesia Financial Group (IFG), and Geekgarden.
+- **Zero-Dependency Native Architecture**: Built with 100% semantic HTML5, modern CSS custom properties, and native ES6+ modules running directly in browsers with zero bundler or compilation overhead.
+- **Synchronized Lenis & GSAP Scroll Engine**: Integrated `@studio-freight/lenis` smooth vertical scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` updates for fluid 60fps kinetic parallax choreography.
+- **Real-Time Three.js WebGL Particle Viewport**: Interactive 3D WebGL canvas rendering custom particle field geometry with real-time mouse tracking and mode-adaptive blending (`NormalBlending` for light mode vs `AdditiveBlending` for dark mode).
+- **Dynamic Case Study Catalog (`projects.json`)**: Non-blocking client-side project fetching with instantaneous category filtering across Web Applications, Mobile, UI/UX, and Open Source software.
+- **Interactive Career Case Study Modal**: Deep-dive animated modal detailing professional backend engineering experience at Manulife Indonesia, Indonesia Financial Group (IFG), and Geekgarden.
+- **Bilingual i18n Localization Engine (`translations.js`)**: Real-time client-side language switching between English (`en`) and Bahasa Indonesia (`id`) with instant DOM updates and persistent language preferences.
+- **Tri-State Theme Manager**: Tactile switcher cycling between Light, Dark, and System states with dynamic `<meta name="theme-color">` updates, media query listeners, and Three.js material synchronization.
+- **Custom Cursor Follower & Micro-Interactions**: Smooth lerp cursor tracking with magnetic hover responses across interactive project cards and navigation links.
 
 ---
 
@@ -105,9 +104,3 @@ Open [http://localhost:8000](http://localhost:8000) in your web browser.
 ## Author
 
 Developed by **[Widi Firmansyah](https://widifirmaan.web.id)**.
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
