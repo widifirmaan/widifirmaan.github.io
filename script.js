@@ -195,8 +195,8 @@ async function fetchGitHubProjects() {
             </div>
         `;
 
-        const gridClass = images.length > 1 ? `grid-${Math.min(images.length, 4)}` : '';
-        const imagesHtml = images.slice(0, 4).map(src => `<img src="${src}" alt="${title}" loading="lazy">`).join('');
+        const gridClass = images.length > 1 ? `grid-${Math.min(images.length, 2)}` : '';
+        const imagesHtml = images.slice(0, 2).map(src => `<img src="${src}" alt="${title}" loading="lazy">`).join('');
 
         card.innerHTML = `
             <div class="project-image ${gridClass}">
