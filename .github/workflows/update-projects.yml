@@ -15,11 +15,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Generate projects.json
         run: node scripts/fetch-projects.mjs
@@ -34,6 +37,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes in projects.json"
           else
-            git commit -m "chore(data): auto-update projects.json [skip ci]"
-            git push
+            git commit -m "chore(data): auto-update projects.json"
+            git pull origin master --rebase || true
+            git push origin master
           fi

@@ -96,23 +96,54 @@ async function getRepos() {
 }
 
 async function fetchReadme(repo) {
-  const branches = [repo.default_branch, 'main', 'master'].filter(Boolean);
+  const token = process.env.GITHUB_TOKEN;
+  const apiHeaders = {
+    'User-Agent': 'widifirmaan-project-fetcher',
+    'Accept': 'application/vnd.github.raw+json'
+  };
+  if (token) {
+    apiHeaders['Authorization'] = `token ${token}`;
+  }
+
+  // 1. Primary: GitHub REST API (always live, zero Fastly CDN cache delay, branch-aware)
+  try {
+    const apiRes = await fetchWithRetry(`https://api.github.com/repos/${repo.full_name}/readme`, {
+      headers: apiHeaders
+    });
+    if (apiRes.ok) {
+      const text = await apiRes.text();
+      if (text && text.trim().length > 0) {
+        return { text, branch: repo.default_branch || 'main' };
+      }
+    } else {
+      console.warn(`GitHub API README for ${repo.name} responded with ${apiRes.status}`);
+    }
+  } catch (err) {
+    console.warn(`GitHub API README failed for ${repo.name}:`, err.message);
+  }
+
+  // 2. Fallback: raw.githubusercontent.com with cache-busting timestamp query
+  const branches = [repo.default_branch, 'main', 'master', 'development'].filter(Boolean);
   const uniqueBranches = [...new Set(branches)];
 
   for (const branch of uniqueBranches) {
-    const url = `https://raw.githubusercontent.com/${repo.full_name}/${branch}/README.md`;
+    const rawHeaders = { 'User-Agent': 'widifirmaan-project-fetcher' };
+    if (token) rawHeaders['Authorization'] = `token ${token}`;
+
+    const url = `https://raw.githubusercontent.com/${repo.full_name}/${branch}/README.md?v=${Date.now()}`;
     try {
-      const res = await fetchWithRetry(url, {
-        headers: { 'User-Agent': 'widifirmaan-project-fetcher' }
-      });
+      const res = await fetchWithRetry(url, { headers: rawHeaders });
       if (res.ok) {
         const text = await res.text();
-        return { text, branch };
+        if (text && text.trim().length > 0) {
+          return { text, branch };
+        }
       }
     } catch (e) {
-      // ignore and try next branch
+      // try next
     }
   }
+
   return { text: '', branch: repo.default_branch || 'main' };
 }
 
@@ -134,7 +165,7 @@ function processReadme(repo, readmeText, branch) {
         }
         if (url.includes('shields.io') || url.includes('badge')) {
           if (badges.length < 5) badges.push(url);
-        } else if (extracted.length < 4) {
+        } else if (extracted.length < 2) {
           extracted.push(url);
         }
       }

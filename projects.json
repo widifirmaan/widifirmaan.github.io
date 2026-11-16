@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-16T11:21:27.881Z",
+  "lastUpdated": "2026-11-16T11:26:57.693Z",
   "total": 10,
   "projects": [
     {
@@ -11,9 +11,7 @@
       "homepage": "https://siapnyafe.widifirmaan.web.id",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/reactjs-coffee-shop-management/main/screenshots/Coffee%20Order%20Menu%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-coffee-shop-management/main/screenshots/Coffee%20Order%20Menu%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-coffee-shop-management/main/screenshots/Coffee%20Manager%20Dashboard%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-coffee-shop-management/main/screenshots/Coffee%20Manager%20Dashboard%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/reactjs-coffee-shop-management/main/screenshots/Coffee%20Order%20Menu%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-siapnyafe.widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white",
@@ -35,9 +33,7 @@
       "homepage": "https://airpro-smooth-react-template.vercel.app",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/reactjs-airpro-template/main/screenshots/AirPro%20Hero%20Stage%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-airpro-template/main/screenshots/AirPro%20Hero%20Stage%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-airpro-template/main/screenshots/AirPro%20Dual%20Earbuds%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-airpro-template/main/screenshots/AirPro%20Dual%20Earbuds%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/reactjs-airpro-template/main/screenshots/AirPro%20Hero%20Stage%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-airpro--smooth--react--template.vercel.app-10B981?style=flat-square&logo=vercel&logoColor=white",
@@ -59,9 +55,7 @@
       "homepage": "https://tryngo.widifirmaan.web.id/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/reactjs-tryngo-programming-learning/master/screenshots/Tryngo%20Index%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-tryngo-programming-learning/master/screenshots/Tryngo%20Index%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-tryngo-programming-learning/master/screenshots/Tryngo%20Grid%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/reactjs-tryngo-programming-learning/master/screenshots/Tryngo%20Hamburger%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/reactjs-tryngo-programming-learning/master/screenshots/Tryngo%20Index%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-tryngo.widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white",
@@ -83,9 +77,7 @@
       "homepage": "https://book-games.widifirmaan.web.id/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/nextjs-book-games/main/screenshots/Book%20Games%20Portal%20Home%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-book-games/main/screenshots/Book%20Games%20Portal%20Home%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-book-games/main/screenshots/Unified%20Role%20Auth%20Portal%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-book-games/main/screenshots/Unified%20Role%20Auth%20Portal%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/nextjs-book-games/main/screenshots/Book%20Games%20Portal%20Home%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-book--games.widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white",
@@ -107,9 +99,7 @@
       "homepage": "https://tools.widifirmaan.web.id/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/javascript-aio-tools/master/screenshots/Dashboard%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/javascript-aio-tools/master/screenshots/Dashboard%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/javascript-aio-tools/master/screenshots/File%20Encryptor%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/javascript-aio-tools/master/screenshots/File%20Encryptor%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/javascript-aio-tools/master/screenshots/Dashboard%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-tools.widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white",
@@ -131,9 +121,7 @@
       "homepage": "https://photo.widifirmaan.web.id",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/nextjs-velvetsnap-photobox/main/screenshots/VelvetSnap%20Hero%20Landing%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-velvetsnap-photobox/main/screenshots/VelvetSnap%20Hero%20Landing%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-velvetsnap-photobox/main/screenshots/VelvetSnap%20Newspaper%20Showcase%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-velvetsnap-photobox/main/screenshots/VelvetSnap%20Newspaper%20Showcase%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/nextjs-velvetsnap-photobox/main/screenshots/VelvetSnap%20Hero%20Landing%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-photo.widifirmaan.web.id-10B981?style=flat-square&logo=cloudflare&logoColor=white",
@@ -155,9 +143,7 @@
       "homepage": "https://nextjs-pwa-moneymanagement.vercel.app/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/nextjs-pwa-moneymanagement/main/screenshots/MoneW%20Dashboard%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-pwa-moneymanagement/main/screenshots/MoneW%20Dashboard%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-pwa-moneymanagement/main/screenshots/MoneW%20Monthly%20Analytics%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/nextjs-pwa-moneymanagement/main/screenshots/MoneW%20Monthly%20Analytics%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/nextjs-pwa-moneymanagement/main/screenshots/MoneW%20Dashboard%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-nextjs--pwa--moneymanagement.vercel.app-10B981?style=flat-square&logo=vercel&logoColor=white",
@@ -179,9 +165,7 @@
       "homepage": "http://widifirmaan.web.id/bootstrap-portograph-template/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/bootstrap-portograph-template/main/screenshots/Portograph%20Hero%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-portograph-template/main/screenshots/Portograph%20Hero%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-portograph-template/main/screenshots/Portograph%20Portfolio%20Gallery%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-portograph-template/main/screenshots/Portograph%20Portfolio%20Gallery%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/bootstrap-portograph-template/main/screenshots/Portograph%20Hero%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-widifirmaan.web.id%2Fbootstrap--portograph--template-10B981?style=flat-square&logo=googlechrome&logoColor=white",
@@ -203,9 +187,7 @@
       "homepage": "https://pos.widifirmaan.web.id/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/springboot-simple-pos/development/screenshots/POS%20Cashier%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/springboot-simple-pos/development/screenshots/POS%20Dashboard%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/springboot-simple-pos/development/screenshots/Stock%20Inventory%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/springboot-simple-pos/development/screenshots/Finance%20Profit%20Desktop.png"
+        "https://raw.githubusercontent.com/widifirmaan/springboot-simple-pos/development/screenshots/POS%20Dashboard%20Desktop.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Spring_Boot-3.2.4-6DB33F?style=flat-square&logo=springboot&logoColor=white",
@@ -227,9 +209,7 @@
       "homepage": "http://widifirmaan.web.id/bootstrap-javex-template/",
       "images": [
         "https://raw.githubusercontent.com/widifirmaan/bootstrap-javex-template/main/screenshots/Javex%20Homepage%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-javex-template/main/screenshots/Javex%20Homepage%20Mobile.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-javex-template/main/screenshots/Javex%20Kompetensi%20Dasar%20Desktop.png",
-        "https://raw.githubusercontent.com/widifirmaan/bootstrap-javex-template/main/screenshots/Javex%20Kompetensi%20Dasar%20Mobile.png"
+        "https://raw.githubusercontent.com/widifirmaan/bootstrap-javex-template/main/screenshots/Javex%20Homepage%20Mobile.png"
       ],
       "badges": [
         "https://img.shields.io/badge/Demo-widifirmaan.web.id%2Fjavex-10B981?style=flat-square&logo=googlechrome&logoColor=white",
