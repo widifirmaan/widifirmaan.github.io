@@ -22,6 +22,8 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 
 ## Showcase
 
+### Light Mode
+
 | Desktop Interface (MacBook Pro M4) | Mobile Interface (iPhone 16 Pro) |
 | :---: | :---: |
 | **Hero Stage & 3D Memoji Desktop**<br>![Hero Stage Desktop](screenshots/Portfolio%20Hero%20Desktop.png) | **Hero Stage Mobile**<br>![Hero Stage Mobile](screenshots/Portfolio%20Hero%20Mobile.png) |
@@ -29,6 +31,16 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | **Project Case Study Modal Desktop**<br>![Project Modal Desktop](screenshots/Portfolio%20Case%20Study%20Modal%20Desktop.png) | **Project Case Study Modal Mobile**<br>![Project Modal Mobile](screenshots/Portfolio%20Case%20Study%20Modal%20Mobile.png) |
 | **About & Engineering Background Desktop**<br>![About Desktop](screenshots/Portfolio%20About%20Desktop.png) | **About & Engineering Background Mobile**<br>![About Mobile](screenshots/Portfolio%20About%20Mobile.png) |
 | **Direct Contact & Socials Desktop**<br>![Contact Desktop](screenshots/Portfolio%20Contact%20Desktop.png) | **Direct Contact & Socials Mobile**<br>![Contact Mobile](screenshots/Portfolio%20Contact%20Mobile.png) |
+
+### Dark Mode
+
+| Desktop Interface (MacBook Pro M4) | Mobile Interface (iPhone 16 Pro) |
+| :---: | :---: |
+| **Hero Stage & 3D Memoji Desktop**<br>![Hero Stage Dark Desktop](screenshots/Portfolio%20Hero%20Dark%20Desktop.png) | **Hero Stage Mobile**<br>![Hero Stage Dark Mobile](screenshots/Portfolio%20Hero%20Dark%20Mobile.png) |
+| **Selected Works Filterable Grid Desktop**<br>![Selected Works Dark Desktop](screenshots/Portfolio%20Works%20Dark%20Desktop.png) | **Selected Works Mobile**<br>![Selected Works Dark Mobile](screenshots/Portfolio%20Works%20Dark%20Mobile.png) |
+| **Project Case Study Modal Desktop**<br>![Project Modal Dark Desktop](screenshots/Portfolio%20Case%20Study%20Modal%20Dark%20Desktop.png) | **Project Case Study Modal Mobile**<br>![Project Modal Dark Mobile](screenshots/Portfolio%20Case%20Study%20Modal%20Dark%20Mobile.png) |
+| **About & Engineering Background Desktop**<br>![About Dark Desktop](screenshots/Portfolio%20About%20Dark%20Desktop.png) | **About & Engineering Background Mobile**<br>![About Dark Mobile](screenshots/Portfolio%20About%20Dark%20Mobile.png) |
+| **Direct Contact & Socials Desktop**<br>![Contact Dark Desktop](screenshots/Portfolio%20Contact%20Dark%20Desktop.png) | **Direct Contact & Socials Mobile**<br>![Contact Dark Mobile](screenshots/Portfolio%20Contact%20Dark%20Mobile.png) |
 
 ---
 
