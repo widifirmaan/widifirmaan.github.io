@@ -4,7 +4,6 @@
 
 widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built with semantic HTML5, modern CSS, and Vanilla JavaScript (ES6+). It features an interactive 3D WebGL particle canvas powered by Three.js, smooth scrolling using Lenis and GSAP ScrollTrigger, bilingual English and Indonesian localization, and dynamic project indexing from `projects.json`.
 
-[![Live Demo](https://img.shields.io/badge/Demo-widifirmaan.web.id-10B981?style=flat-square&logo=googlechrome&logoColor=white)](https://widifirmaan.web.id)
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#features)
 [![3D Engine](https://img.shields.io/badge/3D_Engine-Three.js_r128-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org/)
 [![Motion](https://img.shields.io/badge/Scroll-Lenis_%26_GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)](https://gsap.com/)
