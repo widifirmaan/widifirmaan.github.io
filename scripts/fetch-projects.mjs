@@ -149,6 +149,9 @@ async function fetchReadme(repo) {
 
 function processReadme(repo, readmeText, branch) {
   const ogImage = `https://opengraph.githubassets.com/1/${repo.full_name}`;
+  const homepage = repo.homepage && !/localhost|127\.0\.0\.1|pos\.widifirmaan\.web\.id/.test(repo.homepage)
+    ? repo.homepage
+    : '';
   let images = [ogImage];
   let badges = [];
   let fullReadme = readmeText || '';
@@ -197,7 +200,7 @@ function processReadme(repo, readmeText, branch) {
     </div>
     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
         <a href="${repo.html_url}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem;">Source Code</a>
-        ${repo.homepage ? `<a href="${repo.homepage}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem; background: var(--accent-color);">Live Demo</a>` : ''}
+        ${homepage ? `<a href="${homepage}" target="_blank" class="cta-btn" style="font-size: 0.8rem; padding: 0.6rem 1.2rem; background: var(--accent-color);">Live Demo</a>` : ''}
     </div>
   `.trim();
 
@@ -207,7 +210,7 @@ function processReadme(repo, readmeText, branch) {
     tech,
     description,
     html_url: repo.html_url,
-    homepage: repo.homepage || '',
+    homepage,
     images,
     badges,
     badgeHtml,
