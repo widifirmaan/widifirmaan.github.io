@@ -1,4 +1,4 @@
-# widifirmaan.web.id 🌐
+# widifirmaan.web.id
 
 > Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, Lenis smooth scrolling, bilingual i18n localization, and an interactive project catalog.
 
