@@ -1,4 +1,4 @@
-# widifirmaan.web.id
+# widifirmaan.web.id 🌐
 
 > Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, Lenis smooth scrolling, bilingual i18n localization, and an interactive project catalog.
 
@@ -13,14 +13,14 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 
 ---
 
-## Live Production
+## Live URL
 
 - **URL:** [https://widifirmaan.web.id](https://widifirmaan.web.id)
 - **Deployment:** GitHub Pages + Custom Domain CDN (`CNAME: widifirmaan.web.id`)
 
 ---
 
-## Showcase
+## Screenshots
 
 | Desktop Light (MacBook Pro M4) | Desktop Dark (MacBook Pro M4) | Mobile Light (iPhone 16 Pro) | Mobile Dark (iPhone 16 Pro) |
 | :---: | :---: | :---: | :---: |
@@ -32,7 +32,7 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 
 ---
 
-## Features
+## Fitur
 
 - **Interactive 3D WebGL Canvas**: Real-time particle field and avatar model rendered via Three.js (r128) with mouse-parallax tracking and mode-adaptive material blending (`NormalBlending` for light mode and `AdditiveBlending` for dark mode).
 - **Synchronized Smooth Scrolling**: Integrated Lenis smooth scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` for scroll-linked element animations.
@@ -54,9 +54,9 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | **Data & Content** | JSON (`projects.json`), Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering |
 | **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
 
----
+## Tutorial Run Local & Setup
 
-## Project Structure
+### Project Structure
 
 ```bash
 /
@@ -71,10 +71,6 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 ├── CNAME                 # Custom apex domain routing (widifirmaan.web.id)
 └── README.md
 ```
-
----
-
-## Tutorial Run Local & Setup
 
 ### Prerequisites
 
