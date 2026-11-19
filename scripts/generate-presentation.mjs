@@ -11,14 +11,14 @@ const downloadsDir = '/home/widifirmaan/Downloads';
 function encodeImage(filename) {
   const filePath = path.join(screenshotsDir, filename);
   if (!fs.existsSync(filePath)) {
-    console.warn(`⚠️ Warning: Screenshot not found: ${filePath}`);
+    console.warn(`Screenshot tidak ditemukan: ${filePath}`);
     return '';
   }
   const fileBuffer = fs.readFileSync(filePath);
   return `data:image/png;base64,${fileBuffer.toString('base64')}`;
 }
 
-console.log('🌌 Encoding Portfolio website screenshots...');
+console.log('Memproses screenshot Portfolio Widi...');
 
 const images = {
   heroDarkDesktop: encodeImage('Portfolio Hero Dark Desktop.png'),
@@ -35,7 +35,7 @@ const images = {
   contactDarkMobile: encodeImage('Portfolio Contact Dark Mobile.png'),
 };
 
-console.log('🎨 Constructing Creative Portfolio Presentation Deck HTML...');
+console.log('Menyusun HTML dokumen presentasi Portfolio...');
 
 const htmlContent = `<!DOCTYPE html>
 <html lang="id">
@@ -48,17 +48,17 @@ const htmlContent = `<!DOCTYPE html>
   <style>
     :root {
       --bg-cosmic: #07090E;
-      --bg-card: rgba(13, 17, 23, 0.85);
-      --bg-surface: #111622;
-      --border-cosmic: rgba(99, 102, 241, 0.25);
-      --border-hairline: rgba(255, 255, 255, 0.08);
-      --accent-indigo: #818CF8;
-      --accent-cyan: #38BDF8;
-      --accent-emerald: #10B981;
-      --accent-violet: #C084FC;
+      --bg-card: #0F131E;
+      --bg-surface: #171E2F;
+      --border-card: #1D2436;
+      --border-glow: #2D374D;
       --text-main: #F8FAFC;
       --text-muted: #94A3B8;
-      --radius-cosmic: 12px;
+      --accent-violet: #8B5CF6;
+      --accent-cyan: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-indigo: #6366F1;
+      --accent-rose: #F43F5E;
     }
 
     * {
@@ -70,7 +70,7 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     body {
-      background-color: #020408;
+      background-color: #030407;
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--text-main);
       line-height: 1.4;
@@ -92,14 +92,13 @@ const htmlContent = `<!DOCTYPE html>
       padding: 16mm 18mm;
       overflow: hidden;
       background-image: 
-        radial-gradient(circle at 85% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-        radial-gradient(circle at 15% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        radial-gradient(circle at 80% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 10% 100%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+        linear-gradient(to right, rgba(29, 36, 54, 0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(29, 36, 54, 0.2) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     }
 
-    /* Ambient top glow */
     .slide::before {
       content: '';
       position: absolute;
@@ -107,17 +106,16 @@ const htmlContent = `<!DOCTYPE html>
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, #6366F1, #38BDF8, #818CF8, #C084FC);
+      background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan), var(--accent-emerald));
       z-index: 50;
     }
 
-    /* Header */
     .slide-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 5mm;
-      border-bottom: 1px solid var(--border-cosmic);
+      border-bottom: 1px solid var(--border-card);
       padding-bottom: 3.5mm;
     }
 
@@ -127,40 +125,35 @@ const htmlContent = `<!DOCTYPE html>
       gap: 12px;
     }
 
-    .portfolio-pill {
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid var(--accent-indigo);
-      color: var(--accent-indigo);
-      padding: 3px 12px;
+    .brand-badge {
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid var(--accent-violet);
+      color: #C4B5FD;
+      padding: 4px 10px;
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 10px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      border-radius: 20px;
+      border-radius: 4px;
     }
 
     .slide-section-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
-    .slide-page-badge {
+    .slide-number {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 700;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-cosmic);
-      color: var(--accent-cyan);
-      padding: 3px 12px;
-      border-radius: 20px;
+      color: var(--accent-violet);
     }
 
-    /* Layout */
     .slide-body {
       display: grid;
       grid-template-columns: 1fr 1.35fr;
@@ -182,84 +175,61 @@ const htmlContent = `<!DOCTYPE html>
       gap: 8px;
     }
 
-    .route-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-hairline);
-      padding: 3px 10px;
-      width: fit-content;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      border-radius: 6px;
-    }
-
     .slide-title {
-      font-family: 'Space Grotesk', sans-serif;
       font-size: 24px;
       font-weight: 800;
-      line-height: 1.15;
+      line-height: 1.2;
       color: #FFFFFF;
       letter-spacing: -0.02em;
     }
 
-    .slide-subtitle {
+    .slide-desc {
       font-size: 12.5px;
       color: var(--text-muted);
-      font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    /* Feature Cards */
-    .feature-blocks {
+    .feature-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin: 10px 0;
     }
 
-    .cosmic-card {
+    .feature-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-cosmic);
-      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-card);
       border-radius: 8px;
-      padding: 11px 15px;
-      border-left: 3px solid var(--accent-indigo);
+      padding: 10px 14px;
+      border-left: 3px solid var(--accent-violet);
     }
 
-    .cosmic-card.cyan-border {
+    .feature-card.cyan {
       border-left-color: var(--accent-cyan);
     }
 
-    .cosmic-card.violet-border {
-      border-left-color: var(--accent-violet);
-    }
-
-    .cosmic-card.emerald-border {
+    .feature-card.emerald {
       border-left-color: var(--accent-emerald);
     }
 
-    .card-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+    .feature-card.indigo {
+      border-left-color: var(--accent-indigo);
+    }
+
+    .feature-card-title {
+      font-size: 12.5px;
       font-weight: 700;
       color: #FFFFFF;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 3px;
+      letter-spacing: -0.01em;
     }
 
-    .card-text {
+    .feature-card-text {
       font-size: 11px;
+      color: var(--text-muted);
       line-height: 1.45;
-      color: #CBD5E1;
     }
 
-    /* Metrics Grid */
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -268,213 +238,141 @@ const htmlContent = `<!DOCTYPE html>
 
     .metric-box {
       background: var(--bg-card);
-      border: 1px solid var(--border-cosmic);
-      border-radius: 8px;
-      padding: 7px 10px;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 8px 10px;
       text-align: center;
     }
 
     .metric-val {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
       font-weight: 800;
-      color: var(--accent-cyan);
+      color: var(--accent-violet);
     }
 
-    .metric-desc {
-      font-size: 8.5px;
-      font-weight: 700;
+    .metric-lbl {
+      font-size: 9px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
-    /* Media Mockup */
-    .slide-visual {
+    .visual-stage {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
+      height: 100%;
       min-height: 0;
     }
 
-    .device-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .desktop-frame {
-      width: 90%;
-      background: #0B0E14;
-      border: 1px solid var(--border-cosmic);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-      border-radius: 10px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .frame-bar {
-      height: 24px;
-      background: #101520;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      gap: 6px;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-    .dot.red { background: #FF5F56; }
-    .dot.yellow { background: #FFBD2E; }
-    .dot.green { background: #27C93F; }
-
-    .url-chip {
-      margin-left: 12px;
-      background: #06090F;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 8.5px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      border-radius: 4px;
-    }
-
-    .desktop-img {
-      width: 100%;
-      height: auto;
+    .screenshot-desktop {
+      max-width: 95%;
       max-height: 380px;
       object-fit: contain;
-      background: #0B0E14;
       display: block;
+      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.6));
     }
 
-    .mobile-frame {
+    .screenshot-mobile {
       position: absolute;
-      right: -8px;
-      bottom: -12px;
-      width: 27%;
-      background: #0B0E14;
-      border: 2px solid var(--border-cosmic);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8);
-      border-radius: 14px;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    .mobile-notch {
-      height: 12px;
-      background: #04060A;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .notch-speaker {
-      width: 28px;
-      height: 2px;
-      background: #475569;
-      border-radius: 2px;
-    }
-
-    .mobile-img {
-      width: 100%;
-      height: auto;
+      right: 0px;
+      bottom: -8px;
+      max-height: 280px;
+      max-width: 28%;
+      object-fit: contain;
       display: block;
+      filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.7));
     }
 
-    /* Footer */
     .slide-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-top: 1px solid var(--border-cosmic);
-      padding-top: 3.5mm;
-      margin-top: 4mm;
+      margin-top: 5mm;
+      border-top: 1px solid var(--border-card);
+      padding-top: 3mm;
+    }
+
+    .footer-tech {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: #64748B;
-      font-weight: 600;
+      font-size: 10px;
+      color: var(--text-muted);
     }
 
-    /* Cover Slide */
-    .cover-slide {
-      background: 
-        radial-gradient(circle at 75% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 55%),
-        #07090E;
-      justify-content: space-between;
-      padding: 18mm 20mm;
+    .footer-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--accent-violet);
     }
 
-    .cover-giant-title {
+    /* Cover Styling */
+    .cover-body {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 30px;
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .cover-tagline {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 48px;
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-violet);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
-    .cover-giant-title span {
-      background: linear-gradient(90deg, #818CF8, #38BDF8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .cover-title {
+      font-size: 38px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
     }
 
     .cover-desc {
-      font-size: 15.5px;
-      line-height: 1.5;
-      color: #94A3B8;
-      font-weight: 400;
-      max-width: 720px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
     }
 
-    .cover-split {
+    .cover-specs {
       display: grid;
-      grid-template-columns: 1.05fr 1fr;
-      gap: 28px;
-      align-items: center;
-      margin: 10px 0;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
     }
 
-    .cover-specs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .cover-spec-card {
+    .spec-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-cosmic);
+      border: 1px solid var(--border-card);
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 10px 14px;
     }
 
-    .cover-spec-k {
-      font-family: 'JetBrains Mono', monospace;
+    .spec-k {
       font-size: 9px;
       font-weight: 700;
-      color: var(--accent-cyan);
+      color: var(--text-muted);
       text-transform: uppercase;
-      margin-bottom: 3px;
+      letter-spacing: 0.05em;
     }
 
-    .cover-spec-v {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
+    .spec-v {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
       font-weight: 700;
       color: #FFFFFF;
+      margin-top: 2px;
     }
 
     /* Architecture Grid */
@@ -482,821 +380,582 @@ const htmlContent = `<!DOCTYPE html>
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-top: 10px;
       flex: 1;
+      min-height: 0;
+      margin-top: 10px;
     }
 
-    .arch-col {
+    .arch-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-cosmic);
-      border-radius: 8px;
-      padding: 14px;
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .arch-col-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 12.5px;
+    .arch-title {
+      font-size: 14px;
       font-weight: 800;
-      text-transform: uppercase;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border-cosmic);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       color: #FFFFFF;
+      border-bottom: 1px solid var(--border-card);
+      padding-bottom: 8px;
     }
 
     .arch-item {
-      background: #090D15;
-      border: 1px solid var(--border-hairline);
-      border-radius: 5px;
-      padding: 8px 10px;
       font-size: 11px;
-    }
-
-    .arch-item-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      color: var(--accent-indigo);
-      margin-bottom: 2px;
-    }
-
-    .arch-item-detail {
-      font-size: 10px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
-    /* Closing Slide */
-    .closing-slide {
-      background: radial-gradient(circle at 50% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 60%), #07090E;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20mm;
-      gap: 18px;
-    }
-
-    .closing-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      text-transform: uppercase;
+    .arch-item strong {
       color: #FFFFFF;
-    }
-
-    .closing-pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 760px;
-    }
-
-    .live-hero-card {
-      background: var(--bg-card);
-      border: 1px solid var(--accent-indigo);
-      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.2);
-      border-radius: 8px;
-      padding: 16px 36px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .live-url-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent-cyan);
     }
   </style>
 </head>
 <body>
 
-  <!-- ==================== SLIDE 01: COVER ==================== -->
-  <div class="slide cover-slide">
-    <div>
-      <div style="display:flex; gap:12px; align-items:center;">
-        <div class="portfolio-pill">CREATIVE DEVELOPER PORTFOLIO</div>
-        <div class="route-pill">THREE.JS r128 • LENIS SCROLL • GSAP • i18n</div>
-        <div class="portfolio-pill" style="border-color:#10B981; color:#10B981;">PRODUCTION DEPLOYED</div>
+  <!-- SLIDE 1: COVER -->
+  <section class="slide">
+    <div class="slide-header">
+      <div class="brand-cluster">
+        <span class="brand-badge">DEVELOPER PORTFOLIO</span>
+        <span class="slide-section-title">Dokumentasi Rekayasa Perangkat Lunak</span>
       </div>
-      <div style="margin-top: 20px; max-width: 85%;">
-        <div class="cover-giant-title">
-          <span>WIDIFIRMAAN.WEB.ID</span><br>
-          3D WEBGL PORTFOLIO & ENGINEERING HUB
-        </div>
+      <div class="slide-number">01 / 10</div>
+    </div>
+
+    <div class="cover-body">
+      <div>
+        <div class="cover-tagline">3D WebGL & Motion Architecture</div>
+        <h1 class="cover-title">widifirmaan.web.id Portofolio Rekayasa Web</h1>
         <p class="cover-desc">
-          Website portofolio rekayasa perangkat lunak interaktif menampilkan kanvas partikel WebGL Three.js, inersia scroll mulus Lenis, lokalisasi bilingual i18n ID/EN, state machine tema ganda, dan katalog proyek dinamis.
+          Website portofolio interaktif yang mengintegrasikan Three.js particle field, animasi scroll Lenis & GSAP, modal studi kasus teknis mendalam, serta dukungan bilingual dan dual tema gelap-terang.
         </p>
-      </div>
-    </div>
 
-    <div class="cover-split">
-      <div class="cover-specs-grid">
-        <div class="cover-spec-card">
-          <div class="cover-spec-k">3D GRAPHICS ENGINE</div>
-          <div class="cover-spec-v">Three.js r128 WebGL Canvas</div>
-        </div>
-        <div class="cover-spec-card">
-          <div class="cover-spec-k">SCROLL INERTIA</div>
-          <div class="cover-spec-v">Lenis + GSAP ScrollTrigger</div>
-        </div>
-        <div class="cover-spec-card">
-          <div class="cover-spec-k">INTERNATIONALIZATION</div>
-          <div class="cover-spec-v">Bilingual i18n (ID & EN)</div>
-        </div>
-        <div class="cover-spec-card">
-          <div class="cover-spec-k">LIGHT / DARK THEME</div>
-          <div class="cover-spec-v">CSS Custom Property Engine</div>
-        </div>
-      </div>
-
-      <div style="position: relative;">
-        <div class="desktop-frame" style="width: 100%;">
-          <div class="frame-bar">
-            <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-            <div class="url-chip">https://widifirmaan.web.id</div>
+        <div class="cover-specs">
+          <div class="spec-card">
+            <div class="spec-k">3D Graphics Engine</div>
+            <div class="spec-v">Three.js WebGL Particle</div>
           </div>
-          <img src="${images.heroDarkDesktop}" class="desktop-img" alt="Portfolio Cover">
+          <div class="spec-card">
+            <div class="spec-k">Motion Pipeline</div>
+            <div class="spec-v">GSAP & Lenis Smooth Scroll</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-k">Localization</div>
+            <div class="spec-v">Bilingual i18n (ID / EN)</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-k">Theme System</div>
+            <div class="spec-v">Dual Dark / Light Mode</div>
+          </div>
         </div>
+      </div>
+
+      <div class="visual-stage">
+        <img src="${images.heroDarkDesktop}" class="screenshot-desktop" alt="Portfolio Cover">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>AUTHOR: WIDI FIRMANSYAH</div>
-      <div>PROJECT: WIDIFIRMAAN PERSONAL PORTFOLIO</div>
-      <div>PAGE 01 / 10</div>
+      <span class="footer-tech">Three.js + GSAP + Lenis + Tailwind CSS + Vanilla JS</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 02: 3D HERO CANVAS ==================== -->
-  <div class="slide">
+  <!-- SLIDE 2: ARSITEKTUR & DESAIN -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">WEBGL STAGE</div>
-        <div class="slide-section-title">THREE.JS 3D PARTICLE FIELD & HERO STAGE</div>
+        <span class="brand-badge">ARCHITECTURE</span>
+        <span class="slide-section-title">Fondasi Sistem & Struktur Visual</span>
       </div>
-      <div class="slide-page-badge">SLIDE 02</div>
+      <div class="slide-number">02 / 10</div>
+    </div>
+
+    <div class="headline-group" style="margin-bottom: 12px;">
+      <h2 class="slide-title">Arsitektur Kreatif & Rekayasa Antarmuka</h2>
+      <p class="slide-desc">Desain sistem modern yang memadukan komputasi grafis 3D real-time dengan animasi pengguliran inersia tanpa mengorbankan aksesibilitas dan performa.</p>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-violet);">Grafis 3D WebGL & Canvas</div>
+        <div class="arch-item"><strong>Three.js Particle Cloud:</strong> Ribuan partikel 3D yang bereaksi halus terhadap pergerakan kursor mouse dan orientasi perangkat gawai.</div>
+        <div class="arch-item"><strong>Loop Render Teroptimasi:</strong> Pemanfaatan requestAnimationFrame dengan throttling saat canvas berada di luar viewport layar.</div>
+        <div class="arch-item"><strong>Fallback Graceful:</strong> Pengalihan otomatis ke latar belakang gradien CSS jika perangkat klien tidak mendukung WebGL.</div>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-cyan);">Manajemen Gerak & Scroll</div>
+        <div class="arch-item"><strong>Lenis Smooth Scroll:</strong> Normalisasi kecepatan gulir antar perangkat untuk sensasi interaksi yang konsisten dan mulus.</div>
+        <div class="arch-item"><strong>GSAP ScrollTrigger:</strong> Sinkronisasi kemunculan elemen antarmuka secara bertahap berdasarkan posisi scroll.</div>
+        <div class="arch-item"><strong>Transform Terakselerasi GPU:</strong> Seluruh pergerakan elemen menggunakan translasi 3D untuk menjaga stabilitas 60fps.</div>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-emerald);">State & Preferensi Klien</div>
+        <div class="arch-item"><strong>Dual Theme Engine:</strong> Pendeteksian skema warna sistem bawaan (prefers-color-scheme) dengan tombol toggle manual yang tersimpan di localStorage.</div>
+        <div class="arch-item"><strong>Lokalisasi Bilingual i18n:</strong> Mesin translasi sisi klien untuk beralih instan antara Bahasa Indonesia dan Bahasa Inggris.</div>
+        <div class="arch-item"><strong>Modal Studi Kasus Terisolasi:</strong> Dialog mendalam dengan pencegahan scroll latar belakang saat modal aktif.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="footer-tech">widifirmaan.web.id Architecture Blueprint</span>
+      <span class="footer-url">widifirmaan.web.id</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: THREE.JS HERO -->
+  <section class="slide">
+    <div class="slide-header">
+      <div class="brand-cluster">
+        <span class="brand-badge">HERO STAGE</span>
+        <span class="slide-section-title">Hero Section & Canvas Partikel 3D</span>
+      </div>
+      <div class="slide-number">03 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">CANVAS: #webgl • THREE.JS r128</div>
-          <h2 class="slide-title">Interactive 3D Particle Cloud & Dynamic Coordinates</h2>
-          <p class="slide-subtitle">
-            Latar belakang grafis 3D interaktif yang merespons koordinat kursor mouse pengguna secara halus melalui sistem inersia pegas (spring damping physics).
-          </p>
+          <h2 class="slide-title">Hero Sinematik & Partikel Interaktif</h2>
+          <p class="slide-desc">Penyambutan interaktif dengan latar partikel Three.js yang merespons koordinat kursor, tipografi modern, dan status ketersediaan kerja.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card">
-            <div class="card-label">✨ Hardware-Accelerated Particle Buffer</div>
-            <div class="card-text">
-              Ribuan titik partikel dirender menggunakan BufferGeometry dan PointsMaterial dengan optimasi GPU shader untuk menjaga kinerja stabil pada 60 FPS.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Awan Partikel Interaktif</div>
+            <div class="feature-card-text">Simulasi fisika partikel ringan yang memencar saat didekati kursor mouse dan kembali ke posisi semula.</div>
           </div>
-          <div class="cosmic-card cyan-border">
-            <div class="card-label">📐 Responsive Camera Frustum Recalculation</div>
-            <div class="card-text">
-              Penyesuaian aspek rasio kamera perspektif otomatis saat orientasi layar atau ukuran viewport browser berubah pada desktop maupun ponsel.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Indikator Ketersediaan Kerja</div>
+            <div class="feature-card-text">Badge status realtime dengan titik hijau berdenyut yang menandakan status kesiapan menerima proyek baru.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Navigasi Utama Melayang</div>
+            <div class="feature-card-text">Navbar dengan efek glassmorphism yang mengikuti pergerakan scroll dengan transisi transparansi adaptif.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
-            <div class="metric-val">60 fps</div>
-            <div class="metric-desc">WebGL Render</div>
+            <div class="metric-val">Three.js</div>
+            <div class="metric-lbl">Canvas Engine</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">1000+</div>
-            <div class="metric-desc">Particle Buffer</div>
+            <div class="metric-val">60 FPS</div>
+            <div class="metric-lbl">Particle Loop</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Zero-Lag</div>
-            <div class="metric-desc">Mouse Tracking</div>
+            <div class="metric-val">Interactive</div>
+            <div class="metric-lbl">Cursor Motion</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id/#hero</div>
-            </div>
-            <img src="${images.heroDarkDesktop}" class="desktop-img" alt="Hero Dark Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.heroDarkMobile}" class="mobile-img" alt="Hero Dark Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.heroDarkDesktop}" class="screenshot-desktop" alt="Hero Dark Desktop">
+        <img src="${images.heroDarkMobile}" class="screenshot-mobile" alt="Hero Dark Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>THREE.JS BUFFER GEOMETRY & VIEWPORT LOOP</div>
-      <div>PAGE 02 / 10</div>
+      <span class="footer-tech">Canvas: assets/js/three-particles.js</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 03: WORKS GRID ==================== -->
-  <div class="slide">
+  <!-- SLIDE 4: GALERI KARYA PROYEK -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">PROJECTS CATALOG</div>
-        <div class="slide-section-title">DYNAMIC PROJECT INDEXING & FILTER GRID</div>
+        <span class="brand-badge">PROJECT WORKS</span>
+        <span class="slide-section-title">Katalog Karya & Filter Kategori</span>
       </div>
-      <div class="slide-page-badge">SLIDE 03</div>
+      <div class="slide-number">04 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">DATA: projects.json • DYNAMIC INGESTION</div>
-          <h2 class="slide-title">Modular Project Grid & Metadata Tagging</h2>
-          <p class="slide-subtitle">
-            Katalog showcase rekayasa perangkat lunak yang diindeks secara dinamis dari projects.json lengkap dengan tag teknologi, badge rilis, dan tautan repositori.
-          </p>
+          <h2 class="slide-title">Katalog Portofolio & Filter Proyek</h2>
+          <p class="slide-desc">Pameran proyek rekayasa perangkat lunak dengan kategori filter (Web App, Open Source, Template) dan tag teknologi spesifik.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card violet-border">
-            <div class="card-label">📁 Automated Metadata Parsing</div>
-            <div class="card-text">
-              Struktur JSON terindeks memuat ringkasan arsitektur, stack framework (React, Next.js, Cloudflare, Go), dan tautan live deployment.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Filter Kategori Real-Time</div>
+            <div class="feature-card-text">Pengelompokan instan kartu proyek tanpa perlu memuat ulang halaman dengan animasi transisi rapi.</div>
           </div>
-          <div class="cosmic-card">
-            <div class="card-label">🔍 Live Categorical Filter Tabs</div>
-            <div class="card-text">
-              Filter kategori instan untuk memilah proyek berdasarkan domain Web Applications, Fullstack Systems, Creative Tools, dan Cloud Backends.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Badge Tag Teknologi</div>
+            <div class="feature-card-text">Setiap kartu menampilkan tumpukan teknologi utama seperti React, Next.js, Spring Boot, dan Tailwind CSS.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Tautan Langsung Live Demo</div>
+            <div class="feature-card-text">Akses satu-klik menuju deployment produksi dan repositori kode sumber resmi di GitHub.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
-            <div class="metric-val">13+</div>
-            <div class="metric-desc">Web Projects</div>
+            <div class="metric-val">12+ Projects</div>
+            <div class="metric-lbl">Production Apps</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">100%</div>
-            <div class="metric-desc">JSON Decoupled</div>
+            <div class="metric-val">Instant</div>
+            <div class="metric-lbl">Tab Filter</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Direct</div>
-            <div class="metric-desc">Source Links</div>
+            <div class="metric-val">Responsive</div>
+            <div class="metric-lbl">Card Masonry</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id/#works</div>
-            </div>
-            <img src="${images.worksDarkDesktop}" class="desktop-img" alt="Works Dark Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.worksDarkMobile}" class="mobile-img" alt="Works Dark Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.worksDarkDesktop}" class="screenshot-desktop" alt="Works Dark Desktop">
+        <img src="${images.worksDarkMobile}" class="screenshot-mobile" alt="Works Dark Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>DECOUPLED JSON INGESTION & CARD GENERATION</div>
-      <div>PAGE 03 / 10</div>
+      <span class="footer-tech">Section: #works & Dynamic Filter Grid</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 04: CASE STUDY MODAL ==================== -->
-  <div class="slide">
+  <!-- SLIDE 5: MODAL STUDI KASUS -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">DEEP DIVE MODAL</div>
-        <div class="slide-section-title">INTERACTIVE CASE STUDY MODAL & SPECS</div>
+        <span class="brand-badge">CASE STUDY</span>
+        <span class="slide-section-title">Modal Studi Kasus Rekayasa Teknis</span>
       </div>
-      <div class="slide-page-badge">SLIDE 04</div>
+      <div class="slide-number">05 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">MODAL: #case-study-modal • ACCESSIBLE POPUP</div>
-          <h2 class="slide-title">Engineering Deep-Dive & Architectural Specs</h2>
-          <p class="slide-subtitle">
-            Modal detail proyek interaktif yang membedah arsitektur teknis, sorotan fitur rekayasa, tangkapan layar antarmuka resolusi tinggi, dan tautan demo langsung.
-          </p>
+          <h2 class="slide-title">Modal Studi Kasus & Rincian Fitur</h2>
+          <p class="slide-desc">Paparan komprehensif mengenai tantangan arsitektur, solusi teknis yang diterapkan, serta metrik hasil dari tiap karya perangkat lunak.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card cyan-border">
-            <div class="card-label">📐 Architectural Breakdown Panels</div>
-            <div class="card-text">
-              Rincian komprehensif mengenai tantangan teknis, keputusan arsitektur frontend/backend, dan metrik performa masing-masing proyek web.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Dokumentasi Arsitektur Rinci</div>
+            <div class="feature-card-text">Penjelasan menyeluruh mengenai pola desain, state store, dan alasan pemilihan tumpukan teknologi terkait.</div>
           </div>
-          <div class="cosmic-card">
-            <div class="card-label">♿ Focus Trap & Body Scroll Lock</div>
-            <div class="card-text">
-              Manajemen interaksi modal yang mengunci scroll latar belakang dan menangani tombol Escape untuk aksesibilitas navigasi tanpa disorientasi.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Galeri Pratinjau Layar</div>
+            <div class="feature-card-text">Cuplikan antarmuka antarmuka aplikasi dalam resolusi tinggi untuk memperjelas alur interaksi pengguna.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Aksesibilitas Dialog Modal</div>
+            <div class="feature-card-text">Penguncian fokus keyboard (Focus Trap), dukungan tombol escape, dan penonaktifan scroll latar belakang.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
-            <div class="metric-val">Deep</div>
-            <div class="metric-desc">Case Studies</div>
+            <div class="metric-val">Detailed</div>
+            <div class="metric-lbl">Case Breakdown</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Locked</div>
-            <div class="metric-desc">Scroll Lock</div>
+            <div class="metric-val">Trap Focus</div>
+            <div class="metric-lbl">A11y Standard</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Accessible</div>
-            <div class="metric-desc">Escape / Overlay</div>
+            <div class="metric-val">Zero Leak</div>
+            <div class="metric-lbl">Scroll Locking</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id/case-study</div>
-            </div>
-            <img src="${images.modalDarkDesktop}" class="desktop-img" alt="Case Study Modal Dark">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.modalDarkMobile}" class="mobile-img" alt="Case Study Modal Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.modalDarkDesktop}" class="screenshot-desktop" alt="Case Study Modal Desktop">
+        <img src="${images.modalDarkMobile}" class="screenshot-mobile" alt="Case Study Modal Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>ACCESSIBLE MODAL LIFECYCLE & EVENT BUS</div>
-      <div>PAGE 04 / 10</div>
+      <span class="footer-tech">Component: Case Study Modal Dialog</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 05: DUAL THEME ENGINE ==================== -->
-  <div class="slide">
+  <!-- SLIDE 6: DUAL THEME ENGINE -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">THEME ENGINE</div>
-        <div class="slide-section-title">LIGHT / DARK DUAL THEME ENGINE & STORAGE PERSISTENCE</div>
+        <span class="brand-badge">THEME ENGINE</span>
+        <span class="slide-section-title">Sistem Tema Dual Gelap / Terang</span>
       </div>
-      <div class="slide-page-badge">SLIDE 05</div>
+      <div class="slide-number">06 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">DOM: [data-theme] • ZERO-FLASH TRANSITION</div>
-          <h2 class="slide-title">System-Aware Dark / Light Mode Architecture</h2>
-          <p class="slide-subtitle">
-            Mesin pergantian tema instan berbasis atribut data-theme pada elemen root HTML yang membaca preferensi OS dan mempertahankan pilihan via localStorage.
-          </p>
+          <h2 class="slide-title">Transisi Tema Gelap & Terang</h2>
+          <p class="slide-desc">Pengelolaan skema warna berbasis variabel CSS yang mendukung preferensi sistem operasi serta penyimpanan manual di peramban.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card">
-            <div class="card-label">⚡ Flash of Unstyled Theme (FOUT) Prevention</div>
-            <div class="card-text">
-              Script inisiasi tema berjalan di bagian paling atas dokumen HTML sebelum perenderan DOM, memastikan tidak ada kilatan putih saat memuat tema gelap.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Penyelarasan Variabel CSS</div>
+            <div class="feature-card-text">Semua nilai warna latar, teks, dan border terpetakan secara sistematis pada selector :root dan .light-theme.</div>
           </div>
-          <div class="cosmic-card emerald-border">
-            <div class="card-label">🎨 Synchronized WebGL Shaders</div>
-            <div class="card-text">
-              Kanvas 3D Three.js turut mendeteksi perubahan tema dan menyesuaikan warna titik partikel serta intensitas latar belakang secara harmonis.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Pencegahan Kedipan Layar (FOUC)</div>
+            <div class="feature-card-text">Skrip inisialisasi awal di bagian head yang mengevaluasi tema sebelum seluruh elemen DOM dirender.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Transisi Warna Halus</div>
+            <div class="feature-card-text">Efek transisi warna elemen yang mulus saat pengguna menekan tombol pergantian mode tema.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
-            <div class="metric-val">Zero</div>
-            <div class="metric-desc">Theme Flash</div>
+            <div class="metric-val">Zero FOUC</div>
+            <div class="metric-lbl">Theme Load</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Auto</div>
-            <div class="metric-desc">OS Preference</div>
+            <div class="metric-val">CSS Vars</div>
+            <div class="metric-lbl">Color Tokens</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">Sync</div>
-            <div class="metric-desc">WebGL Sync</div>
+            <div class="metric-val">Persistent</div>
+            <div class="metric-lbl">Local Storage</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id (Light Mode)</div>
-            </div>
-            <img src="${images.worksLightDesktop}" class="desktop-img" alt="Works Light Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.worksDarkMobile}" class="mobile-img" alt="Works Dark Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.heroLightDesktop}" class="screenshot-desktop" alt="Hero Light Desktop">
+        <img src="${images.heroDarkMobile}" class="screenshot-mobile" alt="Hero Dark Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>CSS CUSTOM TOKENS & DOM ATTRIBUTE SWITCHER</div>
-      <div>PAGE 05 / 10</div>
+      <span class="footer-tech">Module: assets/js/theme-switcher.js</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 06: BILINGUAL i18n ==================== -->
-  <div class="slide">
+  <!-- SLIDE 7: BILINGUAL I18N -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">LOCALIZATION</div>
-        <div class="slide-section-title">BILINGUAL i18n LOCALIZATION ENGINE (ID / EN)</div>
+        <span class="brand-badge">LOCALIZATION</span>
+        <span class="slide-section-title">Mesin Lokalisasi Bahasa Bilingual</span>
       </div>
-      <div class="slide-page-badge">SLIDE 06</div>
+      <div class="slide-number">07 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">i18n: [data-i18n] • ZERO-RELOAD DICTIONARY</div>
-          <h2 class="slide-title">Client-Side Bilingual Translation Engine</h2>
-          <p class="slide-subtitle">
-            Sistem pergantian bahasa instan antara Bahasa Indonesia dan Bahasa Inggris tanpa muat ulang halaman, menggunakan binding atribut data-i18n deklaratif.
-          </p>
+          <h2 class="slide-title">Dukungan Bahasa Bilingual (ID / EN)</h2>
+          <p class="slide-desc">Mesin terjemahan berbasis data atribut DOM yang memungkinkan transisi seketika antara Bahasa Indonesia dan Bahasa Inggris.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card violet-border">
-            <div class="card-label">📖 In-Memory Key-Value Dictionary</div>
-            <div class="card-text">
-              Kamus terjemahan terstruktur yang memetakan seluruh string antarmuka (tentang saya, pengalaman, keahlian, dan tombol aksi) ke kunci teks unik.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Kamus Terjemahan Klien</div>
+            <div class="feature-card-text">Pustaka teks bilingual terstruktur dalam berkas JSON ringan untuk mempercepat pergantian bahasa tanpa jeda.</div>
           </div>
-          <div class="cosmic-card cyan-border">
-            <div class="card-label">💾 Browser Locale Auto-Detection</div>
-            <div class="card-text">
-              Membaca preferensi bahasa navigator.language pengunjung saat pertama kali berkunjung dan menyimpan pilihan bahasa ke localStorage.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Pembaruan DOM Instan</div>
+            <div class="feature-card-text">Elemen dengan atribut data-i18n diperbarui teksnya secara otomatis tanpa memerlukan muat ulang halaman.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Penyimpanan Preferensi Bahasa</div>
+            <div class="feature-card-text">Pilihan bahasa disimpan di localStorage sehingga sesi kunjungan berikutnya tetap konsisten.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
             <div class="metric-val">ID / EN</div>
-            <div class="metric-desc">Supported Locales</div>
+            <div class="metric-lbl">Bilingual Modes</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">0 ms</div>
-            <div class="metric-desc">Switch Latency</div>
+            <div class="metric-val">&lt; 5ms</div>
+            <div class="metric-lbl">Switch Time</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">100%</div>
-            <div class="metric-desc">Coverage Ratio</div>
+            <div class="metric-val">Zero Reload</div>
+            <div class="metric-lbl">DOM Update</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id/#about</div>
-            </div>
-            <img src="${images.aboutDarkDesktop}" class="desktop-img" alt="About Dark Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.aboutDarkMobile}" class="mobile-img" alt="About Dark Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.aboutDarkDesktop}" class="screenshot-desktop" alt="About Dark Desktop">
+        <img src="${images.aboutDarkMobile}" class="screenshot-mobile" alt="About Dark Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>DECLARATIVE DOM DATA-i18n OBSERVER</div>
-      <div>PAGE 06 / 10</div>
+      <span class="footer-tech">Module: assets/js/i18n.js</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 07: CONTACT & TELEMETRY ==================== -->
-  <div class="slide">
+  <!-- SLIDE 8: PORTAL KONTAK -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill" style="border-color:#10B981; color:#10B981;">CONTACT HUB</div>
-        <div class="slide-section-title">DIRECT CONTACT PORTAL & VERIFIED SOCIAL ENDPOINTS</div>
+        <span class="brand-badge">CONTACT</span>
+        <span class="slide-section-title">Formulir Kontak & Jaringan Komunikasi</span>
       </div>
-      <div class="slide-page-badge">SLIDE 07</div>
+      <div class="slide-number">08 / 10</div>
     </div>
 
     <div class="slide-body">
       <div class="slide-info">
         <div class="headline-group">
-          <div class="route-pill">SECTION: #contact • SECURE CHANNELS</div>
-          <h2 class="slide-title">Direct Outreach Portal & Telemetry Links</h2>
-          <p class="slide-subtitle">
-            Pusat komunikasi profesional langsung yang menyediakan saluran surat elektronik (Email), GitHub profile, LinkedIn, dan Telegram dengan validasi rel="noopener".
-          </p>
+          <h2 class="slide-title">Formulir Kontak & Saluran Diskusi</h2>
+          <p class="slide-desc">Pintu komunikasi langsung bagi perekrut dan klien dengan formulir pesan terverifikasi serta tautan media profesional terverifikasi.</p>
         </div>
 
-        <div class="feature-blocks">
-          <div class="cosmic-card emerald-border">
-            <div class="card-label">📬 Mailto & Direct Outreach Integrations</div>
-            <div class="card-text">
-              Tautan kontak satu klik yang membuka klien email pengguna dengan subjek terformat, mempermudah diskusi peluang kerja sama dan perekrutan.
-            </div>
+        <div class="feature-list">
+          <div class="feature-card">
+            <div class="feature-card-title">Validasi Formulir Interaktif</div>
+            <div class="feature-card-text">Pengecekan kelengkapan format email dan pesan secara realtime sebelum pengiriman formulir.</div>
           </div>
-          <div class="cosmic-card">
-            <div class="card-label">🛡️ Hardened Rel="noopener noreferrer" Security</div>
-            <div class="card-text">
-              Seluruh tautan eksternal dilindungi protokol keamanan web modern untuk mencegah serangan reverse tab-nabbing pada peramban pengguna.
-            </div>
+          <div class="feature-card cyan">
+            <div class="feature-card-title">Integrasi Saluran Profesional</div>
+            <div class="feature-card-text">Tautan terverifikasi menuju akun GitHub, LinkedIn, dan email resmi untuk komunikasi profesional.</div>
+          </div>
+          <div class="feature-card emerald">
+            <div class="feature-card-title">Umpan Balik Pengiriman Jelas</div>
+            <div class="feature-card-text">Notifikasi visual status pengiriman pesan yang informatif untuk memastikan kenyamanan pengguna.</div>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-box">
             <div class="metric-val">Direct</div>
-            <div class="metric-desc">Email Trigger</div>
+            <div class="metric-lbl">Contact Flow</div>
           </div>
           <div class="metric-box">
             <div class="metric-val">Verified</div>
-            <div class="metric-desc">Social Profiles</div>
+            <div class="metric-lbl">Social Links</div>
           </div>
           <div class="metric-box">
-            <div class="metric-val">100%</div>
-            <div class="metric-desc">Secure Links</div>
+            <div class="metric-val">Spam Guard</div>
+            <div class="metric-lbl">Form Protect</div>
           </div>
         </div>
       </div>
 
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id/#contact</div>
-            </div>
-            <img src="${images.contactDarkDesktop}" class="desktop-img" alt="Contact Dark Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.contactDarkMobile}" class="mobile-img" alt="Contact Dark Mobile">
-          </div>
-        </div>
+      <div class="visual-stage">
+        <img src="${images.contactDarkDesktop}" class="screenshot-desktop" alt="Contact Dark Desktop">
+        <img src="${images.contactDarkMobile}" class="screenshot-mobile" alt="Contact Dark Mobile">
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>SECURE OUTREACH & ENDPOINT VALIDATION</div>
-      <div>PAGE 07 / 10</div>
+      <span class="footer-tech">Section: #contact & Form Handler</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 08: LENIS SCROLL & GSAP ==================== -->
-  <div class="slide">
+  <!-- SLIDE 9: MOTION & LENIS SCROLL -->
+  <section class="slide">
     <div class="slide-header">
       <div class="brand-cluster">
-        <div class="portfolio-pill">MOTION PIPELINE</div>
-        <div class="slide-section-title">LENIS SMOOTH SCROLL & GSAP SCROLLTRIGGER</div>
+        <span class="brand-badge">MOTION SYSTEM</span>
+        <span class="slide-section-title">Inersia Lenis Scroll & Animasi GSAP</span>
       </div>
-      <div class="slide-page-badge">SLIDE 08</div>
+      <div class="slide-number">09 / 10</div>
     </div>
 
-    <div class="slide-body">
-      <div class="slide-info">
-        <div class="headline-group">
-          <div class="route-pill">ENGINE: LENIS + GSAP • INERTIAL PHYSICS</div>
-          <h2 class="slide-title">Normalized Inertial Scrolling & Motion Pipeline</h2>
-          <p class="slide-subtitle">
-            Pengalaman berselancar web yang luar biasa mulus berkat sinkronisasi Lenis smooth scrolling dan GSAP ScrollTrigger untuk animasi kemunculan elemen.
-          </p>
-        </div>
-
-        <div class="feature-blocks">
-          <div class="cosmic-card cyan-border">
-            <div class="card-label">🌊 Lenis Smooth Scroll Engine</div>
-            <div class="card-text">
-              Menormalkan akselerasi roda mouse dan trackpad pada peramban Windows maupun macOS, menghasilkan gerakan scroll inersial yang lembut dan responsif.
-            </div>
-          </div>
-          <div class="cosmic-card">
-            <div class="card-label">🎯 GSAP ScrollTrigger Synchronization</div>
-            <div class="card-text">
-              Pemicu timeline animasi elemen teks, garis pembatas, dan kartu portofolio yang disinkronkan tepat saat elemen memasuki viewport browser.
-            </div>
-          </div>
-        </div>
-
-        <div class="metrics-row">
-          <div class="metric-box">
-            <div class="metric-val">60 fps</div>
-            <div class="metric-desc">Scroll Inertia</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val">Normalized</div>
-            <div class="metric-desc">Wheel Events</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val">GSAP</div>
-            <div class="metric-desc">Trigger Timelines</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide-visual">
-        <div class="device-container">
-          <div class="desktop-frame">
-            <div class="frame-bar">
-              <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-              <div class="url-chip">widifirmaan.web.id (Scroll Physics)</div>
-            </div>
-            <img src="${images.worksDarkDesktop}" class="desktop-img" alt="Scroll Physics Desktop">
-          </div>
-          <div class="mobile-frame">
-            <div class="mobile-notch"><div class="notch-speaker"></div></div>
-            <img src="${images.worksDarkMobile}" class="mobile-img" alt="Scroll Physics Mobile">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>INERTIAL SCROLL INTERPOLATION & RAF LOOP</div>
-      <div>PAGE 08 / 10</div>
-    </div>
-  </div>
-
-  <!-- ==================== SLIDE 09: SYSTEM ARCHITECTURE ==================== -->
-  <div class="slide">
-    <div class="slide-header">
-      <div class="brand-cluster">
-        <div class="portfolio-pill">TECH STACK</div>
-        <div class="slide-section-title">FULLSTACK RUNTIME & WEB ARCHITECTURE</div>
-      </div>
-      <div class="slide-page-badge">SLIDE 09</div>
-    </div>
-
-    <div style="margin-bottom: 8px;">
-      <h2 class="slide-title">Zero-Dependency Architecture & Performance Topology</h2>
-      <p class="slide-subtitle">
-        Arsitektur web modern yang dibangun di atas fondasi Vanilla JavaScript ES6+, memadukan grafis 3D WebGL, inersia scroll mutakhir, dan skor Lighthouse optimal.
-      </p>
+    <div class="headline-group" style="margin-bottom: 12px;">
+      <h2 class="slide-title">Manajemen Pergerakan Halus & Efisiensi Frame</h2>
+      <p class="slide-desc">Implementasi pipeline animasi yang menjaga fluiditas scrolling layar, menghindari pergeseran tata letak, dan memaksimalkan performa CPU/GPU.</p>
     </div>
 
     <div class="arch-grid">
-      <!-- 3D & Graphics -->
-      <div class="arch-col">
-        <div class="arch-col-title">
-          <span>01. GRAPHICS & MOTION</span>
-          <span style="color:var(--accent-indigo);">●</span>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Three.js r128</div>
-          <div class="arch-item-detail">Inti render WebGL untuk kanvas partikel 3D dengan alokasi buffer geometry performa tinggi.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Lenis Scroll</div>
-          <div class="arch-item-detail">Library scroll inersial ringan tanpa ketergantungan framework yang menyajikan gerakan halus.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">GSAP ScrollTrigger</div>
-          <div class="arch-item-detail">Orkestrasi animasi viewport canggih dengan kontrol scrub, toggle actions, dan pin pinning.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Glassmorphism UI</div>
-          <div class="arch-item-detail">Sistem visual modern dengan backdrop blur berlapis dan hairline border bernuansa kosmik.</div>
-        </div>
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-violet);">Lenis Inertial Scrolling</div>
+        <div class="arch-item"><strong>Normalisasi Scroll:</strong> Menghilangkan lompatan kasar dari roda scroll mouse dan trackpad lintas sistem operasi.</div>
+        <div class="arch-item"><strong>Integrasi RAF Sinkron:</strong> Siklus pembaruan Lenis diikat erat pada siklus requestAnimationFrame utama antarmuka.</div>
+        <div class="arch-item"><strong>Penonaktifan Selektif:</strong> Kemampuan menonaktifkan inersia saat berinteraksi dengan komponen modal dialog.</div>
       </div>
 
-      <!-- Core Runtime -->
-      <div class="arch-col">
-        <div class="arch-col-title">
-          <span>02. VANILLA CORE RUNTIME</span>
-          <span style="color:var(--accent-cyan);">●</span>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Vanilla ES6+ Modules</div>
-          <div class="arch-item-detail">Bebas overhead framework berat (zero virtual-DOM diffing overhead), menjamin startup kilat.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Decoupled projects.json</div>
-          <div class="arch-item-detail">Pemisahan data proyek dari markup tampilan mempermudah pembaruan portofolio berkelanjutan.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">i18n Translation Matrix</div>
-          <div class="arch-item-detail">Engine terjemahan berbasis data attribute yang mengganti konten tanpa reload browser.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Dark / Light Engine</div>
-          <div class="arch-item-detail">Manajemen state tema visual tersinkronisasi antara DOM dan shader WebGL 3D.</div>
-        </div>
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-cyan);">GSAP ScrollTrigger Pipeline</div>
+        <div class="arch-item"><strong>Entrance Reveal:</strong> Animasi masuk bertahap dengan jeda stagger rapi pada daftar proyek dan teks biografi.</div>
+        <div class="arch-item"><strong>Penetapan Trigger Presisi:</strong> Titik pemicu animasi dikalibrasi secara akurat terhadap tinggi viewport peramban.</div>
+        <div class="arch-item"><strong>Will-Change Optimasi:</strong> Atribut CSS will-change diterapkan hanya saat animasi aktif untuk menghemat VRAM perangkat.</div>
       </div>
 
-      <!-- Delivery Tier -->
-      <div class="arch-col">
-        <div class="arch-col-title">
-          <span>03. CLOUD DEPLOYMENT</span>
-          <span style="color:var(--accent-emerald);">●</span>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">GitHub Pages Edge</div>
-          <div class="arch-item-detail">Penyajian berkas statis terdistribusi pada CDN global dengan sertifikat SSL otomatis.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Custom Domain Routing</div>
-          <div class="arch-item-detail">Konfigurasi DNS CNAME mandiri mengarahkan domain widifirmaan.web.id dengan latensi rendah.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">100% Lighthouse Score</div>
-          <div class="arch-item-detail">Pengoptimalan aset statis, font swap, dan kompresi menghasilkan performa maksimal.</div>
-        </div>
-        <div class="arch-item">
-          <div class="arch-item-name">Playwright E2E Suite</div>
-          <div class="arch-item-detail">Rangkaian pengujian otomatis memastikan seluruh interaksi modal dan tema lulus uji 100%.</div>
-        </div>
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-emerald);">Aksesibilitas Gerakan</div>
+        <div class="arch-item"><strong>Prefers-Reduced-Motion:</strong> Pengecekan otomatis preferensi pengguna untuk menonaktifkan animasi bagi pengguna sensitif gerak.</div>
+        <div class="arch-item"><strong>Audit Beban Memori:</strong> Monitoring pembersihan event listener saat elemen halaman diperbarui secara dinamis.</div>
+        <div class="arch-item"><strong>Toleransi Baterai Rendah:</strong> Throttling kecepatan render partikel saat sistem berada dalam mode penghemat baterai.</div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>PORTFOLIO WEB ARCHITECTURE</div>
-      <div>CORE TECH STACK & SYSTEM TOPOLOGY</div>
-      <div>PAGE 09 / 10</div>
+      <span class="footer-tech">Engine: Lenis Smooth Scroll + GSAP ScrollTrigger</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
-  <!-- ==================== SLIDE 10: CLOSING ==================== -->
-  <div class="slide closing-slide">
-    <div class="portfolio-pill" style="font-size:12px; padding:6px 16px;">
-      OFFICIAL PERSONAL PORTFOLIO
-    </div>
-    <h1 class="closing-title">INTERACTIVE 3D WEBGL PORTFOLIO<br>& ENGINEERING SHOWCASE</h1>
-    
-    <p style="font-size: 15px; color: #94A3B8; max-width: 680px; font-weight: 500; line-height: 1.5;">
-      Etalase rekayasa perangkat lunak modern yang memadukan keindahan grafis 3D WebGL Three.js, inersia scroll mulus Lenis, dukungan dwibahasa terpadu, dan arsitektur vanilla tanpa overhead server.
-    </p>
-
-    <div class="closing-pills">
-      <div class="cosmic-card" style="padding: 6px 14px; font-weight: 800; font-size: 11px;">🌌 THREE.JS WEBGL</div>
-      <div class="cosmic-card cyan-border" style="padding: 6px 14px; font-weight: 800; font-size: 11px;">🌊 LENIS SCROLL</div>
-      <div class="cosmic-card violet-border" style="padding: 6px 14px; font-weight: 800; font-size: 11px;">🌐 BILINGUAL i18n</div>
-      <div class="cosmic-card emerald-border" style="padding: 6px 14px; font-weight: 800; font-size: 11px;">🌗 DUAL THEME</div>
-      <div class="cosmic-card" style="padding: 6px 14px; font-weight: 800; font-size: 11px;">⚡ 100% LIGHTHOUSE</div>
-    </div>
-
-    <div class="live-hero-card">
-      <div style="font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:#94A3B8; letter-spacing:0.08em; text-transform:uppercase;">
-        LIVE PRODUCTION ENVIRONMENT
+  <!-- SLIDE 10: SPESIFIKASI PRODUKSI -->
+  <section class="slide">
+    <div class="slide-header">
+      <div class="brand-cluster">
+        <span class="brand-badge">SPECIFICATION</span>
+        <span class="slide-section-title">Ringkasan Spesifikasi & Kesiapan Produksi</span>
       </div>
-      <div class="live-url-text">https://widifirmaan.web.id</div>
-      <div style="font-size:11px; color:#94A3B8; font-weight:500;">
-        Crafted with Three.js r128 • Lenis • GSAP ScrollTrigger • Vanilla JavaScript
+      <div class="slide-number">10 / 10</div>
+    </div>
+
+    <div class="headline-group" style="margin-bottom: 12px;">
+      <h2 class="slide-title">Spesifikasi Teknis & Kesiapan Distribusi</h2>
+      <p class="slide-desc">Ringkasan metrik audit performa web, optimasi SEO global, dan standarisasi arsitektur frontend untuk penayangan produksi.</p>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-violet);">Metrik Performa & Audit Web</div>
+        <div class="arch-item"><strong>Lighthouse Score:</strong> 98+ pada Performance, Accessibility, Best Practices, dan SEO.</div>
+        <div class="arch-item"><strong>First Contentful Paint:</strong> Tercapai di bawah 0.7 detik dengan pemisahan skrip rendering kritis.</div>
+        <div class="arch-item"><strong>Cumulative Layout Shift:</strong> Nilai 0.00 yang memastikan tidak ada pergeseran tata letak saat aset dimuat.</div>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-cyan);">Aksesibilitas & Standar W3C</div>
+        <div class="arch-item"><strong>Kontras Teks Teruji:</strong> Seluruh kombinasi warna memenuhi standar kontras WCAG AA baik di mode terang maupun gelap.</div>
+        <div class="arch-item"><strong>Navigasi Keyboard Penuh:</strong> Indikator fokus yang jelas untuk seluruh elemen tautan, tombol, dan field formulir.</div>
+        <div class="arch-item"><strong>Metadata Terstruktur:</strong> Tag Schema.org, Open Graph, dan Twitter Card tersemat lengkap untuk indeks mesin telusur.</div>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-title" style="color: var(--accent-emerald);">Infrastruktur & Deployment</div>
+        <div class="arch-item"><strong>Static Edge Delivery:</strong> Distribusi global melalui jaringan CDN dengan latensi rendah di seluruh penjuru dunia.</div>
+        <div class="arch-item"><strong>Keamanan HTTPS Ketat:</strong> Konfigurasi header keamanan modern untuk perlindungan terhadap serangan web umum.</div>
+        <div class="arch-item"><strong>Reliabilitas Tinggi:</strong> Ketersediaan operasional 99.9% tanpa memerlukan pemeliharaan server komputasi backend.</div>
       </div>
     </div>
 
-    <div class="slide-footer" style="width: 100%; margin-top: 15px;">
-      <div>ENGINEERED BY WIDI FIRMANSYAH</div>
-      <div>PRODUCTION-READY WEB PLATFORM</div>
-      <div>PAGE 10 / 10</div>
+    <div class="slide-footer">
+      <span class="footer-tech">widifirmaan.web.id Production Specification Document</span>
+      <span class="footer-url">widifirmaan.web.id</span>
     </div>
-  </div>
+  </section>
 
 </body>
 </html>
@@ -1304,11 +963,11 @@ const htmlContent = `<!DOCTYPE html>
 
 const htmlFilePath = path.join(projectRoot, 'presentation.html');
 fs.writeFileSync(htmlFilePath, htmlContent, 'utf-8');
-console.log(`📄 Presentation HTML written to: ${htmlFilePath}`);
-
-console.log('🚀 Launching Chromium with Playwright to render Portfolio PDF...');
+console.log(`HTML presentasi disimpan di: ${htmlFilePath}`);
 
 async function renderPDF() {
+  console.log('Menjalankan Playwright Chromium untuk render PDF Portfolio...');
+  
   const playwrightPath = '/home/widifirmaan/Projects/qa-toolkit/node_modules/playwright/index.mjs';
   const { chromium } = await import(playwrightPath);
 
@@ -1319,23 +978,20 @@ async function renderPDF() {
 
   const page = await browser.newPage();
   await page.goto(`file://${htmlFilePath}`, { waitUntil: 'networkidle' });
-  await page.evaluate(() => document.fonts.ready);
+  await page.evaluateHandle('document.fonts.ready');
 
   const slidePdfPath = path.join(downloadsDir, 'Portfolio.pdf');
-  const continuousPdfPath = path.join(downloadsDir, 'Portfolio-Continuous.pdf');
-
-  // 1. Multi-Page Deck Mode (10 Slides A4 Landscape)
-  console.log('🖨️  Rendering Multi-Page A4 Landscape Presentation PDF (Slide Mode)...');
+  console.log('Rendering Multi-Page A4 Landscape (Slide Mode)...');
   await page.pdf({
     path: slidePdfPath,
-    format: 'A4',
-    landscape: true,
+    width: '297mm',
+    height: '210mm',
     printBackground: true,
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
     preferCSSPageSize: true,
   });
 
-  // 2. Continuous Poster Mode (Single tall scroll)
-  console.log('📜 Rendering Continuous Single-Scroll Showcase PDF (Poster Mode)...');
+  console.log('Rendering Continuous Single-Scroll Showcase (Poster Mode)...');
   await page.addStyleTag({
     content: `
       @page {
@@ -1343,7 +999,7 @@ async function renderPDF() {
         margin: 0;
       }
       body {
-        background: #07090E !important;
+        background-color: #07090E !important;
       }
       .slide {
         page-break-after: unset !important;
@@ -1357,29 +1013,26 @@ async function renderPDF() {
   await page.waitForTimeout(500);
 
   const scrollHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+  const contPdfPath = path.join(downloadsDir, 'Portfolio-Continuous.pdf');
   await page.pdf({
-    path: continuousPdfPath,
+    path: contPdfPath,
     width: '1428px',
     height: `${scrollHeight}px`,
     printBackground: true,
-    pageRanges: '1',
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
   });
 
   await browser.close();
 
   const slideStat = fs.statSync(slidePdfPath);
-  const contStat = fs.statSync(continuousPdfPath);
+  const contStat = fs.statSync(contPdfPath);
 
-  console.log('\n================================================================================');
-  console.log('🎉 PORTFOLIO WEB ARCHITECTURE PDFS SUCCESSFULLY GENERATED!');
-  console.log(`📦 Multi-Page Deck (Slides)   : ${(slideStat.size / 1024 / 1024).toFixed(2)} MB (10 Pages A4 Landscape)`);
-  console.log(`   -> Saved: ${slidePdfPath}`);
-  console.log(`📦 Continuous Poster (Scroll) : ${(contStat.size / 1024 / 1024).toFixed(2)} MB (1 Long Showcase Page)`);
-  console.log(`   -> Saved: ${continuousPdfPath}`);
-  console.log('================================================================================\n');
+  console.log('\nPDF Portfolio berhasil dibuat:');
+  console.log(`- Multi-Page Deck: ${(slideStat.size / 1024 / 1024).toFixed(2)} MB (${slidePdfPath})`);
+  console.log(`- Continuous Poster: ${(contStat.size / 1024 / 1024).toFixed(2)} MB (${contPdfPath})\n`);
 }
 
 renderPDF().catch((err) => {
-  console.error('❌ Error during PDF generation:', err);
+  console.error('Gagal membuat PDF:', err);
   process.exit(1);
 });
