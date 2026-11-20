@@ -11,14 +11,14 @@ const downloadsDir = '/home/widifirmaan/Downloads';
 function encodeImage(filename) {
   const filePath = path.join(screenshotsDir, filename);
   if (!fs.existsSync(filePath)) {
-    console.warn(`Peringatan: Screenshot tidak ditemukan: ${filePath}`);
+    console.warn(`Warning: Screenshot file not found: ${filePath}`);
     return '';
   }
   const fileBuffer = fs.readFileSync(filePath);
   return `data:image/png;base64,${fileBuffer.toString('base64')}`;
 }
 
-console.log('Memproses screenshot Portfolio Widi...');
+console.log('Encoding Portfolio screenshots...');
 
 const images = {
   heroDarkDesktop: encodeImage('Portfolio Hero Dark Desktop.png'),
@@ -34,10 +34,10 @@ const images = {
   contactDarkMobile: encodeImage('Portfolio Contact Dark Mobile.png'),
 };
 
-console.log('Menyusun HTML presentasi dengan style murni WebGL Void & Neon Crimson...');
+console.log('Assembling English Portfolio WebGL Void & Neon Crimson Presentation Deck HTML...');
 
 const htmlContent = `<!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>widifirmaan.web.id - Web Engineering Presentation</title>
@@ -327,7 +327,7 @@ const htmlContent = `<!DOCTYPE html>
       <div class="brand-pill">
         <div class="brand-dot"></div>
         <div class="brand-title">Widi Firmansyah</div>
-        <div class="brand-subtitle">3D WebGL Portfolio &amp; Liquid Interaction Architecture</div>
+        <div class="brand-subtitle">3D WebGL Portfolio &amp; Fluid Interaction Architecture</div>
       </div>
       <div class="badge-pill">DECK-PORT-01 / 10</div>
     </div>
@@ -341,11 +341,11 @@ const htmlContent = `<!DOCTYPE html>
             <span class="tech-pill">Glassmorphism</span>
             <span class="tech-pill">Fluid Dock</span>
           </div>
-          <h1 style="font-size: 40px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 16px;">
-            Arsitektur Web Portofolio WebGL 3D &amp; Liquid Interaction
+          <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 16px;">
+            3D WebGL Portfolio &amp; Fluid Interaction Architecture
           </h1>
           <p style="font-size: 15px; color: var(--text-muted); line-height: 1.55; margin-bottom: 24px;">
-            Platform showcase rekayasa perangkat lunak modern yang memadukan latar belakang partikel WebGL interaktif, kursor kustom berbasis fisika, navigasi dock melayang, dan panel kaca glassmorphism berestetika Void &amp; Neon Crimson.
+            A high-performance software engineering showcase blending GPU-accelerated interactive WebGL particle physics, pointer dynamics, floating dock navigation, and glassmorphic Void &amp; Neon Crimson aesthetics.
           </p>
           <div class="glass-panel" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 14px 18px;">
             <div>
@@ -379,53 +379,53 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- SLIDE 2: LATAR BELAKANG & TUJUAN REKAYASA -->
+  <!-- SLIDE 2: BACKGROUND & ENGINEERING OBJECTIVES -->
   <div class="slide">
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Arsitektur &amp; Fondasi</div>
-        <div class="brand-subtitle">Spesifikasi Kebutuhan Web</div>
+        <div class="brand-title">Architecture &amp; Foundations</div>
+        <div class="brand-subtitle">Web Engineering Requirements</div>
       </div>
       <div class="badge-pill">DECK-PORT-02 / 10</div>
     </div>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Fondasi Rekayasa Web</div>
-        <h2 class="slide-title">Keseimbangan Visual Sinematik &amp; Efisiensi Komputasi GPU</h2>
-        <p class="slide-subtitle">Membangun kehadiran digital seorang pengembang senior dengan grafis real-time tanpa mengorbankan aksesibilitas dan performa.</p>
+        <div class="slide-category">Web Engineering Foundations</div>
+        <h2 class="slide-title">Balancing Cinematic Visuals with GPU Compute Efficiency</h2>
+        <p class="slide-subtitle">Delivering real-time graphics and spatial depth without compromising web accessibility, battery consumption, or frame stability.</p>
       </div>
 
       <div class="layout-grid-3">
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">01 &bull; TANTANGAN GPU</div>
-          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Overhead Rendering 3D</h3>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">01 &bull; GPU OVERHEAD CHALLENGE</div>
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">3D Rendering Constraints</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Animasi kanvas WebGL sering menguras daya baterai dan memicu kenaikan suhu CPU jika tidak dioptimasi dengan requestAnimationFrame dan frustum culling.
+            Unconstrained WebGL canvas animation loops induce severe battery drain and CPU thermals if not throttled via requestAnimationFrame and frustum culling.
           </p>
         </div>
 
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">02 &bull; SOLUSI SHADER</div>
-          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Partikel GLSL Ringan</h3>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">02 &bull; SHADER OPTIMIZATION</div>
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Lightweight GLSL Particles</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Penggunaan buffer geometry terkompresi dengan kalkulasi posisi partikel langsung di shader GPU (vertex shader) untuk menjaga frame time di bawah 16ms.
+            Compressed buffer geometries calculate particle coordinate deltas directly inside GPU vertex shaders, maintaining stable sub-16ms frame intervals.
           </p>
         </div>
 
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">03 &bull; ERGONOMI UI</div>
-          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Glassmorphism Void</h3>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">03 &bull; UI ERGONOMICS</div>
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Void Glassmorphism</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Desain panel kaca semi-transparan dengan kontras tinggi yang melindungi keterbacaan teks teknis di atas partikel yang bergerak dinamis di latar belakang.
+            High-contrast frosted glass panels safeguard technical typography legibility across dynamic, continuously flowing background particle fields.
           </p>
         </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <div>WIDIFIRMAAN.WEB.ID &bull; SPESIFIKASI SISTEM</div>
+      <div>WIDIFIRMAAN.WEB.ID &bull; SYSTEM SPECIFICATIONS</div>
       <div>GPU RENDERING STANDARDS</div>
       <div>02 / 10</div>
     </div>
@@ -436,7 +436,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Panggung Interaktif</div>
+        <div class="brand-title">Interactive Stage</div>
         <div class="brand-subtitle">WebGL Hero Canvas &amp; Custom Cursor</div>
       </div>
       <div class="badge-pill">DECK-PORT-03 / 10</div>
@@ -444,9 +444,9 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Interaksi Spasial</div>
-        <h2 class="slide-title">Kanvas WebGL Penuh &amp; Fisika Kursor Interaktif</h2>
-        <p class="slide-subtitle">Sistem partikel responsif terhadap koordinat pointer dengan kursor ganda yang beradaptasi saat melintasi elemen interaktif.</p>
+        <div class="slide-category">Spatial Interaction</div>
+        <h2 class="slide-title">Fullscreen WebGL Canvas &amp; Interactive Pointer Physics</h2>
+        <p class="slide-subtitle">Particle field responding dynamically to pointer coordinates with an adaptive dual-ring cursor tracking interactive elements.</p>
       </div>
 
       <div class="layout-split">
@@ -456,21 +456,21 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Sistem Kursor Lingkaran Ganda (Dot &amp; Follower)</div>
+            <div class="feature-item-title">Dual-Ring Cursor Engine (Dot &amp; Follower)</div>
             <div class="feature-item-desc">
-              Titik pusat 8px berwarna Neon Crimson (#ff3366) dan lingkaran luar 40px dengan interpolasi lerp halus yang merespons elemen anchor dan tombol.
+              An 8px Neon Crimson (#FF3366) core and a 40px outer ring utilizing smooth lerp interpolation, adapting shape over buttons and anchor tags.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Interaksi Hamburan Partikel Pointer</div>
+            <div class="feature-item-title">Pointer Particle Dispersion Dynamics</div>
             <div class="feature-item-desc">
-              Partikel WebGL bereaksi terhadap pergerakan kursor dengan gaya tolak gravitasi lokal dan kembali ke formasi semula secara elastis.
+              WebGL particles repel from active cursor positions via local inverse-gravity vectors, snapping back elastically to baseline coordinates.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Zero CLS Heading Typography</div>
+            <div class="feature-item-title">Zero-CLS Heading Typography</div>
             <div class="feature-item-desc">
-              Hierarki tipografi font Inter 900 dengan display inline-block yang tidak memicu pergeseran layout saat animasi fade-in pertama kali dieksekusi.
+              Rigid font bounding box reservation with Inter 900 guarantees zero layout shifts (CLS 0.00) during initial shader compilation and fade-in.
             </div>
           </div>
         </div>
@@ -489,7 +489,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Navigasi Utama</div>
+        <div class="brand-title">Primary Navigation</div>
         <div class="brand-subtitle">Floating Dock &amp; Light/Dark Theme Switcher</div>
       </div>
       <div class="badge-pill">DECK-PORT-04 / 10</div>
@@ -497,29 +497,29 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Sistem Kendali Antarmuka</div>
-        <h2 class="slide-title">Bilah Navigasi Gaya Dock Mengambang</h2>
-        <p class="slide-subtitle">Komponen navigasi terpusat berbentuk kapsul melayang 50px yang dilengkapi transisi tema terang/gelap real-time.</p>
+        <div class="slide-category">Interface Control System</div>
+        <h2 class="slide-title">Floating Dock Navigation &amp; Theme Transition Engine</h2>
+        <p class="slide-subtitle">Centered 50px pill floating dock delivering fluid route hopping and instant client-side theme switching.</p>
       </div>
 
       <div class="layout-split-reversed">
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Floating Dock Style Nav 50px Pill</div>
+            <div class="feature-item-title">50px Pill Floating Dock Navigation</div>
             <div class="feature-item-desc">
-              Posisi tetap top-1.5rem dengan efek kaca glass-panel (blur 12px, border putih transparan 8%) yang memberikan ilusi panggung melayang.
+              Fixed top-anchored glassmorphic dock (12px blur, 8% white border) providing a suspended stage aesthetic with tactile touch targets.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Peralihan Variabel CSS Light / Dark</div>
+            <div class="feature-item-title">CSS Custom Property Theme Switcher</div>
             <div class="feature-item-desc">
-              Manipulasi variabel tema (--bg-color, --text-color, --accent-color) yang tersimpan di localStorage tanpa jeda kedipan layar (FOUC).
+              Seamless manipulation of CSS variables (--bg-color, --text-color, --accent-color) persisted in localStorage without flash of unstyled content (FOUC).
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Indikator Status Aktif Segmen</div>
+            <div class="feature-item-title">Active Route Indicator Tracking</div>
             <div class="feature-item-desc">
-              Garis bawah aksen Crimson yang berpindah secara otomatis mengikuti posisi bagian halaman yang sedang berada di area pandang pengguna.
+              Dynamic Crimson accent underlines responding automatically to IntersectionObserver triggers as sections enter the user's viewport.
             </div>
           </div>
         </div>
@@ -542,7 +542,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Pameran Proyek</div>
+        <div class="brand-title">Project Catalog</div>
         <div class="brand-subtitle">Interactive Works Grid &amp; Project Cards</div>
       </div>
       <div class="badge-pill">DECK-PORT-05 / 10</div>
@@ -550,9 +550,9 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Katalog Rekayasa Sistem</div>
-        <h2 class="slide-title">Grid Karya Terpilih dengan Efek Kedalaman Visual</h2>
-        <p class="slide-subtitle">Kartu pameran proyek dengan efek hover mikro-interaksi, label stack teknologi, dan pratinjau arsitektur terintegrasi.</p>
+        <div class="slide-category">Systems Catalog</div>
+        <h2 class="slide-title">Curated Works Grid with Elevated Spatial Hierarchy</h2>
+        <p class="slide-subtitle">Interactive project showcase cards featuring micro-interaction hover states, tech stack tags, and integrated architecture breakdowns.</p>
       </div>
 
       <div class="layout-split">
@@ -562,21 +562,21 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Panel Kaca Terisolasi (.glass-panel)</div>
+            <div class="feature-item-title">Isolated Glass Panels (.glass-panel)</div>
             <div class="feature-item-desc">
-              Radius 16px dengan transisi background dan border halus saat kursor melintas, menciptakan elevasi kedalaman ruang yang mewah.
+              16px corner radii with smooth border and background gradient transitions under cursor focus for tactile visual depth.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Badge Tag Teknologi Berbasis JetBrains Mono</div>
+            <div class="feature-item-title">Monospace Tech Stack Badges</div>
             <div class="feature-item-desc">
-              Kapsul kecil penanda framework dan bahasa pemrograman yang mempermudah perekrut teknis memverifikasi keahlian rekayasa.
+              JetBrains Mono badges providing instant technology attribution across frameworks, runtimes, and engineering protocols.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Pratinjau Gambar Beraspek Rasio Presisi</div>
+            <div class="feature-item-title">Aspect-Preserving Mockup Displays</div>
             <div class="feature-item-desc">
-              Gambar mock visual beresolusi tinggi yang teroptimasi tanpa distorsi proporsi pada beragam ukuran monitor dan gawai.
+              Responsive asset containers maintaining device-accurate aspect ratios across diverse workstation displays and mobile viewports.
             </div>
           </div>
         </div>
@@ -595,7 +595,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Studi Kasus</div>
+        <div class="brand-title">Case Studies</div>
         <div class="brand-subtitle">Case Study Modal &amp; Technical Breakdown</div>
       </div>
       <div class="badge-pill">DECK-PORT-06 / 10</div>
@@ -603,29 +603,29 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Inspeksi Solusi Teknis</div>
-        <h2 class="slide-title">Modal Studi Kasus dengan Narasi Arsitektur Menyeluruh</h2>
-        <p class="slide-subtitle">Dialog inspeksi teknis mendalam yang menjabarkan latar belakang masalah, keputusan arsitektur, dan hasil metrik produksi.</p>
+        <div class="slide-category">Technical Deep Dive</div>
+        <h2 class="slide-title">Comprehensive Case Study Inspection Modal</h2>
+        <p class="slide-subtitle">Accessible dialog presenting architectural problem statements, implementation trade-offs, and production metrics.</p>
       </div>
 
       <div class="layout-split-reversed">
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Aksesibilitas Dialog WAI-ARIA Terpadu</div>
+            <div class="feature-item-title">Standardized WAI-ARIA Dialog Compliance</div>
             <div class="feature-item-desc">
-              Penguncian fokus tab keyboard (focus trap) di dalam modal dan penutupan instan dengan tombol Escape atau klik pada overlay backdrop.
+              Strict keyboard focus trap within open modal instances, Escape key dismissal, and click-outside backdrop isolation.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Multi-Screenshot Showcase Carousel</div>
+            <div class="feature-item-title">Dual Viewport Visual Carousel</div>
             <div class="feature-item-desc">
-              Penelusuran tangkapan layar antarmuka desktop dan seluler secara berdampingan untuk memperlihatkan fleksibilitas responsif karya.
+              Side-by-side inspection of desktop and mobile interface viewports validating responsive breakpoint fidelity.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Daftar Capaian &amp; Tautan Repositori</div>
+            <div class="feature-item-title">Production Links &amp; Repository Access</div>
             <div class="feature-item-desc">
-              Tombol langsung menuju kode sumber GitHub dan live production deployment yang dilengkapi indikator status teruji.
+              Direct access triggers connecting to production deployments and verified GitHub repositories with live commit provenance.
             </div>
           </div>
         </div>
@@ -648,7 +648,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Pengalaman Personal</div>
+        <div class="brand-title">Personal Experience</div>
         <div class="brand-subtitle">Interactive Terminal &amp; Engineering Skills</div>
       </div>
       <div class="badge-pill">DECK-PORT-07 / 10</div>
@@ -656,9 +656,9 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Profil Rekayasa</div>
-        <h2 class="slide-title">Terminal Interaktif &amp; Peta Keahlian Teknologi</h2>
-        <p class="slide-subtitle">Penyajian profil pengembang melalui emulator terminal perintah Linux dan visualisasi tingkat kemahiran teknologi.</p>
+        <div class="slide-category">Engineering Profile</div>
+        <h2 class="slide-title">Client-Side Interactive Terminal &amp; Competency Matrix</h2>
+        <p class="slide-subtitle">Developer profile presentation featuring an in-browser command terminal emulator and technical competency mapping.</p>
       </div>
 
       <div class="layout-split">
@@ -668,21 +668,21 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Terminal CLI Interaktif Sisi Klien</div>
+            <div class="feature-item-title">Interactive Client-Side Terminal CLI</div>
             <div class="feature-item-desc">
-              Interpreter perintah (help, bio, skills, contact, clear) yang merespons masukan teks pengguna layaknya console bash asli.
+              In-browser command parser (help, bio, skills, contact, clear) simulating authentic POSIX terminal behavior and output formatting.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Peta Kompetensi Frontend &amp; Backend</div>
+            <div class="feature-item-title">Full-Stack Competency Matrix</div>
             <div class="feature-item-desc">
-              Pengelompokan keahlian mulai dari JavaScript/TypeScript, React/Next.js, Spring Boot, WebGL, hingga infrastruktur CI/CD terpadu.
+              Structured categorization across Frontend, Backend, Systems Engineering, WebGL shaders, and automated CI/CD pipelines.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Linimasa Rekayasa Profesional</div>
+            <div class="feature-item-title">Engineering Career Timeline</div>
             <div class="feature-item-desc">
-              Pencatatan riwayat kontribusi proyek open source dan kepemimpinan teknis dalam pengembangan solusi perangkat lunak enterprise.
+              Documented milestones covering enterprise software development, open-source initiatives, and technical architecture leadership.
             </div>
           </div>
         </div>
@@ -696,12 +696,12 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- SLIDE 8: ADAPTASI ERGONOMI SELULER -->
+  <!-- SLIDE 8: MOBILE VIEWPORT & TOUCH ERGONOMICS -->
   <div class="slide">
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Ergonomi Seluler</div>
+        <div class="brand-title">Mobile Ergonomics</div>
         <div class="brand-subtitle">Mobile Viewport &amp; Responsive Navigation</div>
       </div>
       <div class="badge-pill">DECK-PORT-08 / 10</div>
@@ -709,9 +709,9 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Pengalaman Pengguna Seluler</div>
-        <h2 class="slide-title">Optimasi Layar Sentuh &amp; Penyesuaian Kanvas Seluler</h2>
-        <p class="slide-subtitle">Penskalaan dinamis kerapatan partikel WebGL dan penataan ulang tombol menu untuk operasional jempol satu tangan.</p>
+        <div class="slide-category">Mobile User Experience</div>
+        <h2 class="slide-title">Mobile Touch Ergonomics &amp; Responsive Canvas Adaptation</h2>
+        <p class="slide-subtitle">Dynamic GPU load scaling and single-handed thumb-zone layout restructuring for high-density mobile devices.</p>
       </div>
 
       <div class="layout-split-reversed">
@@ -721,21 +721,21 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="feature-list">
           <div class="feature-item">
-            <div class="feature-item-title">Kompensasi DPI Layar Tinggi (Retina)</div>
+            <div class="feature-item-title">High-DPI Screen Clamping (Retina Optimization)</div>
             <div class="feature-item-desc">
-              Pembatasan window.devicePixelRatio maksimum ke angka 2 guna mencegah overheat GPU seluler pada layar berspesifikasi tinggi.
+              Capping window.devicePixelRatio at 2.0 to eliminate mobile GPU thermal throttling and frame drops on quad-HD screens.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Hamburger Drawer dengan Blur Glassmorphism</div>
+            <div class="feature-item-title">Glassmorphic Mobile Drawer Menu</div>
             <div class="feature-item-desc">
-              Bilah menu seluler yang meluncur halus dari atas layar dengan penutupan otomatis saat salah satu target tautan dipilih.
+              Smooth sliding overlay navigation designed for single-hand reach with automated drawer collapse upon selection.
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-item-title">Penonaktifan Custom Cursor pada Layar Sentuh</div>
+            <div class="feature-item-title">Pointer Coarse Fallbacks</div>
             <div class="feature-item-desc">
-              Deteksi otomatis media (pointer: fine) yang menyembunyikan lingkaran kursor kustom pada gawai berbasis layar sentuh murni.
+              Automatic media query evaluation (pointer: coarse) to cleanly suppress desktop follower cursors on touch screens.
             </div>
           </div>
         </div>
@@ -749,12 +749,12 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- SLIDE 9: REKAYASA KINERJA & CORE WEB VITALS -->
+  <!-- SLIDE 9: PERFORMANCE ENGINEERING & WEB VITALS -->
   <div class="slide">
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Rekayasa Kinerja</div>
+        <div class="brand-title">Performance Engineering</div>
         <div class="brand-subtitle">Shader Optimization &amp; Web Vitals</div>
       </div>
       <div class="badge-pill">DECK-PORT-09 / 10</div>
@@ -762,33 +762,33 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Optimasi Runtime GPU &amp; Browser</div>
-        <h2 class="slide-title">Efisiensi Siklus Render Shader &amp; Stabilitas Tata Letak</h2>
-        <p class="slide-subtitle">Penghentian loop rendering saat tab tidak aktif dan isolasi lapisan komposit untuk mencapai skor Lighthouse sempurna.</p>
+        <div class="slide-category">GPU &amp; Browser Runtime Optimization</div>
+        <h2 class="slide-title">Shader Render Loop Efficiency &amp; Layout Stability</h2>
+        <p class="slide-subtitle">Tab visibility throttles, zero-CLS layout isolation, and WebGL context restoration achieving top-tier Lighthouse benchmarks.</p>
       </div>
 
       <div class="layout-grid-3">
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">GPU THROTTLING</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">GPU POWER MANAGEMENT</div>
           <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Visibility API Pause</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Penghentian requestAnimationFrame secara instan ketika pengguna berpindah tab (document.hidden) untuk menghemat 100% alokasi komputasi baterai.
+            Halting the requestAnimationFrame loop when the browser tab loses focus (document.hidden) to reduce idle battery draw to zero.
           </p>
         </div>
 
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">ZERO CLS SCORE</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">ZERO CLS STABILITY</div>
           <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Fixed Canvas Layer</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Kanvas WebGL diposisikan secara absolut dengan pointer-events none di layer z-index -1, menjamin tidak ada pergeseran tata letak konten DOM (CLS 0.00).
+            Decoupling the WebGL canvas into an absolute layer with pointer-events: none at z-index -1, guaranteeing 0.00 Cumulative Layout Shift.
           </p>
         </div>
 
         <div class="glass-panel">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">MEMORY ISOLATION</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-crimson); margin-bottom: 8px;">CONTEXT RESILIENCE</div>
           <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Context Loss Recovery</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-            Penanganan event webglcontextlost dan webglcontextrestored guna mencegah crash halaman jika peramban kehabisan alokasi sumber daya VRAM.
+            Handling webglcontextlost and webglcontextrestored events to cleanly reinitialize GPU buffers upon browser memory pressure.
           </p>
         </div>
       </div>
@@ -801,47 +801,47 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- SLIDE 10: RANGKUMAN ARSITEKTUR & PRODUKSI -->
+  <!-- SLIDE 10: ARCHITECTURAL SYNTHESIS & RELEASE READINESS -->
   <div class="slide">
     <div class="slide-header">
       <div class="brand-pill">
         <div class="brand-dot"></div>
-        <div class="brand-title">Ringkasan Proyek</div>
-        <div class="brand-subtitle">Spesifikasi Akhir &amp; Kesiapan Rilis</div>
+        <div class="brand-title">Architecture Synthesis</div>
+        <div class="brand-subtitle">System Summary &amp; Release Readiness</div>
       </div>
       <div class="badge-pill">DECK-PORT-10 / 10</div>
     </div>
 
     <div class="slide-content">
       <div class="title-block">
-        <div class="slide-category">Rangkuman Akhir Rekayasa</div>
-        <h2 class="slide-title">Kesimpulan Implementasi Web Portofolio Widi</h2>
-        <p class="slide-subtitle">Sinergi antara estetika visual mutakhir dan arsitektur web modern yang andal untuk representasi profesional.</p>
+        <div class="slide-category">Final Engineering Synthesis</div>
+        <h2 class="slide-title">Architectural Synthesis &amp; Production Verification</h2>
+        <p class="slide-subtitle">Seamless fusion of GPU-accelerated graphics, modular component architecture, and responsive web performance standards.</p>
       </div>
 
       <div class="layout-grid-4">
         <div class="glass-panel">
           <div style="font-size: 11px; color: var(--text-subtle); font-family: 'JetBrains Mono', monospace;">GRAPHICS</div>
           <div style="font-size: 18px; font-weight: 800; color: var(--accent-crimson); margin-top: 4px; margin-bottom: 4px;">WebGL 3D</div>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Shader partikel interaktif berkecepatan 60 FPS.</p>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Interactive 60 FPS GLSL particle canvas.</p>
         </div>
 
         <div class="glass-panel">
-          <div style="font-size: 11px; color: var(--text-subtle); font-family: 'JetBrains Mono', monospace;">DESIGN</div>
+          <div style="font-size: 11px; color: var(--text-subtle); font-family: 'JetBrains Mono', monospace;">DESIGN SYSTEM</div>
           <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-top: 4px; margin-bottom: 4px;">Void Crimson</div>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Panel kaca transparan dengan aksen Neon Crimson.</p>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Frosted glass panels with Neon Crimson (#FF3366) accents.</p>
         </div>
 
         <div class="glass-panel">
           <div style="font-size: 11px; color: var(--text-subtle); font-family: 'JetBrains Mono', monospace;">ERGONOMICS</div>
           <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-top: 4px; margin-bottom: 4px;">Fluid Dock</div>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Navigasi mengambang 50px pill ramah sentuhan.</p>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Touch-accessible 50px pill floating navigation.</p>
         </div>
 
         <div class="glass-panel">
           <div style="font-size: 11px; color: var(--text-subtle); font-family: 'JetBrains Mono', monospace;">DEPLOYMENT</div>
           <div style="font-size: 18px; font-weight: 800; color: #10B981; margin-top: 4px; margin-bottom: 4px;">Production</div>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Live di widifirmaan.web.id via GitHub Pages.</p>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">Live on widifirmaan.web.id via GitHub Pages.</p>
         </div>
       </div>
 
@@ -851,7 +851,7 @@ const htmlContent = `<!DOCTYPE html>
     </div>
 
     <div class="slide-footer">
-      <div>WIDIFIRMAAN.WEB.ID &bull; KESIMPULAN REKAYASA</div>
+      <div>WIDIFIRMAAN.WEB.ID &bull; ENGINEERING SYNTHESIS</div>
       <div>WIDI FIRMANSYAH &bull; PRINCIPAL ARCHITECT</div>
       <div>10 / 10</div>
     </div>
@@ -863,9 +863,9 @@ const htmlContent = `<!DOCTYPE html>
 
 const htmlFilePath = path.join(projectRoot, 'presentation.html');
 fs.writeFileSync(htmlFilePath, htmlContent, 'utf-8');
-console.log(`HTML presentasi disimpan di: ${htmlFilePath}`);
+console.log(`Presentation HTML written to: ${htmlFilePath}`);
 
-console.log('Menjalankan Playwright Chromium untuk render PDF Portfolio WebGL Void & Neon Crimson...');
+console.log('Launching Chromium with Playwright to render English Portfolio WebGL Void & Neon Crimson PDFs...');
 
 async function renderPDF() {
   const playwrightPath = '/home/widifirmaan/Projects/qa-toolkit/node_modules/playwright/index.mjs';
@@ -929,12 +929,12 @@ async function renderPDF() {
   const slideStat = fs.statSync(slidePdfPath);
   const contStat = fs.statSync(continuousPdfPath);
 
-  console.log('\nPDF Portfolio WebGL Void & Neon Crimson berhasil dibuat:');
+  console.log('\nPortfolio English PDFs successfully generated:');
   console.log(`- Multi-Page Deck: ${(slideStat.size / 1024 / 1024).toFixed(2)} MB (${slidePdfPath})`);
   console.log(`- Continuous Poster: ${(contStat.size / 1024 / 1024).toFixed(2)} MB (${continuousPdfPath})\n`);
 }
 
 renderPDF().catch((err) => {
-  console.error('Error saat render PDF:', err);
+  console.error('Error during PDF rendering:', err);
   process.exit(1);
 });
