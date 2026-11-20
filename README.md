@@ -1,13 +1,13 @@
 # widifirmaan.web.id
 
-> Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, Lenis smooth scrolling, bilingual i18n localization, and an interactive project catalog.
+> Official personal portfolio website of Widi Firmansyah, featuring a real-time Three.js 3D viewport, Lenis smooth scrolling, trilingual i18n localization, and an interactive project catalog.
 
-widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built with semantic HTML5, modern CSS, and Vanilla JavaScript (ES6+). It features an interactive 3D WebGL particle canvas powered by Three.js, smooth scrolling using Lenis and GSAP ScrollTrigger, bilingual English and Indonesian localization, and dynamic project indexing from `projects.json`.
+widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built with semantic HTML5, modern CSS, and Vanilla JavaScript (ES6+). It features an interactive 3D WebGL particle canvas powered by Three.js, smooth scrolling using Lenis and GSAP ScrollTrigger, trilingual English, Indonesian, and Chinese localization, and dynamic project indexing from `projects.json`.
 
 [![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#fitur)
 [![3D Engine](https://img.shields.io/badge/3D_Engine-Three.js_r128-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org/)
 [![Motion](https://img.shields.io/badge/Scroll-Lenis_%26_GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)](https://gsap.com/)
-[![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#fitur)
+[![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN_%7C_ZH-007ACC?style=flat-square)](#fitur)
 [![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#fitur)
 
 ---
@@ -35,8 +35,8 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 
 - **Interactive WebGL Canvas**: Real-time particle field with interactive 2D avatar plane rendered via Three.js (r128), featuring mouse-parallax tracking and mode-adaptive material blending (`NormalBlending` for light mode and `AdditiveBlending` for dark mode).
 - **Synchronized Smooth Scrolling**: Integrated Lenis smooth scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` for scroll-linked element animations.
-- **Dynamic Project Catalog (`projects.json`)**: Client-side project indexing with category filtering (All, Web App, Mobile, Template) and detailed modal overlays.
-- **Bilingual Localization (`translations.js`)**: Real-time language switching between English and Bahasa Indonesia across all page sections, inputs, and modals.
+- **Dynamic Project Catalog (`projects.json`)**: Client-side project indexing rendering showcase projects into an animated grid with interactive case study modal overlays, live demo links, and GitHub source links.
+- **Trilingual Localization (`translations.js`)**: Real-time language switching between Bahasa Indonesia (`id`), English (`en`), and Chinese Mandarin (`zh`) across all page sections, navigation, inputs, and modals.
 - **Tri-State Theme Switcher**: Persisted Light, Dark, and System theme preferences with dynamic `<meta name="theme-color">` updates and system `prefers-color-scheme` listeners.
 - **Career History Modal**: Detailed interactive modal highlighting professional software engineering roles at Manulife Indonesia, Indonesia Financial Group (IFG), and Geekgarden.
 - **Custom Cursor Follower**: Smooth lerp cursor tracking with magnetic hover responses on interactive cards and navigation links.
@@ -51,7 +51,7 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | **3D & Graphics** | Three.js `r128`, WebGL Canvas | Interactive particle field and 2D canvas avatar plane rendering |
 | **Scroll & Motion** | Lenis Smooth Scroll, GSAP, ScrollTrigger | Momentum scrolling and scroll-linked element choreography |
 | **Data & Content** | JSON (`projects.json`), Marked.js, Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering and modal markdown parsing |
-| **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
+| **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side Indonesian, English, and Chinese translation dictionary |
 
 ## Tutorial Run Local & Setup
 
