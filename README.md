@@ -4,11 +4,11 @@
 
 widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built with semantic HTML5, modern CSS, and Vanilla JavaScript (ES6+). It features an interactive 3D WebGL particle canvas powered by Three.js, smooth scrolling using Lenis and GSAP ScrollTrigger, bilingual English and Indonesian localization, and dynamic project indexing from `projects.json`.
 
-[![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#features)
+[![Architecture](https://img.shields.io/badge/Architecture-Zero--Dependency_Vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](#fitur)
 [![3D Engine](https://img.shields.io/badge/3D_Engine-Three.js_r128-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org/)
 [![Motion](https://img.shields.io/badge/Scroll-Lenis_%26_GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)](https://gsap.com/)
-[![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#features)
-[![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#features)
+[![Localization](https://img.shields.io/badge/i18n-ID_%7C_EN-007ACC?style=flat-square)](#fitur)
+[![Performance](https://img.shields.io/badge/Lighthouse-100%25_Performance-success?style=flat-square)](#fitur)
 
 ---
 
@@ -33,7 +33,7 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 
 ## Fitur
 
-- **Interactive 3D WebGL Canvas**: Real-time particle field and avatar model rendered via Three.js (r128) with mouse-parallax tracking and mode-adaptive material blending (`NormalBlending` for light mode and `AdditiveBlending` for dark mode).
+- **Interactive WebGL Canvas**: Real-time particle field with interactive 2D avatar plane rendered via Three.js (r128), featuring mouse-parallax tracking and mode-adaptive material blending (`NormalBlending` for light mode and `AdditiveBlending` for dark mode).
 - **Synchronized Smooth Scrolling**: Integrated Lenis smooth scrolling coupled directly with `gsap.ticker` and `ScrollTrigger` for scroll-linked element animations.
 - **Dynamic Project Catalog (`projects.json`)**: Client-side project indexing with category filtering (All, Web App, Mobile, Template) and detailed modal overlays.
 - **Bilingual Localization (`translations.js`)**: Real-time language switching between English and Bahasa Indonesia across all page sections, inputs, and modals.
@@ -48,9 +48,9 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 | Category | Technologies | Purpose |
 | :--- | :--- | :--- |
 | **Core Architecture** | Semantic HTML5, CSS3 Custom Properties, Vanilla ES6+ | Lightweight foundation with zero compilation overhead |
-| **3D & Graphics** | Three.js `r128`, WebGL Canvas | 3D model rendering and interactive particle field |
+| **3D & Graphics** | Three.js `r128`, WebGL Canvas | Interactive particle field and 2D canvas avatar plane rendering |
 | **Scroll & Motion** | Lenis Smooth Scroll, GSAP, ScrollTrigger | Momentum scrolling and scroll-linked element choreography |
-| **Data & Content** | JSON (`projects.json`), Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering |
+| **Data & Content** | JSON (`projects.json`), Marked.js, Vanilla Fetch API | Decoupled case study catalog with asynchronous rendering and modal markdown parsing |
 | **Localization** | Custom JS Dictionary (`translations.js`) | Instant client-side English & Indonesian translation dictionary |
 
 ## Tutorial Run Local & Setup
@@ -64,8 +64,8 @@ widifirmaan.web.id is the personal portfolio website of Widi Firmansyah, built w
 ├── script.js             # Lenis scroll, Three.js canvas, GSAP triggers, and modal logic
 ├── translations.js       # Indonesian & English bilingual locale dictionary
 ├── projects.json         # Decoupled case studies, live links, and repository metadata
-├── animoji.glb           # 3D GLTF binary model for WebGL canvas
-├── memoji.png            # Optimized 2D fallback portrait graphic
+├── memoji.png            # Portrait graphic texture mapped to Three.js avatar plane
+├── animoji.glb           # Reserved asset placeholder
 ├── screenshots/          # High-resolution MacBook Pro M4 & iPhone 16 Pro mockups
 ├── CNAME                 # Custom apex domain routing (widifirmaan.web.id)
 └── README.md
