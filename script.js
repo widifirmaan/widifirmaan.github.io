@@ -125,7 +125,7 @@ async function fetchGitHubProjects() {
             const response = await fetch('https://api.github.com/users/widifirmaan/repos?sort=updated&type=owner&per_page=30');
             if (response.ok) {
                 const repos = await response.json();
-                const excludedRepos = ['widifirmaan.github.io', 'expressjs-server-manager-lightweight', 'fuckingexsandbox', 'penjurusansmkmatlab-skripsi-'];
+                const excludedRepos = ['widifirmaan.github.io', 'nextjs-telefish', 'bash-android-aio-bypass-kit', 'clover-asus-vivobookflip-tp410ua', 'selikur-cldxtrm-web', 'ecu_database', 'expressjs-server-manager-lightweight', 'fuckingexsandbox', 'penjurusansmkmatlab-skripsi-', 'tools'];
                 const filteredRepos = repos.filter(repo => !repo.fork && !excludedRepos.includes(repo.name.toLowerCase()));
                 projects = filteredRepos.map(repo => {
                     const tech = repo.language || 'Web Technology';

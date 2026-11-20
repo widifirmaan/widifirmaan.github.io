@@ -13,27 +13,28 @@ const USERNAME = 'widifirmaan';
 
 const EXCLUDED_REPOS = [
   'widifirmaan.github.io',
+  'nextjs-telefish',
+  'bash-android-aio-bypass-kit',
+  'clover-asus-vivobookflip-tp410ua',
+  'selikur-cldxtrm-web',
+  'ecu_database',
   'expressjs-server-manager-lightweight',
   'fuckingexsandbox',
-  'penjurusansmkmatlab-skripsi-'
+  'penjurusansmkmatlab-skripsi-',
+  'tools'
 ];
 
 const PRIORITY_ORDER = [
   'springboot-simple-pos',
   'nextjs-velvetsnap-photobox',
   'nextjs-pwa-moneymanagement',
-  'nextjs-telefish',
-  'selikur-cldxtrm-web',
   'reactjs-coffee-shop-management',
   'reactjs-airpro-template',
   'reactjs-tryngo-programming-learning',
   'nextjs-book-games',
   'bootstrap-portograph-template',
   'bootstrap-javex-template',
-  'javascript-aio-tools',
-  'bash-android-aio-bypass-kit',
-  'clover-asus-vivobookflip-tp410ua',
-  'ecu_database'
+  'javascript-aio-tools'
 ];
 
 async function fetchWithRetry(url, options = {}, retries = 2) {
