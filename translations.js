@@ -31,7 +31,7 @@ const translations = {
         "loading-projects": "Memuat proyek...",
         "nav-news": "News",
         "news-title": "NEWS",
-        "news-subtitle": "Berita, tips, dan trik seputar coding — ditulis untuk dipraktikkan, bukan sekadar dibaca.",
+        "news-subtitle": "Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan, bukan sekadar dibaca.",
         "news-loading": "Memuat berita...",
         "news-empty": "Belum ada berita yang dipublikasikan.",
         "news-error": "Gagal memuat berita.",
@@ -39,7 +39,7 @@ const translations = {
         "news-next": "Berikutnya",
         "news-page": "Halaman",
         "news-updated": "Terakhir diperbarui",
-        "news-preview": "Pratinjau lokal — belum dipublikasikan",
+        "news-preview": "Pratinjau lokal: belum dipublikasikan",
         "news-ai-note": "Konten ini dibuat dengan bantuan AI.",
         "footer-copy": "© 2026 WDPORT. Hak cipta dilindungi undang-undang."
     },
@@ -75,7 +75,7 @@ const translations = {
         "loading-projects": "Loading projects...",
         "nav-news": "News",
         "news-title": "NEWS",
-        "news-subtitle": "News, tips, and tricks about coding — written to be practised, not just read.",
+        "news-subtitle": "News, tips, and tricks about coding, written to be practised, not just read.",
         "news-loading": "Loading news...",
         "news-empty": "No news has been published yet.",
         "news-error": "Failed to load news.",
@@ -83,7 +83,7 @@ const translations = {
         "news-next": "Next",
         "news-page": "Page",
         "news-updated": "Last updated",
-        "news-preview": "Local preview — not published",
+        "news-preview": "Local preview: not published",
         "news-ai-note": "This content was created with AI assistance.",
         "footer-copy": "© 2026 WDPORT. All rights reserved."
     },
@@ -119,7 +119,7 @@ const translations = {
         "loading-projects": "正在加载项目...",
         "nav-news": "新闻",
         "news-title": "新闻",
-        "news-subtitle": "关于编程的新闻、技巧与实践 —— 为动手实践而写，而不只是阅读。",
+        "news-subtitle": "关于编程的新闻、技巧与实践：为动手实践而写，而不只是阅读。",
         "news-loading": "正在加载新闻...",
         "news-empty": "暂无已发布的新闻。",
         "news-error": "新闻加载失败。",
@@ -127,7 +127,7 @@ const translations = {
         "news-next": "下一页",
         "news-page": "第",
         "news-updated": "最后更新",
-        "news-preview": "本地预览 — 尚未发布",
+        "news-preview": "本地预览：尚未发布",
         "news-ai-note": "本内容由 AI 辅助生成。",
         "footer-copy": "© 2026 WDPORT。保留所有权利。"
     }

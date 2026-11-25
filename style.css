@@ -100,8 +100,22 @@ nav {
 .hamburger {
     display: none;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 5px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
     z-index: 101;
+}
+
+.hamburger:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 8px;
 }
 
 .hamburger .bar {
@@ -686,6 +700,12 @@ section {
     transform: rotate(90deg) scale(1.1);
 }
 
+.modal-close:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 50%;
+}
+
 .modal-body {
     display: block; /* Removed grid to allow natural block flow */
     width: 100%;
@@ -893,6 +913,14 @@ section {
     vertical-align: middle;
 }
 
+body[data-page="news"] .markdown-body img[src*="/news/assets/"] {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    margin: 1.25rem 0;
+}
+
 .markdown-body table {
     width: 100%;
     margin-bottom: 1.5rem;
@@ -952,8 +980,8 @@ section {
     .modal-close {
         top: 1rem;
         right: 1rem;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         font-size: 1.5rem;
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);

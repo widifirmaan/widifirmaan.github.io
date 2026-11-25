@@ -28,8 +28,9 @@ const navLinks = document.querySelector('.nav-links');
 
 if (hamburger) {
     hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
+        const isActive = hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active', isActive);
+        hamburger.setAttribute('aria-expanded', String(isActive));
     });
 
     // Close menu and smooth scroll when clicking links
@@ -40,6 +41,7 @@ if (hamburger) {
             // Close mobile menu
             hamburger.classList.remove('active');
             navLinks.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
             
             // Only intercept internal anchor links
             if (href.startsWith('#')) {
@@ -687,10 +689,13 @@ function closeModal() {
         }, "-=0.1");
 }
 
-// Use event delegation for clickable items (Experience, Projects, News)
+// Use event delegation for clickable items (Experience, Projects, non-lazy News)
 document.addEventListener('click', (e) => {
     const clickable = e.target.closest('.experience-item, .project-card, .news-entry');
     if (clickable) {
+        if (clickable.classList.contains('news-entry') && clickable.dataset.lazy === '1') {
+            return;
+        }
         const data = {
             title: clickable.dataset.title,
             subtitle: clickable.dataset.subtitle,

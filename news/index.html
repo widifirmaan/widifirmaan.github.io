@@ -96,8 +96,8 @@
         <!-- Performance / Preconnect -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="../style.css?v=4.8" />
-        <link rel="stylesheet" href="news.css?v=2.0" />
+        <link rel="stylesheet" href="../style.css?v=4.9" />
+        <link rel="stylesheet" href="news.css?v=3.0" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -141,11 +141,11 @@
                     </div>
                 </li>
             </ul>
-            <div class="hamburger">
+            <button type="button" class="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
-            </div>
+            </button>
         </nav>
 
         <main>
@@ -153,16 +153,18 @@
                 <div class="container">
                     <h2 class="section-title" data-i18n="news-title">NEWS</h2>
                     <p class="news-subtitle" data-i18n="news-subtitle">
-                        Berita, tips, dan trik seputar coding — ditulis untuk dipraktikkan,
+                        Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan,
                         bukan sekadar dibaca.
                     </p>
                     <p id="news-preview-badge" class="news-preview-badge" hidden data-i18n="news-preview">
-                        Pratinjau lokal — belum dipublikasikan
+                        Pratinjau lokal: belum dipublikasikan
                     </p>
 
-                    <div id="news-feed" class="news-feed glass-panel">
+                    <div id="news-feed" class="news-feed">
                         <p class="news-empty" data-i18n="news-loading">Memuat berita...</p>
                     </div>
+
+                    <nav id="news-pagination" class="news-pagination" aria-label="Paginasi berita" hidden></nav>
 
                     <p id="news-updated" class="news-status"></p>
 
@@ -184,7 +186,7 @@
         <div id="detail-modal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content glass-panel" data-lenis-prevent>
-                <button class="modal-close">&times;</button>
+                <button type="button" class="modal-close" aria-label="Tutup modal">&times;</button>
                 <div class="modal-scroll-area">
                     <div class="modal-body">
                         <div id="modal-description" class="modal-description"></div>
@@ -201,7 +203,7 @@
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="../translations.js"></script>
-        <script src="../script.js?v=4.7"></script>
-        <script src="news.js?v=2.0"></script>
+        <script src="../script.js?v=4.8"></script>
+        <script src="news.js?v=3.0"></script>
     </body>
 </html>
