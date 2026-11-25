@@ -687,9 +687,9 @@ function closeModal() {
         }, "-=0.1");
 }
 
-// Use event delegation for clickable items (Experience & Dynamic Projects)
+// Use event delegation for clickable items (Experience, Projects, News)
 document.addEventListener('click', (e) => {
-    const clickable = e.target.closest('.experience-item, .project-card');
+    const clickable = e.target.closest('.experience-item, .project-card, .news-entry');
     if (clickable) {
         const data = {
             title: clickable.dataset.title,
