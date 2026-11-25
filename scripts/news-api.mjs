@@ -4,10 +4,17 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import {
+  ROOT_DIR as ROOT,
+  NEWS_FILE,
+  asString,
+  slugify,
+  normalizeArticle as normalize,
+  readAllArticles as readNews,
+  writeNewsStore as writeNews,
+} from './news-store.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
-const NEWS_FILE = path.join(ROOT, 'news.json');
 const MEDIA_DIR = path.join(ROOT, 'news', 'assets');
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -46,63 +53,6 @@ function isAuthorized(req) {
   if (!TOKEN) return true;
   const auth = req.headers.authorization || '';
   return auth === `Bearer ${TOKEN}`;
-}
-
-async function readNews() {
-  try {
-    const raw = await fs.readFile(NEWS_FILE, 'utf8');
-    const data = JSON.parse(raw);
-    const items = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
-    return { lastUpdated: data?.lastUpdated || new Date().toISOString(), items: items.map(normalize) };
-  } catch (err) {
-    if (err.code === 'ENOENT') return { lastUpdated: new Date().toISOString(), items: [] };
-    throw err;
-  }
-}
-
-async function writeNews(items) {
-  const normalized = items.map(normalize).sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  const payload = { lastUpdated: new Date().toISOString(), total: normalized.length, items: normalized };
-  await fs.writeFile(NEWS_FILE, JSON.stringify(payload, null, 2) + '\n', 'utf8');
-  return payload;
-}
-
-function slugify(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80)
-    .replace(/-+$/g, '');
-}
-
-function uid() {
-  return 'news-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function asString(v) { return typeof v === 'string' ? v.trim() : ''; }
-function asStringArray(v) { return Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()) : []; }
-
-function normalize(raw = {}) {
-  const item = raw && typeof raw === 'object' ? raw : {};
-  const title = asString(item.title);
-  const slug = asString(item.slug) || slugify(title);
-  return {
-    id: asString(item.id) || (slug ? `news-${slug}` : uid()),
-    title,
-    slug,
-    date: asString(item.date) || new Date().toISOString().slice(0, 10),
-    category: asString(item.category),
-    excerpt: asString(item.excerpt),
-    images: asStringArray(item.images),
-    badges: asStringArray(item.badges),
-    body: typeof item.body === 'string' ? item.body : '',
-    url: asString(item.url),
-    source: asString(item.source) || 'manual',
-    model: asString(item.model),
-  };
 }
 
 function pick(input, existing) {

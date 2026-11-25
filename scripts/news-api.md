@@ -1,6 +1,6 @@
 # News Article API
 
-API lokal sederhana untuk CRUD `news.json`. Artikel dibuat/diedit oleh AI CLI atau tool lain; API ini hanya mengelola data.
+API lokal sederhana untuk CRUD feed berita (`news/data/` sharded store dan `news.json` mirror). Artikel dibuat/diedit oleh AI CLI atau tool lain; API ini hanya mengelola data.
 
 ## Jalankan
 
@@ -72,4 +72,4 @@ curl -X POST http://127.0.0.1:8787/api/articles \
 }
 ```
 
-API menulis `news.json` dengan `lastUpdated`, `total`, dan `items` terurut desc by date.
+API menulis penyimpanan sharded di `news/data/` (`manifest.json`, `chunks/chunk-XXXX.json` tanpa `body`, dan `articles/<slug>.json`) serta menulis cerminan terbaru (maksimal 50 item) ke `news.json` terurut desc by date.

@@ -16,11 +16,15 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  readAllArticles,
+  readKnownSummaries,
+  writeNewsStore,
+} from './news-store.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const NEWS_FILE = path.join(ROOT_DIR, 'news.json');
-const MAX_ITEMS = 120;
 
 const PROVIDERS = {
   openai: {
@@ -307,23 +311,11 @@ function normalizeArticle(raw, config, today, index, usedSlugs) {
   };
 }
 
-async function readExistingItems() {
-  try {
-    const raw = await fs.readFile(NEWS_FILE, 'utf8');
-    const data = JSON.parse(raw);
-    const list = Array.isArray(data) ? data : Array.isArray(data.items) ? data.items : [];
-    return list.filter((item) => item && (item.title || item.slug));
-  } catch (error) {
-    if (error.code === 'ENOENT') return [];
-    throw new Error(`news.json tidak bisa dibaca: ${error.message}`);
-  }
-}
-
 async function generate(config) {
   const today = jakartaDate();
-  const existing = await readExistingItems();
-  const usedSlugs = new Set(existing.map((item) => String(item.slug || '').toLowerCase()).filter(Boolean));
-  const existingTitles = new Set(existing.map((item) => titleKey(item.title)).filter(Boolean));
+  const { items: knownSummaries } = await readKnownSummaries();
+  const usedSlugs = new Set(knownSummaries.map((item) => String(item.slug || '').toLowerCase()).filter(Boolean));
+  const existingTitles = new Set(knownSummaries.map((item) => titleKey(item.title)).filter(Boolean));
   const messages = [
     { role: 'system', content: buildSystemPrompt() },
     { role: 'user', content: buildUserPrompt(config, today) }
@@ -356,25 +348,15 @@ async function generate(config) {
   }
 
   if (accepted.length === 0) {
-    console.log('Tidak ada artikel baru. news.json tidak diubah.');
+    console.log('Tidak ada artikel baru. Data berita tidak diubah.');
     return;
   }
 
-  const nextItems = accepted
-    .concat(existing)
-    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
-    .slice(0, MAX_ITEMS);
-
-  const payload = {
-    lastUpdated: new Date().toISOString(),
-    total: nextItems.length,
-    items: nextItems
-  };
-
-  await fs.writeFile(NEWS_FILE, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+  const { items: existing } = await readAllArticles();
+  const result = await writeNewsStore(accepted.concat(existing));
   console.log(`Ditambahkan ${accepted.length} artikel (${config.provider}/${config.model}).`);
   accepted.forEach((item) => console.log(`  + ${item.date}  ${item.title}`));
-  console.log(`news.json sekarang berisi ${nextItems.length} item.`);
+  console.log(`Total arsip berita sekarang: ${result.total} item (${result.chunks} chunk, terbaru ${result.latestChunk}).`);
 }
 
 async function main() {

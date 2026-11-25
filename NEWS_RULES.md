@@ -55,11 +55,13 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 - Terapkan watermark: `node scripts/apply-watermark.mjs <input> [output]`.
 - Jangan mengunggah gambar tanpa watermark, gambar hak cipta tidak jelas, atau screenshot sensitif.
 
-## API Lokal
+## API Lokal dan Penyimpanan Sharded
 
 - CRUD artikel: `node scripts/news-api.mjs` (`GET/POST/PUT/DELETE /api/articles`).
 - Upload media base64: `POST /api/media` menyimpan ke `news/assets/` dan mengembalikan path repo.
-- Setelah upload media dan update `news.json`, commit file terkait.
+- Penyimpanan publik memakai skema sharded di `news/data/` (`manifest.json`, `chunks/chunk-XXXX.json` berisi ringkasan tanpa `body` dengan nomor tertinggi sebagai terbaru, dan `articles/<slug>.json` berisi artikel lengkap untuk lazy load), sementara `news.json` menyimpan cerminan maksimal 50 artikel terbaru untuk kompatibilitas CMS lokal dan fallback.
+- Jalankan `node scripts/news-store.mjs --rebuild` bila perlu menyinkronkan ulang `news/data/` dari `news.json`.
+- Setelah upload media dan update feed (`news.json` + `news/data/`), commit dan push file terkait ke GitHub.
 
 ## Checklist Sebelum Publish
 
