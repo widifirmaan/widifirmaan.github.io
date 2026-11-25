@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
   ROOT_DIR,
+  EXTRA_LOCALES,
+  localizeArticle,
   readAllArticles,
 } from './news-store.mjs';
 
@@ -22,6 +24,48 @@ const ROOT_FILES = [
   'robots.txt',
 ];
 const STATIC_DIRS = ['v1'];
+
+const LOCALE_META = {
+  id: {
+    htmlLang: 'id',
+    ogLocale: 'id_ID',
+    dateLocale: 'id-ID',
+    inLanguage: 'id-ID',
+    backLabel: '← Semua Berita',
+    sourceLabel: 'Sumber',
+    aiNote: 'Konten ini dibuat dengan bantuan AI.',
+    feedTitle: 'News | Widi Firmansyah',
+    feedSubtitle: 'Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan, bukan sekadar dibaca.',
+    feedDescription: 'Berita, tips, dan trik seputar coding oleh Widi Firmansyah, arsip artikel praktis tentang backend, frontend, dan rekayasa perangkat lunak.',
+    emptyText: 'Belum ada berita yang dipublikasikan.',
+  },
+  en: {
+    htmlLang: 'en',
+    ogLocale: 'en_US',
+    dateLocale: 'en-US',
+    inLanguage: 'en-US',
+    backLabel: '← All News',
+    sourceLabel: 'Source',
+    aiNote: 'This content was created with AI assistance.',
+    feedTitle: 'News | Widi Firmansyah',
+    feedSubtitle: 'News, tips, and tricks about coding, written to be practised, not just read.',
+    feedDescription: 'Coding news, tips, and practical technical articles by Widi Firmansyah covering systems, tooling, and open-source software.',
+    emptyText: 'No news has been published yet.',
+  },
+  zh: {
+    htmlLang: 'zh',
+    ogLocale: 'zh_CN',
+    dateLocale: 'zh-CN',
+    inLanguage: 'zh-CN',
+    backLabel: '← 全部新闻',
+    sourceLabel: '来源',
+    aiNote: '本内容由 AI 辅助生成。',
+    feedTitle: '新闻 | Widi Firmansyah',
+    feedSubtitle: '关于编程的新闻、技巧与实践：为动手实践而写，而不只是阅读。',
+    feedDescription: 'Widi Firmansyah 整理的编程新闻、开源项目分析与实用工程技术文章归档。',
+    emptyText: '暂无已发布的新闻。',
+  },
+};
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -54,11 +98,12 @@ function hostOf(raw) {
   }
 }
 
-function formatDateId(value) {
+function formatDate(value, lang = 'id') {
   if (!value) return '';
   const date = new Date(value.length === 10 ? `${value}T00:00:00Z` : value);
   if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('id-ID', {
+  const meta = LOCALE_META[lang] || LOCALE_META.id;
+  return new Intl.DateTimeFormat(meta.dateLocale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -66,16 +111,63 @@ function formatDateId(value) {
   }).format(date);
 }
 
+function availableArticleLocales(article) {
+  const out = ['id'];
+  for (const lang of EXTRA_LOCALES) {
+    const loc = article.locales && article.locales[lang];
+    if (loc && typeof loc.body === 'string' && loc.body.trim()) {
+      out.push(lang);
+    }
+  }
+  return out;
+}
+
+function articlePath(slug, lang = 'id') {
+  return lang === 'id' ? `/news/${slug}/` : `/${lang}/news/${slug}/`;
+}
+
+function feedPath(lang = 'id') {
+  return lang === 'id' ? '/news/' : `/${lang}/news/`;
+}
+
+function buildHreflangLinks(urlByLang, defaultPath) {
+  const links = Object.entries(urlByLang).map(
+    ([lang, relPath]) =>
+      `        <link rel="alternate" hreflang="${escapeHtml(lang)}" href="${escapeHtml(SITE_URL + relPath)}" />`
+  );
+  links.push(
+    `        <link rel="alternate" hreflang="x-default" href="${escapeHtml(SITE_URL + defaultPath)}" />`
+  );
+  return links.join('\n');
+}
+
+function buildOgAlternateLocales(activeLang, availableLangs) {
+  return availableLangs
+    .filter((l) => l !== activeLang)
+    .map((l) => LOCALE_META[l]?.ogLocale)
+    .filter(Boolean)
+    .map((loc) => `        <meta property="og:locale:alternate" content="${loc}" />`)
+    .join('\n');
+}
+
+function buildLangSwitcher(activeLang) {
+  const labels = { id: 'ID', en: 'EN', zh: '中' };
+  return ['id', 'en', 'zh']
+    .map(
+      (lang) =>
+        `                        <button class="lang-btn${lang === activeLang ? ' active' : ''}" data-lang="${lang}">${labels[lang]}</button>`
+    )
+    .join('\n');
+}
+
 async function readImageDimensions(assetPath) {
   if (!assetPath || !assetPath.startsWith('/news/assets/')) return null;
   const fullPath = path.join(ROOT_DIR, assetPath.replace(/^\/+/, ''));
   try {
     const buf = await fs.readFile(fullPath);
-    // PNG
     if (buf.length >= 24 && buf.readUInt32BE(0) === 0x89504e47) {
       return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
     }
-    // WebP (RIFF....WEBP + VP8 / VP8L / VP8X)
     if (buf.length >= 30 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
       const chunk = buf.toString('ascii', 12, 16);
       if (chunk === 'VP8X') {
@@ -91,7 +183,6 @@ async function readImageDimensions(assetPath) {
         return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
       }
     }
-    // JPEG SOF0/SOF2
     if (buf.length >= 4 && buf[0] === 0xff && buf[1] === 0xd8) {
       let i = 2;
       while (i + 9 < buf.length && buf[i] === 0xff) {
@@ -119,19 +210,13 @@ function formatInline(text, imageDimsMap) {
   };
 
   let s = String(text || '');
-
-  // Protect inline code spans before escaping or emphasis parsing.
   s = s.replace(/`([^`]+)`/g, (_, code) => hold(`<code>${escapeHtml(code)}</code>`));
-
-  // Images inline
   s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
     const cleanSrc = safeHref(src);
     const dims = imageDimsMap.get(cleanSrc);
     const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : '';
     return hold(`<img src="${escapeHtml(cleanSrc)}" alt="${escapeHtml(alt)}"${dimAttrs} decoding="async" />`);
   });
-
-  // Links
   s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
     const cleanHref = safeHref(href);
     const external = /^https?:\/\//i.test(cleanHref) ? ' target="_blank" rel="noopener noreferrer"' : '';
@@ -141,7 +226,6 @@ function formatInline(text, imageDimsMap) {
   s = escapeHtml(s);
   s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   s = s.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
-
   return s.replace(/\u0000PH(\d+)\u0000/g, (_, idx) => placeholders[Number(idx)] || '');
 }
 
@@ -158,7 +242,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Fenced code block
     const fenceMatch = line.match(/^```([a-zA-Z0-9_-]*)\s*$/);
     if (fenceMatch) {
       const lang = fenceMatch[1] ? ` class="language-${escapeHtml(fenceMatch[1])}"` : '';
@@ -173,7 +256,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Heading
     const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
     if (headingMatch) {
       const level = headingMatch[1].length;
@@ -182,14 +264,12 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Horizontal rule
     if (/^(-{3,}|\*{3,})\s*$/.test(line)) {
       out.push('<hr />');
       i += 1;
       continue;
     }
 
-    // Standalone image block
     const imgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (imgMatch) {
       const alt = imgMatch[1];
@@ -203,7 +283,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Blockquote
     if (line.startsWith('>')) {
       const quoteLines = [];
       while (i < lines.length && lines[i].startsWith('>')) {
@@ -214,7 +293,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Pipe table
     if (line.includes('|') && i + 1 < lines.length && /^\s*\|?(\s*:?-{2,}:?\s*\|)+\s*:?-{2,}:?\s*\|?\s*$/.test(lines[i + 1])) {
       const parseRow = (row) => row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
       const headers = parseRow(line);
@@ -230,7 +308,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Unordered list
     if (/^[-*]\s+/.test(line)) {
       const items = [];
       while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
@@ -241,7 +318,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Ordered list
     if (/^\d+\.\s+/.test(line)) {
       const items = [];
       while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
@@ -252,7 +328,6 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    // Paragraph
     const paraLines = [];
     while (
       i < lines.length &&
@@ -271,20 +346,90 @@ function renderMarkdown(markdown, imageDimsMap) {
   return out.join('\n');
 }
 
-function renderArticlePage(article, imageDimsMap) {
-  const canonicalUrl = `${SITE_URL}/news/${article.slug}/`;
+function themeBootstrapScript() {
+  return `        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#050505" />
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem('theme');
+                    var mode = stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+                    var effective =
+                        mode === 'light' || mode === 'dark'
+                            ? mode
+                            : window.matchMedia('(prefers-color-scheme: light)').matches
+                              ? 'light'
+                              : 'dark';
+                    document.documentElement.setAttribute('data-theme', effective);
+                    document.documentElement.style.backgroundColor = effective === 'light' ? '#ffffff' : '#050505';
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', effective === 'light' ? '#ffffff' : '#050505');
+                } catch (e) {}
+            })();
+        </script>`;
+}
+
+function navbarHtml(toRoot, newsHref, activeLang) {
+  return `        <nav class="glass-panel">
+            <a class="logo" href="${escapeHtml(toRoot)}">WDPORT</a>
+            <ul class="nav-links">
+                <li><a href="${escapeHtml(toRoot)}index.html#home" data-i18n="nav-home">Home</a></li>
+                <li><a href="${escapeHtml(toRoot)}index.html#about" data-i18n="nav-about">About</a></li>
+                <li><a href="${escapeHtml(toRoot)}index.html#works" data-i18n="nav-works">Works</a></li>
+                <li><a href="${escapeHtml(newsHref)}" class="is-current" aria-current="page" data-i18n="nav-news">News</a></li>
+                <li><a href="${escapeHtml(toRoot)}index.html#contact" data-i18n="nav-contact">Contact</a></li>
+                <li class="theme-switcher-container">
+                    <button
+                        type="button"
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Theme: system"
+                        title="Theme: system (click for light)"
+                    >
+                        <span class="theme-icon visible" id="theme-icon-active"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+                        <span class="theme-label" id="theme-label">System</span>
+                    </button>
+                </li>
+                <li class="lang-switcher-container">
+                    <div class="lang-switcher">
+${buildLangSwitcher(activeLang)}
+                    </div>
+                </li>
+            </ul>
+            <button type="button" class="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+        </nav>`;
+}
+
+function renderArticlePage(rawArticle, lang, imageDimsMap) {
+  const meta = LOCALE_META[lang] || LOCALE_META.id;
+  const article = localizeArticle(rawArticle, lang);
+  const avail = availableArticleLocales(rawArticle);
+  const urlByLang = {};
+  for (const l of avail) {
+    urlByLang[l] = articlePath(article.slug, l);
+  }
+
+  const canonicalUrl = `${SITE_URL}${articlePath(article.slug, lang)}`;
   const heroImage = Array.isArray(article.images) && article.images[0] ? article.images[0] : '/memoji.png';
   const absoluteImage = heroImage.startsWith('http') ? heroImage : `${SITE_URL}${heroImage}`;
-  const formattedDate = formatDateId(article.date);
+  const formattedDate = formatDate(article.date, lang);
   const category = article.category || (article.source === 'ai' ? 'AI' : 'News');
   const labelClass = article.source === 'ai' ? 'news-label is-ai' : 'news-label';
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
+
+  const toRoot = lang === 'id' ? '../../' : '../../../';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.2' : '../../../news/news.css?v=3.2';
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
     headline: article.title,
     description: article.excerpt,
+    inLanguage: meta.inLanguage,
     datePublished: article.date,
     dateModified: article.date,
     url: canonicalUrl,
@@ -307,25 +452,26 @@ function renderArticlePage(article, imageDimsMap) {
   };
 
   const sourceLink = article.url
-    ? `<a class="news-article-source" href="${escapeHtml(safeHref(article.url))}" target="_blank" rel="noopener noreferrer">Sumber: ${escapeHtml(hostOf(article.url))}</a>`
+    ? `<a class="news-article-source" href="${escapeHtml(safeHref(article.url))}" target="_blank" rel="noopener noreferrer"><span data-i18n="news-source">${escapeHtml(meta.sourceLabel)}</span>: ${escapeHtml(hostOf(article.url))}</a>`
     : '';
   const aiNote =
     article.source === 'ai'
-      ? '<p class="news-article-ai-note" data-i18n="news-ai-note">Konten ini dibuat dengan bantuan AI.</p>'
+      ? `<p class="news-article-ai-note" data-i18n="news-ai-note">${escapeHtml(meta.aiNote)}</p>`
       : '';
 
   return `<!doctype html>
-<html lang="id" data-theme="dark">
+<html lang="${meta.htmlLang}" data-page-lang="${lang}" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>${escapeHtml(article.title)} | News | Widi Firmansyah</title>
+        <title>${escapeHtml(article.title)} | ${escapeHtml(meta.feedTitle)}</title>
 
-        <meta name="title" content="${escapeHtml(article.title)} | News | Widi Firmansyah" />
+        <meta name="title" content="${escapeHtml(article.title)} | ${escapeHtml(meta.feedTitle)}" />
         <meta name="description" content="${escapeHtml(article.excerpt)}" />
         <meta name="author" content="Widi Firmansyah" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
+${buildHreflangLinks(urlByLang, articlePath(article.slug, 'id'))}
 
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Widi Firmansyah Portfolio" />
@@ -335,7 +481,8 @@ function renderArticlePage(article, imageDimsMap) {
         <meta property="og:image" content="${escapeHtml(absoluteImage)}" />
         <meta property="article:published_time" content="${escapeHtml(article.date)}" />
         <meta property="article:section" content="${escapeHtml(category)}" />
-        <meta property="og:locale" content="id_ID" />
+        <meta property="og:locale" content="${meta.ogLocale}" />
+${buildOgAlternateLocales(lang, avail)}
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="${escapeHtml(canonicalUrl)}" />
@@ -343,88 +490,36 @@ function renderArticlePage(article, imageDimsMap) {
         <meta name="twitter:description" content="${escapeHtml(article.excerpt)}" />
         <meta name="twitter:image" content="${escapeHtml(absoluteImage)}" />
 
-        <link rel="icon" type="image/png" href="../../favicon.png" />
-        <link rel="apple-touch-icon" href="../../memoji.png" />
+        <link rel="icon" type="image/png" href="${toRoot}favicon.png" />
+        <link rel="apple-touch-icon" href="${toRoot}memoji.png" />
 
         <script type="application/ld+json">
 ${safeJsonLd(jsonLd)}
         </script>
 
-        <meta name="color-scheme" content="dark light" />
-        <meta name="theme-color" content="#050505" />
-        <script>
-            (function () {
-                try {
-                    var stored = localStorage.getItem('theme');
-                    var mode = stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
-                    var effective =
-                        mode === 'light' || mode === 'dark'
-                            ? mode
-                            : window.matchMedia('(prefers-color-scheme: light)').matches
-                              ? 'light'
-                              : 'dark';
-                    document.documentElement.setAttribute('data-theme', effective);
-                    document.documentElement.style.backgroundColor = effective === 'light' ? '#ffffff' : '#050505';
-                    var meta = document.querySelector('meta[name="theme-color"]');
-                    if (meta) meta.setAttribute('content', effective === 'light' ? '#ffffff' : '#050505');
-                } catch (e) {}
-            })();
-        </script>
+${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="../../style.css?v=5.0" />
-        <link rel="stylesheet" href="../news.css?v=3.2" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.0" />
+        <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
         />
     </head>
 
-    <body data-page="news">
+    <body data-page="news" data-lang-urls="${escapeHtml(JSON.stringify(urlByLang))}">
         <div class="cursor-follower"></div>
 
         <canvas id="webgl"></canvas>
 
-        <nav class="glass-panel">
-            <a class="logo" href="../../">WDPORT</a>
-            <ul class="nav-links">
-                <li><a href="../../index.html#home" data-i18n="nav-home">Home</a></li>
-                <li><a href="../../index.html#about" data-i18n="nav-about">About</a></li>
-                <li><a href="../../index.html#works" data-i18n="nav-works">Works</a></li>
-                <li><a href="../" class="is-current" aria-current="page" data-i18n="nav-news">News</a></li>
-                <li><a href="../../index.html#contact" data-i18n="nav-contact">Contact</a></li>
-                <li class="theme-switcher-container">
-                    <button
-                        type="button"
-                        class="theme-toggle"
-                        id="theme-toggle"
-                        aria-label="Theme: system"
-                        title="Theme: system (click for light)"
-                    >
-                        <span class="theme-icon visible" id="theme-icon-active"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-                        <span class="theme-label" id="theme-label">System</span>
-                    </button>
-                </li>
-                <li class="lang-switcher-container">
-                    <div class="lang-switcher">
-                        <button class="lang-btn active" data-lang="id">ID</button>
-                        <button class="lang-btn" data-lang="en">EN</button>
-                        <button class="lang-btn" data-lang="zh">中</button>
-                    </div>
-                </li>
-            </ul>
-            <button type="button" class="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </button>
-        </nav>
+${navbarHtml(toRoot, '../', lang)}
 
         <main>
             <section class="news">
                 <div class="container">
-                    <a class="news-article-back" href="../">&larr; Semua Berita</a>
+                    <a class="news-article-back" href="../" data-i18n="news-back">${escapeHtml(meta.backLabel)}</a>
 
                     <article class="news-article">
                         <header class="news-article-header">
@@ -458,41 +553,222 @@ ${bodyHtml}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
-        <script src="../../translations.js"></script>
-        <script src="../../script.js?v=4.9"></script>
+        <script src="${toRoot}translations.js?v=1.1"></script>
+        <script src="${toRoot}script.js?v=5.0"></script>
     </body>
 </html>
 `;
 }
 
-function buildFeedPreRender(items) {
+function buildFeedPreRender(items, lang) {
+  const meta = LOCALE_META[lang] || LOCALE_META.id;
   const firstPage = items.slice(0, 25);
   if (!firstPage.length) {
-    return '<p class="news-empty" data-i18n="news-empty">Belum ada berita yang dipublikasikan.</p>';
+    return `<p class="news-empty" data-i18n="news-empty">${escapeHtml(meta.emptyText)}</p>`;
   }
+  const siteRoot = lang === 'id' ? '../' : '../../';
   return firstPage
-    .map((item) => {
+    .map((raw) => {
+      const item = localizeArticle(raw, lang);
+      const targetLang = item.lang === lang ? lang : 'id';
+      const href = `${siteRoot}${targetLang === 'id' ? 'news' : `${targetLang}/news`}/${encodeURIComponent(item.slug)}/`;
       const labelClass = item.source === 'ai' ? 'news-label is-ai' : 'news-label';
       const category = item.category || (item.source === 'ai' ? 'AI' : 'News');
-      return `<a class="news-entry" href="./${encodeURIComponent(item.slug)}/" aria-label="${escapeHtml(item.title)}"><div class="news-entry-head"><span class="${labelClass}">${escapeHtml(category)}</span><span class="news-date">${escapeHtml(formatDateId(item.date))}</span></div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt)}</p></a>`;
+      return `<a class="news-entry" href="${escapeHtml(href)}" aria-label="${escapeHtml(item.title)}"><div class="news-entry-head"><span class="${labelClass}">${escapeHtml(category)}</span><span class="news-date">${escapeHtml(formatDate(item.date, lang))}</span></div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt)}</p></a>`;
     })
     .join('\n                        ');
 }
 
+function renderFeedPage(items, lang) {
+  const meta = LOCALE_META[lang] || LOCALE_META.id;
+  const toRoot = lang === 'id' ? '../' : '../../';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.2' : '../../news/news.css?v=3.2';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.4' : '../../news/news.js?v=3.4';
+  const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
+  const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: meta.feedTitle,
+    url: canonicalUrl,
+    inLanguage: meta.inLanguage,
+    description: meta.feedDescription,
+    isPartOf: {
+      '@type': 'WebSite',
+      url: `${SITE_URL}/`,
+    },
+    about: {
+      '@type': 'Person',
+      name: 'Widi Firmansyah',
+      url: `${SITE_URL}/`,
+    },
+  };
+
+  return `<!doctype html>
+<html lang="${meta.htmlLang}"${lang !== 'id' ? ` data-page-lang="${lang}"` : ''} data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>${escapeHtml(meta.feedTitle)}</title>
+
+        <meta name="title" content="${escapeHtml(meta.feedTitle)}" />
+        <meta name="description" content="${escapeHtml(meta.feedDescription)}" />
+        <meta name="author" content="Widi Firmansyah" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+        <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
+${buildHreflangLinks(urlByLang, feedPath('id'))}
+
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Widi Firmansyah Portfolio" />
+        <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
+        <meta property="og:title" content="${escapeHtml(meta.feedTitle)}" />
+        <meta property="og:description" content="${escapeHtml(meta.feedDescription)}" />
+        <meta property="og:image" content="${SITE_URL}/memoji.png" />
+        <meta property="og:image:alt" content="Avatar Widi Firmansyah" />
+        <meta property="og:locale" content="${meta.ogLocale}" />
+${buildOgAlternateLocales(lang, ['id', 'en', 'zh'])}
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="${escapeHtml(canonicalUrl)}" />
+        <meta name="twitter:title" content="${escapeHtml(meta.feedTitle)}" />
+        <meta name="twitter:description" content="${escapeHtml(meta.feedDescription)}" />
+        <meta name="twitter:image" content="${SITE_URL}/memoji.png" />
+
+        <link rel="icon" type="image/png" href="${toRoot}favicon.png" />
+        <link rel="apple-touch-icon" href="${toRoot}memoji.png" />
+
+        <script type="application/ld+json">
+${safeJsonLd(jsonLd)}
+        </script>
+
+${themeBootstrapScript()}
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.0" />
+        <link rel="stylesheet" href="${newsCssHref}" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+
+    <body data-page="news" data-site-root="${toRoot}">
+        <div class="cursor-follower"></div>
+
+        <canvas id="webgl"></canvas>
+
+${navbarHtml(toRoot, './', lang)}
+
+        <main>
+            <section id="news" class="news">
+                <div class="container">
+                    <h2 class="section-title" data-i18n="news-title">NEWS</h2>
+                    <p class="news-subtitle" data-i18n="news-subtitle">
+                        ${escapeHtml(meta.feedSubtitle)}
+                    </p>
+                    <p id="news-preview-badge" class="news-preview-badge" hidden data-i18n="news-preview">
+                        Pratinjau lokal: belum dipublikasikan
+                    </p>
+
+                    <div id="news-feed" class="news-feed">
+                        ${buildFeedPreRender(items, lang)}
+                    </div>
+
+                    <nav id="news-pagination" class="news-pagination" aria-label="Paginasi berita" hidden></nav>
+
+                    <p id="news-updated" class="news-status"></p>
+
+                    <noscript>
+                        <p class="news-empty">
+                            Arsip berita memerlukan JavaScript. Data mentah tersedia di
+                            <a href="${toRoot}news.json">news.json</a>.
+                        </p>
+                    </noscript>
+                </div>
+            </section>
+
+            <footer>
+                <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
+            </footer>
+        </main>
+
+        <div id="detail-modal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content glass-panel" data-lenis-prevent>
+                <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
+                <div class="modal-scroll-area">
+                    <div class="modal-body">
+                        <div id="modal-description" class="modal-description"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="${toRoot}translations.js?v=1.1"></script>
+        <script src="${toRoot}script.js?v=5.0"></script>
+        <script src="${newsJsSrc}"></script>
+    </body>
+</html>
+`;
+}
+
+function sitemapAlternateTags(alternates) {
+  return alternates
+    .map(
+      ({ hreflang, href }) =>
+        `    <xhtml:link rel="alternate" hreflang="${escapeXml(hreflang)}" href="${escapeXml(href)}" />`
+    )
+    .join('\n');
+}
+
 function buildSitemap(items) {
   const latestDate = items[0]?.date || new Date().toISOString().slice(0, 10);
-  const articleUrls = items
-    .map(
-      (item) => `  <url>
-    <loc>${escapeXml(`${SITE_URL}/news/${item.slug}/`)}</loc>
+  const feedAlternates = [
+    { hreflang: 'id', href: `${SITE_URL}/news/` },
+    { hreflang: 'en', href: `${SITE_URL}/en/news/` },
+    { hreflang: 'zh', href: `${SITE_URL}/zh/news/` },
+    { hreflang: 'x-default', href: `${SITE_URL}/news/` },
+  ];
+
+  const feedEntries = ['id', 'en', 'zh'].map(
+    (lang) => `  <url>
+    <loc>${escapeXml(SITE_URL + feedPath(lang))}</loc>
+    <lastmod>${escapeXml(latestDate)}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>${lang === 'id' ? '0.8' : '0.7'}</priority>
+${sitemapAlternateTags(feedAlternates)}
+  </url>`
+  );
+
+  const articleEntries = [];
+  for (const item of items) {
+    const avail = availableArticleLocales(item);
+    const alternates = [
+      ...avail.map((l) => ({ hreflang: l, href: `${SITE_URL}${articlePath(item.slug, l)}` })),
+      { hreflang: 'x-default', href: `${SITE_URL}${articlePath(item.slug, 'id')}` },
+    ];
+    for (const lang of avail) {
+      articleEntries.push(`  <url>
+    <loc>${escapeXml(SITE_URL + articlePath(item.slug, lang))}</loc>
     <lastmod>${escapeXml(item.date || latestDate)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>`
-    )
-    .join('\n');
+${sitemapAlternateTags(alternates)}
+  </url>`);
+    }
+  }
 
-  return `<?xml version="1.0" encoding="UTF-8"?>
+  return {
+    totalUrls: 1 + feedEntries.length + articleEntries.length,
+    xml: `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
@@ -505,15 +781,11 @@ function buildSitemap(items) {
     <xhtml:link rel="alternate" hreflang="zh" href="${SITE_URL}/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />
   </url>
-  <url>
-    <loc>${SITE_URL}/news/</loc>
-    <lastmod>${escapeXml(latestDate)}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-${articleUrls}
+${feedEntries.join('\n')}
+${articleEntries.join('\n')}
 </urlset>
-`;
+`,
+  };
 }
 
 async function copyDirFiltered(src, dest, excludeRel = new Set(), prefix = '') {
@@ -572,41 +844,50 @@ async function main() {
         if (dims) imageDimsMap.set(imgPath, dims);
       }
     }
-    const matches = String(item.body || '').matchAll(/!\[[^\]]*\]\(([^)]+)\)/g);
-    for (const m of matches) {
-      const src = m[1].trim();
-      if (!imageDimsMap.has(src)) {
-        const dims = await readImageDimensions(src);
-        if (dims) imageDimsMap.set(src, dims);
+    const bodies = [item.body, ...Object.values(item.locales || {}).map((l) => l && l.body)];
+    for (const body of bodies) {
+      const matches = String(body || '').matchAll(/!\[[^\]]*\]\(([^)]+)\)/g);
+      for (const m of matches) {
+        const src = m[1].trim();
+        if (!imageDimsMap.has(src)) {
+          const dims = await readImageDimensions(src);
+          if (dims) imageDimsMap.set(src, dims);
+        }
       }
     }
   }
 
-  // Pre-populate /news/index.html feed with static article links for crawlers
-  const newsIndexPath = path.join(OUT_DIR, 'news', 'index.html');
-  let newsIndexHtml = await fs.readFile(newsIndexPath, 'utf8');
-  newsIndexHtml = newsIndexHtml.replace(
-    /<div id="news-feed" class="news-feed">[\s\S]*?<\/div>/,
-    `<div id="news-feed" class="news-feed">\n                        ${buildFeedPreRender(items)}\n                    </div>`
-  );
-  await fs.writeFile(newsIndexPath, newsIndexHtml, 'utf8');
-
-  // Generate /news/<slug>/index.html for each article
-  for (const article of items) {
-    const articleDir = path.join(OUT_DIR, 'news', article.slug);
-    await fs.mkdir(articleDir, { recursive: true });
-    await fs.writeFile(
-      path.join(articleDir, 'index.html'),
-      renderArticlePage(article, imageDimsMap),
-      'utf8'
-    );
+  // Build localized feed pages (/news/, /en/news/, /zh/news/)
+  for (const lang of ['id', 'en', 'zh']) {
+    const feedOut = lang === 'id'
+      ? path.join(OUT_DIR, 'news', 'index.html')
+      : path.join(OUT_DIR, lang, 'news', 'index.html');
+    await fs.mkdir(path.dirname(feedOut), { recursive: true });
+    await fs.writeFile(feedOut, renderFeedPage(items, lang), 'utf8');
   }
 
-  // Generate sitemap.xml in _site/
-  await fs.writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(items), 'utf8');
+  // Build localized article pages (/news/<slug>/, /en/news/<slug>/, /zh/news/<slug>/)
+  let articlePagesCount = 0;
+  for (const article of items) {
+    for (const lang of availableArticleLocales(article)) {
+      const rel = articlePath(article.slug, lang).replace(/^\/+/, '');
+      const articleDir = path.join(OUT_DIR, rel);
+      await fs.mkdir(articleDir, { recursive: true });
+      await fs.writeFile(
+        path.join(articleDir, 'index.html'),
+        renderArticlePage(article, lang, imageDimsMap),
+        'utf8'
+      );
+      articlePagesCount += 1;
+    }
+  }
+
+  // Generate multilingual sitemap.xml in _site/
+  const sitemap = buildSitemap(items);
+  await fs.writeFile(path.join(OUT_DIR, 'sitemap.xml'), sitemap.xml, 'utf8');
 
   console.log(
-    `Built static site in _site/: ${items.length} article page(s), ${items.length + 2} sitemap URL(s).`
+    `Built static site in _site/: ${items.length} article(s), ${articlePagesCount} localized article page(s), ${sitemap.totalUrls} sitemap URL(s).`
   );
 }
 

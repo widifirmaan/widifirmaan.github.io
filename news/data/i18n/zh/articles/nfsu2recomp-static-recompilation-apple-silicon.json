@@ -1,0 +1,17 @@
+{
+  "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
+  "title": "NFSU2Recomp 功能解析：苹果芯片原生极品飞车地下狂飙2",
+  "slug": "nfsu2recomp-static-recompilation-apple-silicon",
+  "date": "2026-11-25",
+  "category": "Open Source",
+  "excerpt": "全面介绍 NFSU2Recomp 在 Apple Silicon Mac 上的核心特性：Metal 原生与 HD 引擎、画面调校、SwiftUI 启动器及隔离 Mod 管理。",
+  "images": [
+    "/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp"
+  ],
+  "badges": [],
+  "body": "**NFSU2Recomp**（`TalhaMudo/NFSU2Recomp`）将 PC 版《极品飞车：地下狂飙 2》静态重编译为面向 Apple Silicon Mac 的原生 ARM64 Metal 应用。运行过程无需 Wine、CrossOver、虚拟机或实时 JIT 翻译：32 位 `SPEED2.EXE` 指令与 Direct3D 9 着色器在构建阶段即转译为原生 C 代码和 Metal Shading Language，启动后直接由苹果芯片原生执行。\n\n![NFSU2Recomp 在 Apple Silicon Mac 上运行极品飞车地下狂飙 2 的夜间赛事实机画面](/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp)\n\n该项目并非仅让老游戏勉强启动，而是围绕玩家体验构建了完整的现代特性集，涵盖双图形引擎切换、宽屏投影修正、SwiftUI 存档管理器、模拟扳机手柄支持与无损隔离 Mod 系统。\n\n## 原生 Metal 性能与低延迟音频调度\n\n在底层，`tools/lifter/reloc2.py` 与 `tools/lifter/lift.py` 从 `SPEED2.EXE` 提取并提升了 `23,278` 个 x86-32 函数至原生 C，并对接手写的 `runtime/` 运行时层，分别接管 Metal 渲染、CoreAudio 音频与 macOS 输入事件。运行期间在栈上动态生成的短小 x86 thunk 由 `runtime/genexec.c` 直接解释执行，而开销较高的 D3DX9 效果路径则由 `runtime/d3dx_hle.c` 提供高层实现，避免拖慢主线程。\n\n在 M1 Pro MacBook `1280x960` 分辨率实测中，比赛帧率稳定在 `119 fps`（受限于 120 Hz 显示刷新率），单帧 CPU 耗时约 `12.6 ms`；即便在 `3024x1964` 全视网膜 `120 fps` 下运行，标准引擎整机 CPU 与 GPU 合计功耗仅约 `6.5 W`，机身温度低于 `70` 摄氏度且风扇保持静音。CoreAudio 的两条 `10 ms` 定时器享有高优先级调度，加载赛道或通过调度中心切换桌面空间时不再断音，同时还修复了长时段游玩的内存增长问题，片头动画、带声效剧情过场、赛前场景与马力机测功图曲线均已正常呈现。\n\n## Original 与 HD 双引擎、宽屏修复及画面选项\n\n玩家可在应用主窗口一键选择保留经典 PC 观感的 **Original** 引擎，或切换至 **HD** 引擎启用 MSAA 抗锯齿（1440 线及以上为 `2x`，以下为 `4x`）、屏幕空间反射（SSR）与光线追踪反射特性（全视网膜分辨率功耗约 `18 W`）。\n\n面向宽屏及 4K 显示器，Hor+ 宽屏投影结合 `NFSRES` 与 `HUDFIX` 修正了界面比例并消除了画面左右边缘物体延迟弹出；雨天暗角滤镜也已铺满整块宽屏区域。从 `v2.5` 起，HD 引擎新增 **Settings > Picture** 标签页，可减弱 PC 版偏色滤镜、启用主机版 Gamma、边缘平滑与画面锐化，并独立开关湿滑路面与后视镜里的天空反射、车灯照射反光与细节增强。日常快捷键 `Cmd-F` 可随时切换窗口与全屏模式，`Cmd+Shift+D` 支持保存画面帧诊断快照。\n\n## SwiftUI 启动器、存档与 XtendedInput 手柄支持\n\n内置 SwiftUI 启动器首次启动时仅需用户自行指向包含无光盘验证 v1.2 `SPEED2.EXE` 的游戏目录（兼容 `4,800,512` 字节美版与 `4,788,224` 字节欧版，程序本身不含游戏资产）。通过 **Saves** 菜单可直接新建生涯存档、保留备份或导入导出 ZIP 存档包；点击 **Make Copy** 则可利用 APFS 克隆打包出一份内含资产的便携式独立应用副本。\n\n外设操控支持键盘、鼠标，以及 Xbox、PlayStation、Nintendo Switch、MFi 和八位堂等 DirectInput 手柄。针对美版 v1.2 可执行文件，**Settings > Controls** 提供 **XtendedInput layout** 开关，依照 `scripts/NFSU_XtendedInput.ini` 配置将 `RT`、`LT` 设为独立线性油门与刹车，并同步完善全菜单按键提示。目前方向盘外设与联机对战暂未支持。\n\n## 隔离 Mod 管理器与启动方式\n\n自 `v2.6` 版本起，启动器集成 **Settings > Mods** 标签页，支持导入 `.zip`、`.7z`、`.rar` 或文件夹格式的 Mod，既可直接替换 `TRACKS`、`GLOBAL`、`CARS` 等资源文件，也兼容附带 `install.end` / `.endlauncher` 的 Binary 与 Binarius 交互式安装脚本。美版用户还可启用内置静态提升版的 **NFSU2 Unlimiter 4.0.0.802** 来加载扩展车辆与改装件包。所有修改均保存在 `~/Library/Application Support/NFSU2/Mods`，原始游戏文件夹保持零改动，通过 **Restore Original Game** 可随时还原。\n\n将 `NFSU2.app` 移至应用程序目录或自行从源码编译后，可执行以下终端命令解除苹果隔离标记并直接指定引擎预设启动：\n\n```bash\nxattr -dr com.apple.quarantine /Applications/NFSU2.app\n./run.sh 1080p\n./run.sh hd\n```\n\n首条 `xattr` 命令用于在首次运行前清除 macOS Gatekeeper 隔离属性，而 `./run.sh 1080p` 与 `./run.sh hd` 则方便从源码构建的开发者直接由终端启动 `1080p` 宽屏模式或 `HD` 引擎。",
+  "url": "https://github.com/TalhaMudo/NFSU2Recomp",
+  "source": "ai",
+  "model": "Gemini 4 Hydrogen",
+  "lang": "zh"
+}

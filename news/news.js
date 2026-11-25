@@ -1,4 +1,4 @@
-// /news renderer — sharded feed: loads manifest + highest chunk first, lazy-loads article body on demand.
+// /news renderer — sharded feed: loads active-locale manifest + latest chunk on demand.
 (() => {
     'use strict';
 
@@ -9,15 +9,14 @@
     const previewBadge = document.getElementById('news-preview-badge');
     const paginationEl = document.getElementById('news-pagination');
 
+    const siteRoot = (document.body && document.body.dataset.siteRoot) || '../';
     const params = new URLSearchParams(window.location.search);
     const previewMode = params.get('preview') === '1';
 
-    const MANIFEST_URL = '../news/data/manifest.json';
-    const CHUNKS_BASE = '../news/data/chunks/';
-    const ARTICLES_BASE = '../news/data/articles/';
-    const LEGACY_FEED_URL = '../news.json';
+    const LEGACY_FEED_URL = siteRoot + 'news.json';
     const LEGACY_PAGE_SIZE = 25;
 
+    const manifestCache = new Map();
     const chunkCache = new Map();
     const articleCache = new Map();
 
@@ -29,13 +28,26 @@
     let lastUpdatedRaw = '';
     let loadedOk = false;
     let activeSlug = '';
+    let activeLoadSeq = 0;
 
     function currentLang() {
+        const declared = document.documentElement.dataset.pageLang;
         try {
-            return localStorage.getItem('lang') || document.documentElement.lang || 'id';
-        } catch (e) {
-            return 'id';
-        }
+            const stored = localStorage.getItem('lang');
+            if (stored && ['id', 'en', 'zh'].includes(stored)) return stored;
+        } catch (e) {}
+        if (declared && ['id', 'en', 'zh'].includes(declared)) return declared;
+        const htmlLang = document.documentElement.lang;
+        return ['id', 'en', 'zh'].includes(htmlLang) ? htmlLang : 'id';
+    }
+
+    function localePaths(lang) {
+        const base = lang === 'id' ? siteRoot + 'news/data/' : siteRoot + 'news/data/i18n/' + lang + '/';
+        return {
+            manifestUrl: base + 'manifest.json',
+            chunksBase: base + 'chunks/',
+            articlesBase: base + 'articles/'
+        };
     }
 
     function t(key) {
@@ -77,20 +89,35 @@
         }
     }
 
-    function normalizeEntry(item, index) {
+    function resolveLocalizedFields(item, lang) {
+        const loc = lang && lang !== 'id' && item.locales && item.locales[lang] ? item.locales[lang] : null;
+        return {
+            title: (loc && loc.title) || item.title || item.slug || '',
+            excerpt: (loc && loc.excerpt) || item.excerpt || '',
+            body: typeof (loc && loc.body) === 'string' && loc.body
+                ? loc.body
+                : (typeof item.body === 'string' ? item.body : ''),
+            lang: item.lang || (loc ? lang : 'id')
+        };
+    }
+
+    function normalizeEntry(item, index, lang) {
+        const active = resolveLocalizedFields(item, lang || currentLang());
         return {
             id: item.id || item.slug || 'news-' + index,
-            title: item.title || item.slug || '',
+            title: active.title,
             slug: item.slug || '',
             date: item.date || '',
             category: item.category || '',
-            excerpt: item.excerpt || '',
+            excerpt: active.excerpt,
             images: Array.isArray(item.images) ? item.images.filter(Boolean) : [],
             badges: Array.isArray(item.badges) ? item.badges.filter(Boolean) : [],
-            body: typeof item.body === 'string' ? item.body : '',
+            body: active.body,
+            locales: item.locales && typeof item.locales === 'object' ? item.locales : undefined,
             url: item.url || '',
             source: item.source || 'manual',
-            model: item.model || ''
+            model: item.model || '',
+            lang: active.lang
         };
     }
 
@@ -173,6 +200,8 @@
 
     async function handleOpenArticle(item) {
         const slug = item.slug;
+        const lang = currentLang();
+        const cacheKey = lang + ':' + slug;
         activeSlug = slug;
 
         if (item.body) {
@@ -180,8 +209,8 @@
             return;
         }
 
-        if (slug && articleCache.has(slug)) {
-            renderModalArticle(articleCache.get(slug));
+        if (slug && articleCache.has(cacheKey)) {
+            renderModalArticle(articleCache.get(cacheKey));
             return;
         }
 
@@ -191,11 +220,12 @@
         });
 
         try {
-            const response = await fetch(ARTICLES_BASE + encodeURIComponent(slug) + '.json');
+            const paths = localePaths(lang);
+            const response = await fetch(paths.articlesBase + encodeURIComponent(slug) + '.json');
             if (!response.ok) throw new Error('HTTP ' + response.status);
             const raw = await response.json();
-            const fullItem = normalizeEntry(raw, 0);
-            articleCache.set(slug, fullItem);
+            const fullItem = normalizeEntry(raw, 0, lang);
+            articleCache.set(cacheKey, fullItem);
             if (activeSlug === slug) {
                 updateOpenModalBody(fullItem);
             }
@@ -209,9 +239,17 @@
         }
     }
 
+    function articleHref(item, lang) {
+        const slug = encodeURIComponent(item.slug);
+        if (lang !== 'id' && item.lang === lang) {
+            return siteRoot + lang + '/news/' + slug + '/';
+        }
+        return siteRoot + 'news/' + slug + '/';
+    }
+
     function createEntry(item) {
+        const lang = currentLang();
         const title = item.title || item.slug;
-        const meta = [formatDate(item.date), item.category].filter(Boolean).join(' · ');
 
         const entry = document.createElement(previewMode ? 'button' : 'a');
         entry.className = 'news-entry';
@@ -219,7 +257,7 @@
             entry.type = 'button';
             entry.dataset.lazy = '1';
         } else {
-            entry.href = './' + encodeURIComponent(item.slug) + '/';
+            entry.href = articleHref(item, lang);
         }
         entry.setAttribute('aria-label', title);
 
@@ -314,14 +352,16 @@
         updatedEl.textContent = label + ': ' + formatDate(lastUpdatedRaw.slice(0, 10));
     }
 
-    async function fetchChunk(chunkIndex) {
+    async function fetchChunk(chunkIndex, lang) {
         const entry = manifest.chunks[chunkIndex];
         if (!entry || !entry.file) return [];
-        if (chunkCache.has(entry.file)) return chunkCache.get(entry.file);
+        const key = lang + ':' + entry.file;
+        if (chunkCache.has(key)) return chunkCache.get(key);
 
+        const paths = localePaths(lang);
         const isLatest = entry.file === manifest.latestChunk || chunkIndex === 0;
         const response = await fetch(
-            CHUNKS_BASE + encodeURIComponent(entry.file),
+            paths.chunksBase + encodeURIComponent(entry.file),
             isLatest ? { cache: 'no-cache' } : undefined
         );
         if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -329,19 +369,20 @@
         const list = Array.isArray(data.items) ? data.items : [];
         const normalized = list
             .filter((item) => item && (item.title || item.slug))
-            .map(normalizeEntry)
+            .map((item, idx) => normalizeEntry(item, idx, lang))
             .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-        chunkCache.set(entry.file, normalized);
+        chunkCache.set(key, normalized);
         return normalized;
     }
 
     async function goToPage(pageIndex) {
         if (pageIndex < 0 || pageIndex >= totalPages) return;
         currentPage = pageIndex;
+        const lang = currentLang();
 
         if (manifest && Array.isArray(manifest.chunks)) {
             try {
-                currentItems = await fetchChunk(pageIndex);
+                currentItems = await fetchChunk(pageIndex, lang);
                 loadedOk = true;
             } catch (e) {
                 currentItems = [];
@@ -349,7 +390,9 @@
             }
         } else {
             const start = pageIndex * LEGACY_PAGE_SIZE;
-            currentItems = legacyItems.slice(start, start + LEGACY_PAGE_SIZE);
+            currentItems = legacyItems.slice(start, start + LEGACY_PAGE_SIZE).map((item, idx) =>
+                normalizeEntry(item, idx, lang)
+            );
         }
 
         render();
@@ -357,7 +400,11 @@
         updateStatus();
     }
 
-    async function load() {
+    async function loadLocale(targetPage) {
+        const seq = ++activeLoadSeq;
+        const lang = currentLang();
+        const page = Number.isInteger(targetPage) ? targetPage : currentPage;
+
         if (previewMode) {
             try {
                 const cached = localStorage.getItem('news_preview');
@@ -370,13 +417,12 @@
                           : [];
                     legacyItems = list
                         .filter((item) => item && (item.title || item.slug))
-                        .map(normalizeEntry)
                         .sort((a, b) => String(b.date).localeCompare(String(a.date)));
                     lastUpdatedRaw = data && data.lastUpdated ? data.lastUpdated : '';
                     loadedOk = true;
                     totalPages = Math.max(1, Math.ceil(legacyItems.length / LEGACY_PAGE_SIZE));
                     if (previewBadge) previewBadge.hidden = false;
-                    await goToPage(0);
+                    await goToPage(Math.min(page, totalPages - 1));
                     return;
                 }
             } catch (e) {}
@@ -385,30 +431,42 @@
         if (previewBadge) previewBadge.hidden = true;
 
         try {
-            const response = await fetch(MANIFEST_URL, { cache: 'no-cache' });
-            if (response.ok) {
-                const parsed = await response.json();
-                if (parsed && Array.isArray(parsed.chunks)) {
-                    manifest = parsed;
-                    lastUpdatedRaw = parsed.lastUpdated || '';
-                    totalPages = parsed.chunks.length;
-                    if (totalPages === 0) {
-                        loadedOk = true;
-                        currentItems = [];
-                        render();
-                        renderPagination();
-                        updateStatus();
-                        return;
+            let parsed = manifestCache.get(lang);
+            if (!parsed) {
+                const paths = localePaths(lang);
+                const response = await fetch(paths.manifestUrl, { cache: 'no-cache' });
+                if (response.ok) {
+                    const json = await response.json();
+                    if (json && Array.isArray(json.chunks)) {
+                        parsed = json;
+                        manifestCache.set(lang, parsed);
                     }
-                    await goToPage(0);
+                }
+            }
+
+            if (seq !== activeLoadSeq) return;
+
+            if (parsed) {
+                manifest = parsed;
+                lastUpdatedRaw = parsed.lastUpdated || '';
+                totalPages = parsed.chunks.length;
+                if (totalPages === 0) {
+                    loadedOk = true;
+                    currentItems = [];
+                    render();
+                    renderPagination();
+                    updateStatus();
                     return;
                 }
+                await goToPage(Math.min(page, totalPages - 1));
+                return;
             }
         } catch (e) {}
 
-        // Fallback to single news.json if manifest is unavailable
+        // Fallback to default i18n root or news.json if localized manifest is unavailable
         try {
             const response = await fetch(LEGACY_FEED_URL, { cache: 'no-cache' });
+            if (seq !== activeLoadSeq) return;
             if (response.ok) {
                 const data = await response.json();
                 const list = Array.isArray(data)
@@ -418,16 +476,17 @@
                       : [];
                 legacyItems = list
                     .filter((item) => item && (item.title || item.slug))
-                    .map(normalizeEntry)
                     .sort((a, b) => String(b.date).localeCompare(String(a.date)));
                 lastUpdatedRaw = data && data.lastUpdated ? data.lastUpdated : '';
                 loadedOk = true;
+                manifest = null;
                 totalPages = Math.max(1, Math.ceil(legacyItems.length / LEGACY_PAGE_SIZE));
-                await goToPage(0);
+                await goToPage(Math.min(page, totalPages - 1));
                 return;
             }
         } catch (e) {}
 
+        if (seq !== activeLoadSeq) return;
         loadedOk = false;
         currentItems = [];
         render();
@@ -438,11 +497,9 @@
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.lang-btn')) return;
         setTimeout(() => {
-            render();
-            renderPagination();
-            updateStatus();
+            loadLocale(currentPage);
         }, 0);
     });
 
-    load();
+    loadLocale(0);
 })();

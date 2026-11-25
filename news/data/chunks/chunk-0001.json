@@ -1,5 +1,6 @@
 {
   "chunk": "chunk-0001.json",
+  "lang": "id",
   "total": 2,
   "items": [
     {
@@ -7,7 +8,7 @@
       "title": "ArtCraft (storytold): Suite 17 Aplikasi Kreatif dan Kantor Berbasis Rust",
       "slug": "artcraft-rust-open-source-suite",
       "date": "2026-11-25",
-      "category": "Tooling",
+      "category": "Open Source",
       "excerpt": "Mengulas ekosistem open-source ArtCraft dari storytold, daftar 17 aplikasi Crafting Apps berbasis Rust, cara instalasi lintas OS, dan perintah build Cargo.",
       "images": [
         "/news/assets/artcraft-open-source-tools-72b72d44.webp"
@@ -15,14 +16,15 @@
       "badges": [],
       "url": "https://getartcraft.com",
       "source": "ai",
-      "model": "Gemini 4 Hydrogen"
+      "model": "Gemini 4 Hydrogen",
+      "lang": "id"
     },
     {
       "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
       "title": "Fitur NFSU2Recomp: Need for Speed Underground 2 Native di Apple Silicon",
       "slug": "nfsu2recomp-static-recompilation-apple-silicon",
       "date": "2026-11-25",
-      "category": "Performance",
+      "category": "Open Source",
       "excerpt": "Mengulas fitur lengkap NFSU2Recomp di Mac Apple Silicon: engine Metal Original dan HD, opsi Picture, launcher SwiftUI, kontroler XtendedInput, hingga manajer mod.",
       "images": [
         "/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp"
@@ -30,7 +32,8 @@
       "badges": [],
       "url": "https://github.com/TalhaMudo/NFSU2Recomp",
       "source": "ai",
-      "model": "Gemini 4 Hydrogen"
+      "model": "Gemini 4 Hydrogen",
+      "lang": "id"
     }
   ]
 }

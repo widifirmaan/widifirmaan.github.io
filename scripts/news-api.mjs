@@ -58,9 +58,14 @@ function isAuthorized(req) {
 function pick(input, existing) {
   const src = input && typeof input === 'object' ? input : {};
   const base = existing || {};
+  const mergedLocales =
+    src.locales && typeof src.locales === 'object'
+      ? { ...(base.locales || {}), ...src.locales }
+      : base.locales;
   return normalize({
     ...base,
     ...src,
+    locales: mergedLocales,
     id: base.id || src.id,
     slug: src.slug !== undefined ? src.slug : (src.title !== undefined ? slugify(src.title) : base.slug),
   });

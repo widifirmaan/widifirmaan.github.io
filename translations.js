@@ -41,6 +41,8 @@ const translations = {
         "news-updated": "Terakhir diperbarui",
         "news-preview": "Pratinjau lokal: belum dipublikasikan",
         "news-ai-note": "Konten ini dibuat dengan bantuan AI.",
+        "news-back": "← Semua Berita",
+        "news-source": "Sumber",
         "footer-copy": "© 2026 WDPORT. Hak cipta dilindungi undang-undang."
     },
     en: {
@@ -85,6 +87,8 @@ const translations = {
         "news-updated": "Last updated",
         "news-preview": "Local preview: not published",
         "news-ai-note": "This content was created with AI assistance.",
+        "news-back": "← All News",
+        "news-source": "Source",
         "footer-copy": "© 2026 WDPORT. All rights reserved."
     },
     zh: {
@@ -129,6 +133,8 @@ const translations = {
         "news-updated": "最后更新",
         "news-preview": "本地预览：尚未发布",
         "news-ai-note": "本内容由 AI 辅助生成。",
+        "news-back": "← 全部新闻",
+        "news-source": "来源",
         "footer-copy": "© 2026 WDPORT。保留所有权利。"
     }
 };

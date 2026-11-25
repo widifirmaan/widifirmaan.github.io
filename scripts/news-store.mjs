@@ -13,6 +13,9 @@ export const MANIFEST_FILE = path.join(DATA_DIR, 'manifest.json');
 
 export const CHUNK_SIZE = 25;
 export const LEGACY_MIRROR_LIMIT = 50;
+export const EXTRA_LOCALES = ['en', 'zh'];
+export const ALL_LOCALES = ['id', ...EXTRA_LOCALES];
+export const I18N_DIR = path.join(DATA_DIR, 'i18n');
 
 export function asString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -22,6 +25,22 @@ export function asStringArray(value) {
   return Array.isArray(value)
     ? value.filter((item) => typeof item === 'string' && item.trim()).map((item) => item.trim())
     : [];
+}
+
+export function normalizeLocales(rawLocales) {
+  const src = rawLocales && typeof rawLocales === 'object' ? rawLocales : {};
+  const out = {};
+  for (const lang of EXTRA_LOCALES) {
+    const entry = src[lang];
+    if (!entry || typeof entry !== 'object') continue;
+    const title = asString(entry.title);
+    const excerpt = asString(entry.excerpt);
+    const body = typeof entry.body === 'string' ? entry.body : '';
+    if (title || excerpt || body.trim()) {
+      out[lang] = { title, excerpt, body };
+    }
+  }
+  return out;
 }
 
 export function slugify(value) {
@@ -48,7 +67,8 @@ export function normalizeArticle(raw = {}) {
   const item = raw && typeof raw === 'object' ? raw : {};
   const title = asString(item.title);
   const slug = safeSlug(asString(item.slug) || title, asString(item.id));
-  return {
+  const locales = normalizeLocales(item.locales);
+  const normalized = {
     id: asString(item.id) || `news-${slug}`,
     title,
     slug,
@@ -58,25 +78,50 @@ export function normalizeArticle(raw = {}) {
     images: asStringArray(item.images),
     badges: asStringArray(item.badges),
     body: typeof item.body === 'string' ? item.body : '',
-    url: asString(item.url),
-    source: asString(item.source) || 'manual',
-    model: asString(item.model),
   };
+  if (Object.keys(locales).length > 0) {
+    normalized.locales = locales;
+  }
+  normalized.url = asString(item.url);
+  normalized.source = asString(item.source) || 'manual';
+  normalized.model = asString(item.model);
+  return normalized;
 }
 
-export function toSummary(item) {
+export function localizeArticle(item, lang = 'id') {
+  const loc = lang && lang !== 'id' && item.locales && item.locales[lang] ? item.locales[lang] : null;
   return {
     id: item.id,
-    title: item.title,
+    title: (loc && loc.title) || item.title,
     slug: item.slug,
     date: item.date,
     category: item.category,
-    excerpt: item.excerpt,
+    excerpt: (loc && loc.excerpt) || item.excerpt,
     images: item.images,
     badges: item.badges,
+    body: (loc && loc.body) || item.body,
     url: item.url,
     source: item.source,
     model: item.model,
+    lang: loc ? lang : 'id',
+  };
+}
+
+export function toSummary(item, lang = 'id') {
+  const localized = localizeArticle(item, lang);
+  return {
+    id: localized.id,
+    title: localized.title,
+    slug: localized.slug,
+    date: localized.date,
+    category: localized.category,
+    excerpt: localized.excerpt,
+    images: localized.images,
+    badges: localized.badges,
+    url: localized.url,
+    source: localized.source,
+    model: localized.model,
+    lang: localized.lang,
   };
 }
 
@@ -171,36 +216,29 @@ export async function readAllArticles() {
   };
 }
 
-export async function writeNewsStore(rawItems) {
-  await fs.mkdir(CHUNKS_DIR, { recursive: true });
-  await fs.mkdir(ARTICLES_DIR, { recursive: true });
-
-  const deduped = new Map();
-  for (const raw of rawItems) {
-    const item = normalizeArticle(raw);
-    if (!item.title && !item.slug) continue;
-    deduped.set(item.slug, item);
-  }
-
-  const itemsDesc = Array.from(deduped.values()).sort(compareDesc);
-  const itemsAsc = itemsDesc.slice().sort(compareAsc);
-  const nowIso = new Date().toISOString();
+async function writeShardedLocale({ baseDir, itemsDesc, itemsAsc, lang, includeFullSource, nowIso }) {
+  const chunksDir = path.join(baseDir, 'chunks');
+  const articlesDir = path.join(baseDir, 'articles');
+  const manifestFile = path.join(baseDir, 'manifest.json');
+  await fs.mkdir(chunksDir, { recursive: true });
+  await fs.mkdir(articlesDir, { recursive: true });
 
   // Write individual article payloads (only changed or new files are rewritten).
   const expectedArticleFiles = new Set();
   for (const item of itemsDesc) {
     const fileName = `${item.slug}.json`;
     expectedArticleFiles.add(fileName);
+    const payload = includeFullSource ? item : localizeArticle(item, lang);
     await writeIfChanged(
-      path.join(ARTICLES_DIR, fileName),
-      JSON.stringify(item, null, 2) + '\n'
+      path.join(articlesDir, fileName),
+      JSON.stringify(payload, null, 2) + '\n'
     );
   }
 
   // Remove orphaned article files.
-  for (const existingFile of await fs.readdir(ARTICLES_DIR)) {
+  for (const existingFile of await fs.readdir(articlesDir)) {
     if (existingFile.endsWith('.json') && !expectedArticleFiles.has(existingFile)) {
-      await fs.unlink(path.join(ARTICLES_DIR, existingFile));
+      await fs.unlink(path.join(articlesDir, existingFile));
     }
   }
 
@@ -214,10 +252,11 @@ export async function writeNewsStore(rawItems) {
     const sliceDesc = itemsAsc.slice(i, i + CHUNK_SIZE).sort(compareDesc);
     const payload = {
       chunk: fileName,
+      lang,
       total: sliceDesc.length,
-      items: sliceDesc.map(toSummary),
+      items: sliceDesc.map((it) => toSummary(it, lang)),
     };
-    await writeIfChanged(path.join(CHUNKS_DIR, fileName), JSON.stringify(payload, null, 2) + '\n');
+    await writeIfChanged(path.join(chunksDir, fileName), JSON.stringify(payload, null, 2) + '\n');
     chunkMeta.push({
       file: fileName,
       count: sliceDesc.length,
@@ -227,9 +266,9 @@ export async function writeNewsStore(rawItems) {
   }
 
   // Remove obsolete extra chunk files if total shrank.
-  for (const existingFile of await fs.readdir(CHUNKS_DIR)) {
+  for (const existingFile of await fs.readdir(chunksDir)) {
     if (existingFile.endsWith('.json') && !expectedChunkFiles.has(existingFile)) {
-      await fs.unlink(path.join(CHUNKS_DIR, existingFile));
+      await fs.unlink(path.join(chunksDir, existingFile));
     }
   }
 
@@ -237,13 +276,48 @@ export async function writeNewsStore(rawItems) {
   const chunksDesc = chunkMeta.slice().reverse();
   const manifest = {
     version: 1,
+    lang,
     lastUpdated: nowIso,
     total: itemsDesc.length,
     pageSize: CHUNK_SIZE,
     latestChunk: chunksDesc[0]?.file || '',
     chunks: chunksDesc,
   };
-  await fs.writeFile(MANIFEST_FILE, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+  await fs.writeFile(manifestFile, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+  return manifest;
+}
+
+export async function writeNewsStore(rawItems) {
+  const deduped = new Map();
+  for (const raw of rawItems) {
+    const item = normalizeArticle(raw);
+    if (!item.title && !item.slug) continue;
+    deduped.set(item.slug, item);
+  }
+
+  const itemsDesc = Array.from(deduped.values()).sort(compareDesc);
+  const itemsAsc = itemsDesc.slice().sort(compareAsc);
+  const nowIso = new Date().toISOString();
+
+  const manifest = await writeShardedLocale({
+    baseDir: DATA_DIR,
+    itemsDesc,
+    itemsAsc,
+    lang: 'id',
+    includeFullSource: true,
+    nowIso,
+  });
+
+  for (const lang of EXTRA_LOCALES) {
+    await writeShardedLocale({
+      baseDir: path.join(I18N_DIR, lang),
+      itemsDesc,
+      itemsAsc,
+      lang,
+      includeFullSource: false,
+      nowIso,
+    });
+  }
 
   // Keep legacy news.json capped at the latest N full items for audit CMS & <noscript>.
   const recent = itemsDesc.slice(0, LEGACY_MIRROR_LIMIT);
@@ -259,7 +333,7 @@ export async function writeNewsStore(rawItems) {
     lastUpdated: nowIso,
     total: itemsDesc.length,
     latestChunk: manifest.latestChunk,
-    chunks: chunksDesc.length,
+    chunks: manifest.chunks.length,
   };
 }
 

@@ -51,7 +51,8 @@ const CATEGORIES = [
   'Security',
   'Performance',
   'Tooling',
-  'AI'
+  'AI',
+  'Open Source'
 ];
 
 function readConfig() {
@@ -126,30 +127,29 @@ function buildUserPrompt(config, today) {
     'choose a concrete, evergreen problem that developers actually search for (debugging, architecture, performance, security, tooling, or testing)';
   const category = config.category || `choose one of: ${CATEGORIES.join(', ')}`;
 
-  return `Write ${config.count} original coding article(s) in ${LANGUAGES[config.language]}.
+  return `Write ${config.count} original coding article(s) in ${LANGUAGES[config.language]}, plus natural transcreated editions for English ("en") and Simplified Chinese ("zh").
 
 Topic: ${topic}
 Category: ${category}
 Publication date: ${today}
 
-Editorial rules:
-- 500-900 words of Markdown per article.
-- Open with one paragraph that states the problem; do not restate the title.
-- Use at least three "## " sections.
-- Include at least one fenced code block with a language tag and explain it.
-- Use concrete examples. No filler, no generic motivation, no listicles without substance.
-- No emoji. No em dash character. No "--" used as punctuation.
+Editorial and SEO rules:
+- 500-900 words of Markdown per article for id and en (matching complete Chinese article for zh).
+- Open with one paragraph that states the problem or practical payoff; do not restate the title.
+- Use 3 to 5 descriptive "## " sections with flowing paragraphs; avoid stiff "- **Label:** ..." bold list templates.
+- Include at least one minimal fenced code block with a language tag and explain it concisely below the block.
+- No filler, no generic motivation, no listicles without substance.
+- No emoji. No em dash character. No "--" used as sentence punctuation outside code blocks.
 - Do not fabricate personal experience, employers, clients, metrics, or benchmark numbers.
-- No HTML, no external links, no tables with more than 4 columns.
-- Title: max 80 characters, specific, no clickbait, no numbering prefix.
-- Excerpt: 120-200 characters describing the payoff and acting as meta description.
+- No HTML, no third-party blog links if official primary source applies.
+- Title: max 80 characters for id/en (18-45 Han characters for zh), specific, no clickbait, no numbering prefix.
+- Excerpt (meta description): 120-200 characters for id/en (60-110 chars for zh).
 - Slug: kebab-case English, max 60 characters, derived from the title.
 - Category must be one of: ${CATEGORIES.join(', ')}.
-- Use natural SEO keywords in title/excerpt/body; never keyword stuffing.
-- If any image is referenced, use a descriptive kebab-case filename and assume watermark is applied before publish.
+- Transcreation rule: keep project names, CLI flags, code identifiers, version numbers, and verified metrics consistent while making phrasing natural in each language.
 
 Return ONLY valid JSON without prose or code fences:
-{"articles":[{"title":"...","slug":"...","category":"...","excerpt":"...","body":"markdown"}]}`;
+{"articles":[{"title":"...","slug":"...","category":"...","excerpt":"...","body":"markdown","locales":{"en":{"title":"...","excerpt":"...","body":"markdown"},"zh":{"title":"...","excerpt":"...","body":"markdown"}}}]}`;
 }
 
 async function requestWithRetry(url, options, attempts = 3) {
@@ -295,6 +295,19 @@ function normalizeArticle(raw, config, today, index, usedSlugs) {
   const category = String(config.category || raw.category || 'Coding').trim().slice(0, 40);
   const excerpt = cleanExcerpt(raw.excerpt, body);
 
+  const rawLocales = raw.locales && typeof raw.locales === 'object' ? raw.locales : {};
+  const locales = {};
+  for (const lang of ['en', 'zh']) {
+    const loc = rawLocales[lang];
+    if (loc && typeof loc === 'object' && String(loc.body || '').trim().length >= 300) {
+      locales[lang] = {
+        title: String(loc.title || title).replace(/\s+/g, ' ').trim().slice(0, 90),
+        excerpt: cleanExcerpt(loc.excerpt, loc.body),
+        body: String(loc.body || '').trim(),
+      };
+    }
+  }
+
   return {
     id: `ai-${today.replace(/-/g, '')}-${candidate}`,
     title: title.slice(0, 90),
@@ -305,6 +318,7 @@ function normalizeArticle(raw, config, today, index, usedSlugs) {
     images: [],
     badges: [],
     body,
+    ...(Object.keys(locales).length ? { locales } : {}),
     url: '',
     source: 'ai',
     model: config.model

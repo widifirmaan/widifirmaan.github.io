@@ -1,0 +1,39 @@
+{
+  "chunk": "chunk-0001.json",
+  "lang": "en",
+  "total": 2,
+  "items": [
+    {
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft (storytold): 17 Rust Native Creative and Office Apps",
+      "slug": "artcraft-rust-open-source-suite",
+      "date": "2026-11-25",
+      "category": "Open Source",
+      "excerpt": "Explore storytold ArtCraft and its 17 open-source Crafting Apps built in native Rust, cross-platform installers, Flatpak OCI packages, and Cargo build steps.",
+      "images": [
+        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
+      ],
+      "badges": [],
+      "url": "https://getartcraft.com",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen",
+      "lang": "en"
+    },
+    {
+      "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
+      "title": "NFSU2Recomp Features: Native Need for Speed Underground 2 on Mac",
+      "slug": "nfsu2recomp-static-recompilation-apple-silicon",
+      "date": "2026-11-25",
+      "category": "Open Source",
+      "excerpt": "Overview of NFSU2Recomp features on Apple Silicon: native Metal and HD engines, Picture options, SwiftUI launcher, XtendedInput controls, and mod isolation.",
+      "images": [
+        "/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp"
+      ],
+      "badges": [],
+      "url": "https://github.com/TalhaMudo/NFSU2Recomp",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen",
+      "lang": "en"
+    }
+  ]
+}

@@ -1,50 +1,78 @@
 # News Rules
 
-Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau mempublikasikan artikel di folder/news feed proyek ini.
+Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerjemahkan, mengedit, atau mempublikasikan artikel pada feed dan halaman berita di proyek ini.
 
-## Gaya Penulisan
+## Gaya Penulisan (Article Writing Style)
 
-- Gunakan bahasa jurnalistik: jelas, faktual, dinamis, aktif, dan terverifikasi.
-- Lakukan riset langsung ke sumber primer sebelum menulis (situs resmi proyek, repositori GitHub/README, katalog aplikasi, halaman rilis, dan panduan instalasi resmi). Dilarang menyimpulkan sesuatu tanpa riset.
-- Tautan referensi pihak ketiga yang diberikan sebagai konteks riset tidak perlu disertakan di isi artikel maupun `url` jika sumber resmi primer tersedia.
-- Hindari format daftar berlabel bold kaku (`- **Label:** ...`); utamakan paragraf mengalir atau daftar kalimat alami yang substansial.
+- Gunakan bahasa jurnalistik: jelas, faktual, dinamis, aktif, dan langsung pada poin inti.
+- Lakukan riset langsung ke sumber primer sebelum menulis (situs resmi proyek, repositori GitHub, README, dokumentasi, serta catatan rilis resmi). Dilarang menyimpulkan sesuatu tanpa bukti riset.
+- Tautan referensi pihak ketiga yang dipakai hanya sebagai konteks riset tidak perlu dimasukkan ke isi artikel maupun field `url` apabila sumber primer resmi tersedia.
+- Paragraf pembuka (`lead`) harus langsung menyatakan masalah, kemampuan inti, atau nilai praktis proyek tanpa mengulang redaksi judul.
+- Gunakan 3 sampai 5 subjudul `##` yang deskriptif dan spesifik per topik, disusun dengan paragraf mengalir atau daftar kalimat bernas.
+- Hindari format daftar berlabel bold kaku (`- **Label:** keterangan...`) dan hindari filler generik ("Di era digital...", "Penting untuk dicatat...", "Kesimpulannya...").
+- Sertakan minimal 1 fenced code block dengan language tag yang sesuai; kode harus minimal, benar, relevan dengan pembahasan, dan dijelaskan secara singkat di bawah blok kode.
 - Dilarang menggunakan emoji.
-- Dilarang pola tanda hubung panjang khas AI (`—`, `--` sebagai pengganti kalimat). Gunakan koma, titik, atau pisahkan kalimat.
-- Dilarang filler generik: "Di era digital...", "Penting untuk dicatat...", "Kesimpulannya..." tanpa isi konkret.
-- Dilarang klaim palsu: pengalaman pribadi, klien, employer, metrik, benchmark, kutipan, atau "sudah diuji" jika tidak ada bukti.
-- Jangan menulis "sebagai AI" atau menyebut prompt internal.
-- Judul spesifik, maksimal 80 karakter, tanpa clickbait/no numbering.
-- Excerpt 120-200 karakter, menjelaskan manfaat nyata.
-- Body 500-900 kata Markdown, minimal 3 subjudul `##`, minimal 1 fenced code block dengan language tag.
-- Kode harus minimal, benar, dan relevan. Jelaskan kode.
+- Dilarang pola tanda hubung panjang (`—`) maupun `--` sebagai tanda baca jeda di dalam teks prosa (tanda `--` hanya sah di dalam code block atau inline command CLI). Gunakan koma, titik, atau pisahkan menjadi dua kalimat.
+- Dilarang mengarang pengalaman pribadi, nama klien, pemberi kerja, kutipan, metrik, atau hasil uji tanpa sumber terverifikasi. Jangan menulis "sebagai AI" atau menyinggung prompt internal.
+- Terapkan **transcreation**, bukan terjemahan kaku kata demi kata: versi `id`, `en`, dan `zh` wajib memakai alur kalimat alami di masing-masing bahasa, sementara nama proyek, perintah CLI, path file, simbol kode, angka benchmark, dan versi rilis harus konsisten di semua bahasa.
 
-## SEO dan Kategori
+## Aturan Translasi dan Performa Web
 
-- `category` wajib diisi dan hanya boleh salah satu: `Backend`, `Frontend`, `DevOps`, `Database`, `Security`, `Performance`, `Tooling`, `AI`.
-- `title` harus memuat topik utama secara alami; hindari clickbait, hindari judul duplikat.
-- `excerpt` berfungsi sebagai meta description: 120-200 karakter, ringkas, menjelaskan manfaat/hasil yang didapat pembaca.
-- `slug` wajib kebab-case Inggris, pendek, deskriptif, unik, dan stabil (jangan diubah setelah dipublikasikan kecuali ada redirect/keputusan eksplisit).
-- `date` wajib format `YYYY-MM-DD` dan mencerminkan tanggal publikasi/update yang valid.
-- `url` opsional untuk sumber eksternal; jika diisi harus `https://` valid dan relevan.
-- Gambar di `images[]` harus punya konteks di artikel; gunakan nama file deskriptif kebab-case sebelum upload/watermark.
-- Jangan keyword stuffing. Gunakan istilah teknis yang memang dibahas di body.
-- Jika artikel punya halaman statis tersendiri di masa depan, halaman itu wajib punya canonical, meta title/description, Open Graph/Twitter card, dan structured data `Article`/`TechArticle`.
-- Halaman statis `/news/<slug>/index.html` dan `sitemap.xml` untuk deploy dibangun otomatis saat deploy oleh `node scripts/build-pages.mjs` lewat `.github/workflows/deploy-pages.yml` (ke folder `_site/` yang tidak di-commit ke Git). Feed `/news/` tetap ada di sitemap.
+- Bahasa yang didukung: `id` (Bahasa Indonesia sebagai default utama), `en` (English), dan `zh` (Simplified Chinese).
+- Setiap artikel baru maupun pembaruan besar wajib menyertakan ketiga bahasa (`id` pada root artikel, serta `en` dan `zh` pada `locales`).
+- **Pemisahan ketat dari translator global (`translations.js`)**: dilarang menggabungkan judul, ringkasan (`excerpt`), atau isi artikel (`body`) ke `translations.js`. File `translations.js` khusus menampung label UI antarmuka (navbar, hero/about homepage, label tombol/status halaman berita, dan footer) agar halaman utama tidak ikut lambat.
+- **Lazy-load per bahasa untuk feed dinamis**:
+  - Data utama `id` disimpan terpecah pada `news/data/manifest.json` dan `news/data/chunks/chunk-XXXX.json` (hanya ringkasan tanpa `body`).
+  - Bahasa tambahan (`en`, `zh`) disimpan terpisah pada `news/data/i18n/<lang>/manifest.json`, `news/data/i18n/<lang>/chunks/chunk-XXXX.json`, dan `news/data/i18n/<lang>/articles/<slug>.json`.
+  - Pengunjung hanya mengunduh chunk bahasa yang sedang aktif; saat mengganti bahasa di `/news/`, hanya chunk bahasa tujuan yang diambil secara lazy.
+- Pada halaman artikel statis, tombol bahasa (`ID` / `EN` / `中`) mengarahkan browser ke halaman statis khusus bahasa tersebut sehingga tiap halaman HTML hanya membawa 1 bahasa aktif dengan ukuran muat minimum.
+
+## SEO Multibahasa dan Kategori
+
+- `category` wajib diisi dan hanya boleh salah satu dari: `Backend`, `Frontend`, `DevOps`, `Database`, `Security`, `Performance`, `Tooling`, `AI`, `Open Source`.
+- Struktur URL kanonik per bahasa bersifat tetap:
+  - Bahasa Indonesia (`id`, sekaligus `x-default`): `/news/` dan `/news/<slug>/`
+  - Bahasa Inggris (`en`): `/en/news/` dan `/en/news/<slug>/`
+  - Bahasa Mandarin Sederhana (`zh`): `/zh/news/` dan `/zh/news/<slug>/`
+- `slug` wajib kebab-case Inggris ASCII, pendek, deskriptif, unik, dan stabil di semua versi bahasa (jangan ubah slug setelah terbit kecuali dengan keputusan redirect eksplisit).
+- Panjang `title` (spesifik, memuat topik utama secara alami, tanpa clickbait atau penomoran): `id` dan `en` maksimal 80 karakter; `zh` disarankan 18 sampai 45 karakter.
+- Panjang `excerpt` (meta description yang menjelaskan manfaat nyata): `id` dan `en` 120 sampai 200 karakter; `zh` 60 sampai 110 karakter.
+- Panjang `body`: `id` dan `en` 500 sampai 900 kata Markdown; `zh` sepadan secara substansi (sekitar 800 sampai 2200 karakter Han dengan kelengkapan bagian yang sama).
+- `date` wajib berformat `YYYY-MM-DD`; `url` bersifat opsional dengan format `https://` menuju sumber resmi primer.
+- Dilarang keyword stuffing; gunakan istilah teknis yang benar-benar dibahas di dalam isi artikel.
+- Setiap halaman HTML statis per bahasa yang dihasilkan `node scripts/build-pages.mjs` (ke `_site/` via `.github/workflows/deploy-pages.yml`) wajib memiliki:
+  - `<html lang="id|en|zh">` dan metadata `<title>` / `<meta name="description">` sesuai bahasa halaman.
+  - Self-referencing `<link rel="canonical">`.
+  - Tag `<link rel="alternate" hreflang="id|en|zh|x-default">` dua arah hanya untuk bahasa yang tersedia pada URL tersebut.
+  - Tag Open Graph (`og:locale`, `og:locale:alternate`, `og:image`), Twitter Card, serta JSON-LD `TechArticle` (atau `CollectionPage`) dengan `inLanguage` sesuai bahasa halaman.
+  - `sitemap.xml` dengan daftar `<xhtml:link rel="alternate" hreflang="...">` untuk setiap URL terindeks.
 
 ## Struktur Data Artikel
 
 ```json
 {
   "id": "news-<slug>",
-  "title": "...",
+  "title": "Judul Bahasa Indonesia",
   "slug": "kebab-case",
   "date": "YYYY-MM-DD",
-  "category": "Backend|Frontend|DevOps|Database|Security|Performance|Tooling|AI",
-  "excerpt": "...",
-  "images": ["/news/assets/file.png"],
+  "category": "Backend|Frontend|DevOps|Database|Security|Performance|Tooling|AI|Open Source",
+  "excerpt": "Ringkasan meta description Bahasa Indonesia",
+  "images": ["/news/assets/file.webp"],
   "badges": [],
-  "body": "Markdown",
-  "url": "",
+  "body": "Markdown Bahasa Indonesia",
+  "locales": {
+    "en": {
+      "title": "English Title",
+      "excerpt": "English meta description summary.",
+      "body": "English Markdown body"
+    },
+    "zh": {
+      "title": "简体中文标题",
+      "excerpt": "简体中文摘要描述。",
+      "body": "简体中文 Markdown 正文"
+    }
+  },
+  "url": "https://...",
   "source": "ai|manual",
   "model": "nama-model-jika-ai"
 }
@@ -52,29 +80,30 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 
 ## Media dan Watermark
 
-- **Search image, don't create**: cari dan gunakan gambar, foto, atau screenshot asli dari sumber resmi yang izinnya jelas (press kit resmi, repositori resmi, dokumentasi proyek, atau lisensi terbuka). Dilarang men-generate gambar AI baru atau membuat ilustrasi/kolase buatan.
-- Gambar/video artikel disimpan di `news/assets/` di repo (disarankan format WebP agar ringan), lalu di-commit/push agar ter-host di GitHub.
-- Semua gambar artikel wajib diberi watermark sebelum publish.
-- Gunakan watermark standar: `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut).
-- Terapkan watermark: `node scripts/apply-watermark.mjs <input> [output]`.
-- Jangan mengunggah gambar tanpa watermark, gambar hasil generate AI, gambar hak cipta tidak jelas, atau screenshot sensitif.
+- **Search image, don't create**: cari dan gunakan gambar, foto, atau screenshot asli dari sumber resmi yang izinnya jelas (repositori resmi, dokumentasi resmi, rilis proyek, atau press kit). Dilarang men-generate gambar AI baru atau membuat ilustrasi/kolase buatan.
+- Gambar atau video artikel disimpan di `news/assets/` di repo (disarankan format WebP) dengan nama file kebab-case yang deskriptif.
+- Semua gambar artikel wajib diberi watermark standar `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut) melalui `node scripts/apply-watermark.mjs <input> [output]`.
+- Dilarang mengunggah gambar tanpa watermark, gambar hasil generate AI, gambar dengan overlay UI pihak ketiga (seperti player YouTube/watermark situs lain), atau screenshot sensitif.
 
 ## API Lokal dan Penyimpanan Sharded
 
 - CRUD artikel: `node scripts/news-api.mjs` (`GET/POST/PUT/DELETE /api/articles`).
-- Upload media base64: `POST /api/media` menyimpan ke `news/assets/` dan mengembalikan path repo.
-- Penyimpanan publik memakai skema sharded di `news/data/` (`manifest.json`, `chunks/chunk-XXXX.json` berisi ringkasan tanpa `body` dengan nomor tertinggi sebagai terbaru, dan `articles/<slug>.json` berisi artikel lengkap untuk lazy load), sementara `news.json` menyimpan cerminan maksimal 50 artikel terbaru untuk kompatibilitas CMS lokal dan fallback.
-- Jalankan `node scripts/news-store.mjs --rebuild` bila perlu menyinkronkan ulang `news/data/` dari `news.json`.
-- Setelah upload media dan update feed (`news.json` + `news/data/`), commit dan push file terkait ke GitHub.
+- Upload media base64: `POST /api/media` menyimpan file ke `news/assets/` dan mengembalikan path repo.
+- Penyimpanan publik memakai skema sharded yang dikelola `scripts/news-store.mjs`:
+  - `news/data/manifest.json`, `news/data/chunks/chunk-XXXX.json`, dan `news/data/articles/<slug>.json` untuk bahasa default (`id`).
+  - `news/data/i18n/<lang>/manifest.json`, `news/data/i18n/<lang>/chunks/chunk-XXXX.json`, dan `news/data/i18n/<lang>/articles/<slug>.json` untuk tiap bahasa tambahan (`en`, `zh`).
+  - `news.json` menyimpan cerminan maksimal 50 artikel terbaru (tanpa membengkakkan chunk per halaman publik).
+- Jalankan `node scripts/news-store.mjs --rebuild` bila perlu membangun ulang seluruh indeks sharded dan file i18n.
+- Setelah upload media dan update feed, jalankan `node scripts/build-pages.mjs` untuk memverifikasi build statis di `_site/`, lalu commit dan push file sumber berita (`news.json`, `news/data/`, `news/assets/`, dan skrip terkait; jangan commit `_site/` atau `news/audit/`).
 
 ## Checklist Sebelum Publish
 
-- [ ] Tidak ada emoji.
-- [ ] Tidak ada em dash / pola tanda hubung khas AI.
-- [ ] Bahasa jurnalistik, dinamis, faktual, hasil riset sumber primer tanpa asumsi.
-- [ ] Tidak menyertakan referensi blog pihak ketiga jika sumber resmi primer tersedia.
-- [ ] Slug unik, tanggal valid, kategori valid.
-- [ ] Title/excerpt memenuhi aturan SEO, tidak clickbait, tidak keyword stuffing.
-- [ ] `sitemap.xml` diperbarui jika ada halaman publik baru/perubahan URL yang dapat diindeks.
-- [ ] Gambar berasal dari pencarian sumber resmi/berizin jelas (bukan hasil generate/create) dan memiliki 1 watermark `widifirmaan.web.id` transparan di tengah gambar.
+- [ ] Tersedia versi `id`, `en`, dan `zh` yang alami (transcreation, bukan terjemahan kaku), dan isi artikel tidak dicampur ke `translations.js`.
+- [ ] Tidak ada emoji, tidak ada em dash (`—`), dan tidak ada pola `--` di luar code block.
+- [ ] Bahasa jurnalistik, dinamis, faktual, hasil riset sumber primer tanpa mengarang klaim.
+- [ ] Tidak menyertakan tautan blog pihak ketiga jika sumber resmi primer tersedia.
+- [ ] Slug kebab-case Inggris konsisten, tanggal valid (`YYYY-MM-DD`), kategori masuk daftar resmi (`Open Source`, `Tooling`, dll.).
+- [ ] Judul dan excerpt memenuhi batas karakter SEO untuk setiap bahasa tanpa clickbait atau keyword stuffing.
+- [ ] Gambar berasal dari pencarian sumber resmi/terverifikasi (bukan hasil generate/create) dan memakai 1 watermark `widifirmaan.web.id` transparan di tengah.
+- [ ] `node scripts/build-pages.mjs` menghasilkan halaman `id`, `en`, `zh`, tag `canonical` + `hreflang`, dan `sitemap.xml` tanpa error.
 - [ ] `source` dan `model` terisi untuk konten AI.

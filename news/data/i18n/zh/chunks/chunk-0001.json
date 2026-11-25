@@ -1,0 +1,39 @@
+{
+  "chunk": "chunk-0001.json",
+  "lang": "zh",
+  "total": 2,
+  "items": [
+    {
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft（storytold）：基于 Rust 的 17 款开源创意与办公套件",
+      "slug": "artcraft-rust-open-source-suite",
+      "date": "2026-11-25",
+      "category": "Open Source",
+      "excerpt": "解析 storytold 开源项目 ArtCraft：17 款纯 Rust 原生 Crafting Apps、全平台安装包及 Cargo 编译指南。",
+      "images": [
+        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
+      ],
+      "badges": [],
+      "url": "https://getartcraft.com",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen",
+      "lang": "zh"
+    },
+    {
+      "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
+      "title": "NFSU2Recomp 功能解析：苹果芯片原生极品飞车地下狂飙2",
+      "slug": "nfsu2recomp-static-recompilation-apple-silicon",
+      "date": "2026-11-25",
+      "category": "Open Source",
+      "excerpt": "全面介绍 NFSU2Recomp 在 Apple Silicon Mac 上的核心特性：Metal 原生与 HD 引擎、画面调校、SwiftUI 启动器及隔离 Mod 管理。",
+      "images": [
+        "/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp"
+      ],
+      "badges": [],
+      "url": "https://github.com/TalhaMudo/NFSU2Recomp",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen",
+      "lang": "zh"
+    }
+  ]
+}
