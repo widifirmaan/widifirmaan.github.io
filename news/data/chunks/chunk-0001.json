@@ -1,0 +1,21 @@
+{
+  "chunk": "chunk-0001.json",
+  "total": 1,
+  "items": [
+    {
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft: Alternatif Open-Source Berbasis Rust untuk Adobe dan Microsoft",
+      "slug": "artcraft-rust-open-source-suite",
+      "date": "2026-11-25",
+      "category": "Tooling",
+      "excerpt": "Mengenal ekosistem ArtCraft berbasis Rust sebagai alternatif open-source aplikasi Adobe dan Microsoft Office, lengkap dengan arsitektur dan cara mencobanya.",
+      "images": [
+        "/news/assets/artcraft-rust-suite-14873dbe.webp"
+      ],
+      "badges": [],
+      "url": "https://winpoin.com/artcraft-kumpulan-aplikasi-open-source-berbasis-rust-yang-ingin-menantang-adobe-dan-microsoft/",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen"
+    }
+  ]
+}

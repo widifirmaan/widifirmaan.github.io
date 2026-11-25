@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-11-25T05:34:06.302Z",
+  "total": 1,
+  "pageSize": 25,
+  "latestChunk": "chunk-0001.json",
+  "chunks": [
+    {
+      "file": "chunk-0001.json",
+      "count": 1,
+      "newestDate": "2026-11-25",
+      "oldestDate": "2026-11-25"
+    }
+  ]
+}
