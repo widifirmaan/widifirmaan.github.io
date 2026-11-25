@@ -19,13 +19,13 @@
     },
     {
       "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
-      "title": "NFSU2Recomp: Rekompilasi Statis Need for Speed Underground 2 di Apple Silicon",
+      "title": "Fitur NFSU2Recomp: Need for Speed Underground 2 Native di Apple Silicon",
       "slug": "nfsu2recomp-static-recompilation-apple-silicon",
       "date": "2026-11-25",
       "category": "Performance",
-      "excerpt": "Mengenal NFSU2Recomp, proyek rekompilasi statis x86 ke ARM64 dan Direct3D 9 ke Metal agar Need for Speed Underground 2 berjalan native di Mac Apple Silicon.",
+      "excerpt": "Mengulas fitur lengkap NFSU2Recomp di Mac Apple Silicon: engine Metal Original dan HD, opsi Picture, launcher SwiftUI, kontroler XtendedInput, hingga manajer mod.",
       "images": [
-        "/news/assets/nfsu2recomp-github-repo-d4a25fe4.webp"
+        "/news/assets/nfsu2-underground-2-gameplay-9db807bd.webp"
       ],
       "badges": [],
       "url": "https://github.com/TalhaMudo/NFSU2Recomp",
