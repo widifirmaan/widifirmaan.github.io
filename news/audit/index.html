@@ -35,7 +35,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="stylesheet" href="../../style.css?v=4.8" />
-        <link rel="stylesheet" href="audit.css?v=1.0" />
+        <link rel="stylesheet" href="audit.css?v=2.1" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -88,216 +88,148 @@
                         <p class="audit-kicker">/news/audit</p>
                         <h1 class="section-title">NEWS CMS</h1>
                         <p class="audit-sub">
-                            Kelola feed <code>/news</code>. Editor menyimpan draft di browser,
-                            audit konten menandai masalah sebelum terbit, dan publish menulis
-                            <code>news.json</code> langsung ke repositori GitHub.
+                            Kelola draft dan artikel terbit di <code>news.json</code>. Export/import
+                            untuk backup manual, atau generate lewat AI workflow.
                         </p>
-                    </div>
-                    <div class="audit-stats">
-                        <div class="stat">
-                            <strong id="stat-total">0</strong>
-                            <span>item</span>
-                        </div>
-                        <div class="stat">
-                            <strong id="stat-errors">0</strong>
-                            <span>error</span>
-                        </div>
-                        <div class="stat">
-                            <strong id="stat-warnings">0</strong>
-                            <span>warning</span>
-                        </div>
                     </div>
                 </header>
 
-                <div class="audit-grid">
-                    <aside class="glass-panel audit-sidebar">
-                        <div class="audit-toolbar">
-                            <input
-                                id="search"
-                                class="audit-input"
-                                type="search"
-                                placeholder="Cari judul, slug, kategori..."
-                                aria-label="Cari item"
-                            />
+                <section class="glass-panel audit-card">
+                    <div class="audit-card-head">
+                        <div>
+                            <h2>Daftar Artikel</h2>
+                            <p class="hint">Draft dan published ditampilkan bersama. Klik item untuk edit.</p>
+                        </div>
+                        <div class="audit-card-head-actions">
                             <button id="btn-new" class="audit-btn primary" type="button">Baru</button>
                         </div>
+                    </div>
+
+                    <div class="audit-toolbar">
+                        <input
+                            id="search"
+                            class="audit-input"
+                            type="search"
+                            placeholder="Cari judul, slug, kategori..."
+                            aria-label="Cari item"
+                        />
                         <select id="filter-status" class="audit-input" aria-label="Filter status">
                             <option value="all">Semua status</option>
-                            <option value="new">Baru</option>
+                            <option value="new">Draft</option>
                             <option value="modified">Diubah</option>
                             <option value="published">Terbit</option>
                         </select>
-                        <div id="item-list" class="audit-list" data-lenis-prevent></div>
-                        <div class="audit-sidebar-foot">
-                            <span id="draft-note">Draft lokal</span>
-                            <button id="btn-reset" class="audit-link" type="button">Reset</button>
+                    </div>
+
+                    <div id="item-list" class="audit-list" data-lenis-prevent></div>
+                    <div class="audit-sidebar-foot">
+                        <span id="draft-note">Draft lokal</span>
+                        <button id="btn-reset" class="audit-link" type="button">Reset</button>
+                    </div>
+
+                    <div id="editor-empty" class="audit-empty">
+                        <p>Pilih item atau buat artikel baru.</p>
+                    </div>
+
+                    <form id="editor-form" hidden novalidate>
+                        <div class="editor-head">
+                            <h2>Editor</h2>
+                            <span id="editor-status" class="editor-status"></span>
                         </div>
-                    </aside>
 
-                    <section class="glass-panel audit-editor">
-                        <div id="editor-empty" class="audit-empty">
-                            <p>Pilih item di samping atau buat item baru.</p>
-                            <p class="hint">
-                                Isi minimal: judul, slug, tanggal, dan salah satu dari ringkasan
-                                atau isi markdown.
-                            </p>
-                        </div>
-
-                        <form id="editor-form" hidden novalidate>
-                            <div class="editor-head">
-                                <h2>Editor</h2>
-                                <span id="editor-status" class="editor-status"></span>
-                            </div>
-
-                            <div class="field-grid">
-                                <label class="field field-wide">
-                                    <span>Judul</span>
-                                    <input id="f-title" class="audit-input" maxlength="120" />
-                                </label>
-                                <label class="field field-wide">
-                                    <span>Slug</span>
-                                    <input id="f-slug" class="audit-input" maxlength="90" />
-                                </label>
-                                <label class="field">
-                                    <span>Tanggal</span>
-                                    <input id="f-date" class="audit-input" type="date" />
-                                </label>
-                                <label class="field">
-                                    <span>Kategori</span>
-                                    <input
-                                        id="f-category"
-                                        class="audit-input"
-                                        list="category-list"
-                                        maxlength="40"
-                                    />
-                                </label>
-                                <datalist id="category-list">
-                                    <option value="Backend"></option>
-                                    <option value="Frontend"></option>
-                                    <option value="DevOps"></option>
-                                    <option value="Database"></option>
-                                    <option value="Security"></option>
-                                    <option value="Performance"></option>
-                                    <option value="Tooling"></option>
-                                    <option value="AI"></option>
-                                </datalist>
-                                <label class="field field-wide">
-                                    <span>Ringkasan</span>
-                                    <textarea id="f-excerpt" class="audit-input" rows="3" maxlength="240"></textarea>
-                                    <span class="hint"><span id="excerpt-count">0</span>/240 karakter</span>
-                                </label>
-                                <label class="field">
-                                    <span>Gambar (satu URL per baris)</span>
-                                    <textarea id="f-images" class="audit-input mono" rows="3"></textarea>
-                                </label>
-                                <label class="field">
-                                    <span>Badge (satu URL per baris)</span>
-                                    <textarea id="f-badges" class="audit-input mono" rows="3"></textarea>
-                                </label>
-                                <label class="field field-wide">
-                                    <span>Tautan eksternal</span>
-                                    <input
-                                        id="f-url"
-                                        class="audit-input"
-                                        type="url"
-                                        placeholder="https://..."
-                                    />
-                                </label>
-                                <label class="field field-wide">
-                                    <span>Isi (Markdown)</span>
-                                    <textarea id="f-body" class="audit-input mono" rows="16"></textarea>
-                                </label>
-                            </div>
-
-                            <div class="audit-actions">
-                                <button id="btn-preview" class="audit-btn" type="button">Pratinjau</button>
-                                <button id="btn-duplicate" class="audit-btn" type="button">Duplikat</button>
-                                <button id="btn-delete" class="audit-btn danger" type="button">Hapus</button>
-                                <span class="spacer"></span>
-                                <button id="btn-save" class="audit-btn primary" type="button">Simpan draft</button>
-                            </div>
-                            <p id="editor-meta" class="hint"></p>
-                        </form>
-                    </section>
-                </div>
-
-                <div class="audit-panels">
-                    <section class="glass-panel audit-panel">
-                        <h2>Audit konten</h2>
-                        <div id="audit-summary" class="audit-summary"></div>
-                        <ul id="audit-issues" class="issue-list" data-lenis-prevent></ul>
-                    </section>
-
-                    <section class="glass-panel audit-panel">
-                        <h2>Publish ke GitHub</h2>
                         <div class="field-grid">
-                            <label class="field">
-                                <span>Owner</span>
-                                <input id="gh-owner" class="audit-input" value="widifirmaan" />
-                            </label>
-                            <label class="field">
-                                <span>Repo</span>
-                                <input id="gh-repo" class="audit-input" value="widifirmaan.github.io" />
-                            </label>
-                            <label class="field">
-                                <span>Branch</span>
-                                <input id="gh-branch" class="audit-input" value="master" />
-                            </label>
-                            <label class="field">
-                                <span>Path</span>
-                                <input id="gh-path" class="audit-input" value="news.json" />
+                            <label class="field field-wide">
+                                <span>Judul</span>
+                                <input id="f-title" class="audit-input" maxlength="120" />
                             </label>
                             <label class="field field-wide">
-                                <span>Token GitHub (PAT)</span>
-                                <input
-                                    id="gh-token"
-                                    class="audit-input"
-                                    type="password"
-                                    autocomplete="off"
-                                    spellcheck="false"
-                                    placeholder="ghp_... / github_pat_..."
-                                />
+                                <span>Slug</span>
+                                <input id="f-slug" class="audit-input" maxlength="90" />
+                            </label>
+                            <label class="field">
+                                <span>Tanggal</span>
+                                <input id="f-date" class="audit-input" type="date" />
+                            </label>
+                            <label class="field">
+                                <span>Kategori</span>
+                                <input id="f-category" class="audit-input" list="category-list" maxlength="40" />
+                            </label>
+                            <datalist id="category-list">
+                                <option value="Backend"></option>
+                                <option value="Frontend"></option>
+                                <option value="DevOps"></option>
+                                <option value="Database"></option>
+                                <option value="Security"></option>
+                                <option value="Performance"></option>
+                                <option value="Tooling"></option>
+                                <option value="AI"></option>
+                            </datalist>
+                            <label class="field field-wide">
+                                <span>Ringkasan</span>
+                                <textarea id="f-excerpt" class="audit-input" rows="3" maxlength="240"></textarea>
+                                <span class="hint"><span id="excerpt-count">0</span>/240 karakter</span>
+                            </label>
+                            <label class="field">
+                                <span>Gambar (satu URL per baris)</span>
+                                <textarea id="f-images" class="audit-input mono" rows="3"></textarea>
+                            </label>
+                            <label class="field">
+                                <span>Badge (satu URL per baris)</span>
+                                <textarea id="f-badges" class="audit-input mono" rows="3"></textarea>
+                            </label>
+                            <label class="field field-wide">
+                                <span>Tautan eksternal</span>
+                                <input id="f-url" class="audit-input" type="url" placeholder="https://..." />
+                            </label>
+                            <label class="field field-wide">
+                                <span>Isi (Markdown)</span>
+                                <textarea id="f-body" class="audit-input mono" rows="14"></textarea>
                             </label>
                         </div>
+
                         <div class="audit-actions">
-                            <button id="btn-verify" class="audit-btn" type="button">Verifikasi token</button>
-                            <button id="btn-forget" class="audit-btn" type="button">Lupakan</button>
+                            <button id="btn-preview" class="audit-btn" type="button">Pratinjau</button>
+                            <button id="btn-duplicate" class="audit-btn" type="button">Duplikat</button>
+                            <button id="btn-delete" class="audit-btn danger" type="button">Hapus</button>
                             <span class="spacer"></span>
-                            <button id="btn-publish" class="audit-btn primary" type="button">Publish news.json</button>
+                            <button id="btn-save" class="audit-btn primary" type="button">Simpan draft</button>
                         </div>
-                        <p id="publish-status" class="panel-status" role="status"></p>
-                        <p class="hint">
-                            Token disimpan hanya di <code>sessionStorage</code> dan hilang saat tab
-                            ditutup. Fine-grained token butuh <strong>Contents: read/write</strong>
-                            dan <strong>Actions: read/write</strong>. Tanpa token, gunakan Export
-                            lalu commit manual.
+                        <p id="editor-meta" class="hint"></p>
+                    </form>
+                </section>
+
+                <div class="audit-bottom-grid">
+                    <section class="glass-panel audit-card">
+                        <h2>Export / Import</h2>
+                        <p class="panel-sub">
+                            Export draft sebagai <code>news.json</code>, atau import file JSON untuk
+                            mengganti draft lokal.
                         </p>
+                        <div class="audit-actions">
+                            <button id="btn-export" class="audit-btn primary" type="button">Export news.json</button>
+                            <button id="btn-import" class="audit-btn" type="button">Import JSON</button>
+                            <input id="import-file" type="file" accept="application/json,.json" hidden />
+                        </div>
+                        <div class="audit-actions">
+                            <button id="btn-reload" class="audit-btn" type="button">Muat ulang news.json</button>
+                        </div>
+                        <p id="data-status" class="panel-status" role="status"></p>
                     </section>
 
-                    <section class="glass-panel audit-panel">
-                        <h2>AI Generator</h2>
+                    <section class="glass-panel audit-card">
+                        <h2>AI Generator &amp; Preview</h2>
                         <p class="panel-sub">
-                            Menjalankan workflow <code>update-news.yml</code> di GitHub Actions.
-                            Artikel baru dibuat oleh model AI, di-commit ke <code>news.json</code>,
-                            lalu bisa diaudit di sini.
+                            Generate artikel lewat workflow GitHub Actions, lalu pratinjau hasil draft
+                            di <code>/news?preview=1</code>.
                         </p>
                         <div class="field-grid">
                             <label class="field field-wide">
                                 <span>Topik (opsional)</span>
-                                <input
-                                    id="ai-topic"
-                                    class="audit-input"
-                                    placeholder="mis. menghindari query N+1 di Spring Boot"
-                                />
+                                <input id="ai-topic" class="audit-input" placeholder="mis. menghindari query N+1 di Spring Boot" />
                             </label>
                             <label class="field">
                                 <span>Kategori</span>
-                                <input
-                                    id="ai-category"
-                                    class="audit-input"
-                                    list="category-list"
-                                    placeholder="otomatis"
-                                />
+                                <input id="ai-category" class="audit-input" list="category-list" placeholder="otomatis" />
                             </label>
                             <label class="field">
                                 <span>Jumlah</span>
@@ -317,41 +249,11 @@
                             </label>
                         </div>
                         <div class="audit-actions">
-                            <button id="btn-generate" class="audit-btn primary" type="button">
-                                Generate sekarang
-                            </button>
+                            <button id="btn-generate" class="audit-btn primary" type="button">Generate sekarang</button>
+                            <button id="btn-preview-site" class="audit-btn" type="button">Pratinjau /news</button>
                         </div>
                         <p id="ai-status" class="panel-status" role="status"></p>
-                        <p class="hint">
-                            Butuh secret <code>NEWS_AI_API_KEY</code> di repositori. Jadwal harian
-                            berjalan otomatis; tombol ini memicu run manual dengan topik tertentu.
-                        </p>
-                    </section>
-
-                    <section class="glass-panel audit-panel">
-                        <h2>Data</h2>
-                        <div class="audit-actions">
-                            <button id="btn-export" class="audit-btn" type="button">Export news.json</button>
-                            <button id="btn-import" class="audit-btn" type="button">Import JSON</button>
-                            <input id="import-file" type="file" accept="application/json,.json" hidden />
-                        </div>
-                        <div class="audit-actions">
-                            <button id="btn-preview-site" class="audit-btn" type="button">Pratinjau /news</button>
-                            <button id="btn-reload" class="audit-btn" type="button">Muat ulang news.json</button>
-                        </div>
-                        <p id="data-status" class="panel-status" role="status"></p>
-                        <p class="hint">
-                            Pratinjau menulis ke <code>localStorage.news_preview</code> lalu membuka
-                            <code>/news?preview=1</code>. Tidak ada yang berubah di situs publik.
-                        </p>
-                    </section>
-
-                    <section class="glass-panel audit-panel audit-log-panel">
-                        <h2>Audit log</h2>
-                        <ol id="audit-log" class="log-list" data-lenis-prevent></ol>
-                        <div class="audit-actions">
-                            <button id="btn-clear-log" class="audit-link" type="button">Bersihkan log</button>
-                        </div>
+                        <p class="hint">Butuh secret <code>NEWS_AI_API_KEY</code> di repositori untuk AI generator.</p>
                     </section>
                 </div>
             </div>
@@ -377,6 +279,6 @@
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="../../translations.js"></script>
         <script src="../../script.js?v=4.7"></script>
-        <script src="audit.js?v=1.0"></script>
+        <script src="audit.js?v=2.1"></script>
     </body>
 </html>

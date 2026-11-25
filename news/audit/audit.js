@@ -42,22 +42,6 @@
         btnDuplicate: $('btn-duplicate'),
         btnDelete: $('btn-delete'),
         btnSave: $('btn-save'),
-        statTotal: $('stat-total'),
-        statErrors: $('stat-errors'),
-        statWarnings: $('stat-warnings'),
-        auditSummary: $('audit-summary'),
-        auditIssues: $('audit-issues'),
-        auditLog: $('audit-log'),
-        btnClearLog: $('btn-clear-log'),
-        ghOwner: $('gh-owner'),
-        ghRepo: $('gh-repo'),
-        ghBranch: $('gh-branch'),
-        ghPath: $('gh-path'),
-        ghToken: $('gh-token'),
-        btnVerify: $('btn-verify'),
-        btnForget: $('btn-forget'),
-        btnPublish: $('btn-publish'),
-        publishStatus: $('publish-status'),
         aiTopic: $('ai-topic'),
         aiCategory: $('ai-category'),
         aiCount: $('ai-count'),
@@ -125,6 +109,13 @@
         } catch (e) {
             return value;
         }
+    }
+
+    function statusOf(item) {
+        const pub = published.find((p) => p.id === item.id);
+        if (!pub) return { key: 'new', label: 'Draft baru' };
+        const same = JSON.stringify(normalizeItem(pub)) === JSON.stringify(normalizeItem(item));
+        return same ? { key: 'published', label: 'Terbit' } : { key: 'modified', label: 'Diubah' };
     }
 
     function normalizeItem(raw) {
@@ -197,58 +188,7 @@
             .replace(/'/g, '&#39;');
     }
 
-    /* ----------------------------- audit log ----------------------------- */
-
-    function readLog() {
-        try {
-            const parsed = JSON.parse(localStorage.getItem(STORAGE.log) || '[]');
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function writeLog(entries) {
-        try {
-            localStorage.setItem(STORAGE.log, JSON.stringify(entries.slice(0, 200)));
-        } catch (e) {}
-        renderLog();
-    }
-
-    function logEvent(action, detail) {
-        const entries = readLog();
-        entries.unshift({ at: new Date().toISOString(), action, detail });
-        writeLog(entries);
-    }
-
-    function renderLog() {
-        if (!els.auditLog) return;
-        const entries = readLog();
-        els.auditLog.innerHTML = '';
-
-        if (entries.length === 0) {
-            const empty = document.createElement('li');
-            empty.className = 'hint';
-            empty.textContent = 'Belum ada aktivitas.';
-            els.auditLog.appendChild(empty);
-            return;
-        }
-
-        entries.slice(0, 60).forEach((entry) => {
-            const row = document.createElement('li');
-            const time = document.createElement('time');
-            time.dateTime = entry.at;
-            time.textContent = formatDateTime(entry.at);
-            const action = document.createElement('span');
-            action.className = 'log-action';
-            action.textContent = entry.action;
-            const detail = document.createElement('span');
-            detail.className = 'log-detail';
-            detail.textContent = entry.detail || '';
-            row.append(time, action, detail);
-            els.auditLog.appendChild(row);
-        });
-    }
+    function logEvent() {}
 
     /* ------------------------------ draft I/O ---------------------------- */
 
@@ -300,33 +240,15 @@
     /* ---------------------------- published feed ------------------------- */
 
     async function fetchFeed() {
-        const settings = getSettings();
-        const rawUrl =
-            'https://raw.githubusercontent.com/' +
-            encodeURIComponent(settings.owner) +
-            '/' +
-            encodeURIComponent(settings.repo) +
-            '/' +
-            encodeURIComponent(settings.branch) +
-            '/' +
-            settings.path.split('/').map(encodeURIComponent).join('/') +
-            '?v=' +
-            Date.now();
-
+        const rawUrl = 'https://raw.githubusercontent.com/widifirmaan/widifirmaan.github.io/master/news.json?v=' + Date.now();
         try {
             const response = await fetch(rawUrl, { cache: 'no-store' });
-            if (response.ok) {
-                return { data: await response.json(), source: 'GitHub' };
-            }
+            if (response.ok) return { data: await response.json(), source: 'GitHub' };
         } catch (e) {}
-
         try {
             const response = await fetch(LOCAL_FEED + '?v=' + Date.now(), { cache: 'no-store' });
-            if (response.ok) {
-                return { data: await response.json(), source: 'situs' };
-            }
+            if (response.ok) return { data: await response.json(), source: 'situs' };
         } catch (e) {}
-
         return null;
     }
 
@@ -357,8 +279,6 @@
 
         if (dirty && !opts.force) {
             renderList();
-            renderStats();
-            renderIssues();
             setDataStatus(
                 'Feed dimuat dari ' +
                     result.source +
@@ -375,8 +295,6 @@
         saveWorking(false);
         renderEditor();
         renderList();
-        renderStats();
-        renderIssues();
         setDataStatus('Dimuat dari ' + result.source + ' · ' + published.length + ' item.', 'ok');
 
         if (opts.log) logEvent('reload', 'Feed dimuat ulang dari ' + result.source);
@@ -384,140 +302,6 @@
     }
 
     /* ------------------------------ validation --------------------------- */
-
-    function validateItem(item, all) {
-        const issues = [];
-        const push = (level, field, msg) => issues.push({ level, field, msg });
-
-        if (!item.title) push('error', 'title', 'Judul wajib diisi.');
-        else if (item.title.length > 90) push('warn', 'title', 'Judul lebih dari 90 karakter.');
-
-        if (!item.slug) {
-            push('error', 'slug', 'Slug wajib diisi.');
-        } else {
-            if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug)) {
-                push('warn', 'slug', 'Slug sebaiknya hanya huruf kecil, angka, dan tanda hubung.');
-            }
-            if (all.filter((entry) => entry.slug === item.slug).length > 1) {
-                push('error', 'slug', 'Slug dipakai lebih dari satu item.');
-            }
-        }
-
-        if (!item.date || !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) {
-            push('error', 'date', 'Tanggal harus berformat YYYY-MM-DD.');
-        } else if (item.date > todayISO()) {
-            push('warn', 'date', 'Tanggal berada di masa depan.');
-        }
-
-        if (!item.category) push('warn', 'category', 'Kategori kosong.');
-
-        if (!item.excerpt && !item.body) {
-            push('error', 'body', 'Ringkasan atau isi markdown wajib diisi.');
-        } else if (!item.excerpt) {
-            push('warn', 'excerpt', 'Ringkasan kosong; kartu tidak punya teks pendek.');
-        } else if (item.excerpt.length > 240) {
-            push('warn', 'excerpt', 'Ringkasan lebih dari 240 karakter.');
-        }
-
-        if (!item.body) push('warn', 'body', 'Isi markdown kosong.');
-        else if (item.body.length < 120) push('warn', 'body', 'Isi kurang dari 120 karakter.');
-
-        if (item.images.length === 0) {
-            push('warn', 'images', 'Tanpa gambar; kartu memakai placeholder bertulisan NEWS.');
-        }
-        item.images.forEach((url) => {
-            if (!isHttpUrl(url)) push('error', 'images', 'URL gambar tidak valid: ' + url);
-        });
-
-        item.badges.forEach((url) => {
-            if (!isHttpUrl(url)) push('error', 'badges', 'URL badge tidak valid: ' + url);
-        });
-        if (item.badges.length > 5) push('info', 'badges', 'Kartu hanya menampilkan 5 badge pertama.');
-
-        if (item.url && !isHttpUrl(item.url)) {
-            push('error', 'url', 'URL tautan eksternal tidak valid.');
-        }
-
-        if (item.source === 'ai') {
-            if (!/^##\s+/m.test(item.body)) push('warn', 'body', 'Artikel AI tanpa subjudul "## ".');
-            if (!/```/.test(item.body)) push('info', 'body', 'Artikel AI tanpa blok kode.');
-            if (!item.model) push('info', 'body', 'Model generator tidak tercatat.');
-        }
-
-        return issues;
-    }
-
-    function collectIssues() {
-        const issues = [];
-        working.forEach((item) => {
-            validateItem(item, working).forEach((issue) => {
-                issues.push({
-                    ...issue,
-                    id: item.id,
-                    title: item.title || item.slug || 'Tanpa judul'
-                });
-            });
-        });
-
-        if (working.length > MAX_ITEMS) {
-            issues.push({
-                level: 'warn',
-                field: '',
-                id: null,
-                title: 'Feed',
-                msg:
-                    'Ada ' +
-                    working.length +
-                    ' item; publish menyimpan maksimal ' +
-                    MAX_ITEMS +
-                    ' item terbaru.'
-            });
-        }
-
-        published
-            .filter((entry) => !working.some((item) => item.id === entry.id))
-            .forEach((entry) => {
-                issues.push({
-                    level: 'warn',
-                    field: 'delete',
-                    id: null,
-                    title: entry.title || entry.slug || 'Tanpa judul',
-                    msg: 'Item terpublikasi akan dihapus saat publish.'
-                });
-            });
-
-        return issues;
-    }
-
-    function focusIssue(issue) {
-        const map = {
-            title: 'f-title',
-            slug: 'f-slug',
-            date: 'f-date',
-            category: 'f-category',
-            excerpt: 'f-excerpt',
-            images: 'f-images',
-            badges: 'f-badges',
-            body: 'f-body',
-            url: 'f-url'
-        };
-        const field = map[issue.field];
-        if (!field) return;
-        const input = $(field);
-        if (!input) return;
-        input.focus();
-        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    /* ------------------------------- render ------------------------------ */
-
-    function statusOf(item) {
-        const match = published.find((entry) => entry.id === item.id);
-        if (!match) return { key: 'new', label: 'Baru' };
-        return JSON.stringify(match) === JSON.stringify(item)
-            ? { key: 'published', label: 'Terbit' }
-            : { key: 'modified', label: 'Diubah' };
-    }
 
     function renderList() {
         if (!els.itemList) return;
@@ -539,7 +323,7 @@
         if (visible.length === 0) {
             const empty = document.createElement('p');
             empty.className = 'hint';
-            empty.textContent = working.length === 0 ? 'Belum ada item.' : 'Tidak ada item yang cocok.';
+            empty.textContent = working.length === 0 ? 'Belum ada artikel.' : 'Tidak ada artikel yang cocok.';
             els.itemList.appendChild(empty);
             return;
         }
@@ -551,9 +335,6 @@
             button.className = 'audit-list-item' + (item.id === selectedId ? ' is-active' : '');
             button.dataset.id = item.id;
 
-            const dot = document.createElement('span');
-            dot.className = 'dot ' + status.key;
-
             const main = document.createElement('span');
             main.className = 'item-main';
             const title = document.createElement('strong');
@@ -563,78 +344,15 @@
             main.append(title, sub);
 
             const state = document.createElement('span');
-            state.className = 'item-state';
-            state.textContent = status.label;
+            state.className = 'item-state state-' + status.key;
+            state.textContent = status.key === 'published' ? 'Published' : 'Draft';
 
-            button.append(dot, main, state);
+            button.append(main, state);
             button.addEventListener('click', () => selectItem(item.id));
             els.itemList.appendChild(button);
         });
     }
 
-    function renderStats() {
-        const issues = collectIssues();
-        const errors = issues.filter((issue) => issue.level === 'error').length;
-        const warnings = issues.filter((issue) => issue.level === 'warn').length;
-
-        els.statTotal.textContent = String(working.length);
-        els.statErrors.textContent = String(errors);
-        els.statWarnings.textContent = String(warnings);
-
-        els.auditSummary.innerHTML = '';
-        const chips = [
-            { text: working.length + ' item', tone: '' },
-            { text: errors + ' error', tone: errors > 0 ? 'is-error' : 'is-ok' },
-            { text: warnings + ' warning', tone: warnings > 0 ? 'is-warn' : 'is-ok' }
-        ];
-        chips.forEach((chip) => {
-            const span = document.createElement('span');
-            span.className = 'summary-chip ' + chip.tone;
-            span.textContent = chip.text;
-            els.auditSummary.appendChild(span);
-        });
-    }
-
-    function renderIssues() {
-        if (!els.auditIssues) return;
-        const issues = collectIssues();
-        els.auditIssues.innerHTML = '';
-
-        if (issues.length === 0) return;
-
-        issues.forEach((issue) => {
-            const row = document.createElement('li');
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'issue-item level-' + issue.level;
-
-            const level = document.createElement('span');
-            level.className = 'issue-level';
-            level.textContent = issue.level === 'warn' ? 'warning' : issue.level;
-
-            const body = document.createElement('span');
-            body.className = 'issue-body';
-            const title = document.createElement('strong');
-            title.textContent = issue.title;
-            const message = document.createElement('span');
-            message.textContent = issue.msg;
-            body.append(title, message);
-
-            button.append(level, body);
-
-            if (issue.id) {
-                button.addEventListener('click', () => {
-                    selectItem(issue.id);
-                    focusIssue(issue);
-                });
-            } else {
-                button.disabled = true;
-            }
-
-            row.appendChild(button);
-            els.auditIssues.appendChild(row);
-        });
-    }
 
     function updateEditorMeta(item) {
         if (!item) {
@@ -700,8 +418,6 @@
         Object.assign(item, readForm());
         els.excerptCount.textContent = String(item.excerpt.length);
         renderList();
-        renderStats();
-        renderIssues();
         updateEditorMeta(item);
         scheduleAutosave();
     }
@@ -743,8 +459,6 @@
         logEvent('delete', (wasPublished ? 'Item terpublikasi dihapus: ' : 'Draft dihapus: ') + (item.slug || item.title));
         renderEditor();
         renderList();
-        renderStats();
-        renderIssues();
     }
 
     function duplicateItem() {
@@ -834,7 +548,7 @@
         link.remove();
         URL.revokeObjectURL(url);
         logEvent('export', payload.total + ' item diunduh sebagai news.json');
-        setDataStatus('news.json diunduh. Commit ke ' + getSettings().path + ' untuk menerbitkan.', 'ok');
+        setDataStatus('news.json diunduh. Siap di-commit sebagai news.json.', 'ok');
     }
 
     function previewSite() {
@@ -849,32 +563,23 @@
         window.open('../?preview=1', '_blank', 'noopener');
     }
 
-    /* ------------------------------ settings ----------------------------- */
+    /* ------------------------------ AI / settings ----------------------------- */
 
-    function getSettings() {
-        return {
-            owner: els.ghOwner.value.trim() || 'widifirmaan',
-            repo: els.ghRepo.value.trim() || 'widifirmaan.github.io',
-            branch: els.ghBranch.value.trim() || 'master',
-            path: els.ghPath.value.trim() || 'news.json'
-        };
+    const GH = {
+        owner: 'widifirmaan',
+        repo: 'widifirmaan.github.io',
+        branch: 'master',
+        workflow: WORKFLOW_FILE
+    };
+
+    function activeToken() {
+        try { return sessionStorage.getItem(STORAGE.token) || ''; } catch (e) { return ''; }
     }
 
-    function saveSettings() {
-        try {
-            localStorage.setItem(STORAGE.settings, JSON.stringify(getSettings()));
-        } catch (e) {}
-    }
-
-    function restoreSettings() {
-        let saved = {};
-        try {
-            saved = JSON.parse(localStorage.getItem(STORAGE.settings) || '{}') || {};
-        } catch (e) {}
-        els.ghOwner.value = saved.owner || 'widifirmaan';
-        els.ghRepo.value = saved.repo || 'widifirmaan.github.io';
-        els.ghBranch.value = saved.branch || 'master';
-        els.ghPath.value = saved.path === 'news/news.json' ? 'news.json' : saved.path || 'news.json';
+    function setDataStatus(message, tone) {
+        if (!els.dataStatus) return;
+        els.dataStatus.className = 'panel-status' + (tone ? ' is-' + tone : '');
+        els.dataStatus.textContent = message;
     }
 
     function apiHeaders(token) {
@@ -886,226 +591,8 @@
         };
     }
 
-    function activeToken() {
-        try {
-            return sessionStorage.getItem(STORAGE.token) || els.ghToken.value.trim();
-        } catch (e) {
-            return els.ghToken.value.trim();
-        }
-    }
-
-    /* ------------------------------- publish ----------------------------- */
-
-    function setDataStatus(message, tone) {
-        els.dataStatus.className = 'panel-status' + (tone ? ' is-' + tone : '');
-        els.dataStatus.textContent = message;
-    }
-
-    function setPublishStatus(message, tone, linkUrl) {
-        els.publishStatus.className = 'panel-status' + (tone ? ' is-' + tone : '');
-        els.publishStatus.textContent = message;
-        if (linkUrl) {
-            const link = document.createElement('a');
-            link.href = linkUrl;
-            link.target = '_blank';
-            link.rel = 'noopener';
-            link.textContent = ' Buka commit';
-            els.publishStatus.appendChild(link);
-        }
-    }
-
-    function toBase64(text) {
-        const bytes = new TextEncoder().encode(text);
-        let binary = '';
-        const chunk = 0x8000;
-        for (let index = 0; index < bytes.length; index += chunk) {
-            binary += String.fromCharCode.apply(null, bytes.subarray(index, index + chunk));
-        }
-        return btoa(binary);
-    }
-
-    function fromBase64(value) {
-        const binary = atob(String(value || '').replace(/\s/g, ''));
-        const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-        return new TextDecoder().decode(bytes);
-    }
-
-    async function verifyToken() {
-        const token = activeToken();
-        if (!token) {
-            setPublishStatus('Isi token GitHub terlebih dahulu.', 'warn');
-            return false;
-        }
-
-        setPublishStatus('Memeriksa token...', 'pending');
-        try {
-            const response = await fetch('https://api.github.com/user', {
-                headers: apiHeaders(token)
-            });
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const user = await response.json();
-            sessionStorage.setItem(STORAGE.token, token);
-            els.ghToken.value = '';
-            logEvent('token', 'Token diverifikasi untuk @' + user.login);
-            setPublishStatus('Token valid untuk @' + user.login + '.', 'ok');
-            return true;
-        } catch (error) {
-            try {
-                sessionStorage.removeItem(STORAGE.token);
-            } catch (e) {}
-            setPublishStatus('Token tidak valid: ' + error.message, 'error');
-            return false;
-        }
-    }
-
-    async function publish() {
-        const token = activeToken();
-        if (!token) {
-            setPublishStatus('Token belum ada. Verifikasi token atau gunakan Export news.json.', 'warn');
-            return;
-        }
-
-        const errors = collectIssues().filter((issue) => issue.level === 'error');
-        if (errors.length > 0 && !confirm('Masih ada ' + errors.length + ' error audit. Tetap publish?')) {
-            return;
-        }
-
-        if (currentPublishedStamp && draftBaseStamp && draftBaseStamp !== currentPublishedStamp) {
-            setPublishStatus(
-                'Draft lokal dibuat dari versi news.json yang berbeda. Muat ulang feed (draft akan dibuang) atau export draft, lalu publish ulang. Ini mencegah artikel baru dari generator AI tertimpa.',
-                'error'
-            );
-            return;
-        }
-
-        if (
-            currentPublishedStamp &&
-            !draftBaseStamp &&
-            !confirm('Draft ini tidak mencatat versi news.json asalnya. Publish bisa menimpa perubahan remote. Lanjut?')
-        ) {
-            return;
-        }
-
-        const missing = published.filter((entry) => !working.some((item) => item.id === entry.id));
-        if (missing.length > 0 && !confirm(missing.length + ' item terpublikasi tidak ada di draft dan akan terhapus. Lanjut?')) {
-            return;
-        }
-
-        const settings = getSettings();
-        saveSettings();
-
-        const payload = buildPayload();
-        const json = JSON.stringify(payload, null, 2) + '\n';
-        const apiUrl =
-            'https://api.github.com/repos/' +
-            encodeURIComponent(settings.owner) +
-            '/' +
-            encodeURIComponent(settings.repo) +
-            '/contents/' +
-            settings.path.split('/').map(encodeURIComponent).join('/');
-
-        els.btnPublish.disabled = true;
-        setPublishStatus('Mengunggah news.json ke GitHub...', 'pending');
-
-        try {
-            let sha = null;
-            let remoteStamp = '';
-
-            const head = await fetch(apiUrl + '?ref=' + encodeURIComponent(settings.branch), {
-                headers: apiHeaders(token)
-            });
-
-            if (head.ok) {
-                const info = await head.json();
-                sha = info.sha;
-                try {
-                    const remote = JSON.parse(fromBase64(info.content));
-                    remoteStamp = remote.lastUpdated || '';
-                } catch (e) {}
-            } else if (head.status !== 404) {
-                throw new Error('Gagal membaca berkas di GitHub: HTTP ' + head.status);
-            }
-
-            if (remoteStamp && currentPublishedStamp && remoteStamp !== currentPublishedStamp) {
-                setPublishStatus(
-                    'news.json di GitHub sudah berubah (kemungkinan dari generator AI). Muat ulang news.json dulu supaya artikel baru tidak tertimpa.',
-                    'error'
-                );
-                return;
-            }
-
-            if (!remoteStamp) {
-                try {
-                    const rawUrl =
-                        'https://raw.githubusercontent.com/' +
-                        encodeURIComponent(settings.owner) +
-                        '/' +
-                        encodeURIComponent(settings.repo) +
-                        '/' +
-                        encodeURIComponent(settings.branch) +
-                        '/' +
-                        settings.path.split('/').map(encodeURIComponent).join('/') +
-                        '?v=' +
-                        Date.now();
-                    const rawResponse = await fetch(rawUrl, { cache: 'no-store' });
-                    if (rawResponse.ok) {
-                        const remote = await rawResponse.json();
-                        remoteStamp = remote.lastUpdated || '';
-                    }
-                } catch (e) {}
-
-                if (remoteStamp && currentPublishedStamp && remoteStamp !== currentPublishedStamp) {
-                    setPublishStatus(
-                        'news.json di GitHub sudah berubah (kemungkinan dari generator AI). Muat ulang news.json dulu supaya artikel baru tidak tertimpa.',
-                        'error'
-                    );
-                    return;
-                }
-            }
-
-            const body = {
-                message: 'chore(news): publish ' + payload.total + ' item',
-                content: toBase64(json),
-                branch: settings.branch
-            };
-            if (sha) body.sha = sha;
-
-            const response = await fetch(apiUrl, {
-                method: 'PUT',
-                headers: apiHeaders(token),
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                const detail = await response.json().catch(() => ({}));
-                throw new Error(detail.message || 'HTTP ' + response.status);
-            }
-
-            const result = await response.json();
-            published = payload.items.map(normalizeItem);
-            working = deepCopy(published);
-            ensureIds(working);
-            currentPublishedStamp = payload.lastUpdated;
-            draftBaseStamp = currentPublishedStamp;
-            saveWorking(false);
-            logEvent('publish', payload.total + ' item → ' + settings.owner + '/' + settings.repo + '@' + settings.branch);
-            renderList();
-            renderStats();
-            renderIssues();
-            updateEditorMeta(working.find((entry) => entry.id === selectedId));
-
-            const commitUrl = result.commit && result.commit.html_url ? result.commit.html_url : '';
-            setPublishStatus('Berhasil dipublikasikan. ' + payload.total + ' item di ' + settings.path + '.', 'ok', commitUrl);
-        } catch (error) {
-            setPublishStatus('Publish gagal: ' + error.message, 'error');
-        } finally {
-            els.btnPublish.disabled = false;
-        }
-    }
-
-    /* --------------------------- AI generation --------------------------- */
-
     function setAiStatus(message, tone, linkUrl) {
+        if (!els.aiStatus) return;
         els.aiStatus.className = 'panel-status' + (tone ? ' is-' + tone : '');
         els.aiStatus.textContent = message;
         if (linkUrl) {
@@ -1123,28 +610,21 @@
         pollTimer = 0;
     }
 
-    async function pollRun(owner, repo, startedAt, attempt) {
+    async function pollRun(startedAt, attempt) {
         const token = activeToken();
         if (!token) {
-            setAiStatus('Token hilang dari sesi. Verifikasi ulang.', 'error');
-            els.btnGenerate.disabled = false;
+            setAiStatus('Token hilang dari sesi. Set sessionStorage.news_cms_token lalu coba lagi.', 'error');
+            if (els.btnGenerate) els.btnGenerate.disabled = false;
             return;
         }
-
         if (attempt >= POLL_LIMIT) {
             setAiStatus('Melebihi batas tunggu. Periksa tab Actions di GitHub.', 'warn');
-            els.btnGenerate.disabled = false;
+            if (els.btnGenerate) els.btnGenerate.disabled = false;
             return;
         }
-
         try {
-            const url =
-                'https://api.github.com/repos/' +
-                encodeURIComponent(owner) +
-                '/' +
-                encodeURIComponent(repo) +
-                '/actions/workflows/' +
-                encodeURIComponent(WORKFLOW_FILE) +
+            const url = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo +
+                '/actions/workflows/' + encodeURIComponent(GH.workflow) +
                 '/runs?event=workflow_dispatch&per_page=10';
             const response = await fetch(url, { headers: apiHeaders(token) });
             if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -1155,97 +635,72 @@
             if (!run) {
                 setAiStatus('Menunggu workflow mulai...', 'pending');
             } else if (run.status !== 'completed') {
-                setAiStatus('Workflow ' + run.status + '. Menunggu...', 'pending', run.html_url);
+                setAiStatus('Workflow ' + run.status + '...', 'pending', run.html_url);
             } else if (run.conclusion === 'success') {
                 setAiStatus('Selesai. Memuat news.json terbaru...', 'pending', run.html_url);
                 const reloaded = await reloadFeed({});
-                if (!reloaded) {
-                    setAiStatus(
-                        'Workflow selesai, tetapi news.json gagal dimuat. Tekan "Muat ulang news.json".',
-                        'warn',
-                        run.html_url
-                    );
-                } else if (hasLocalChanges()) {
-                    setAiStatus(
-                        'Artikel baru sudah masuk news.json, tetapi draft lokal belum memuatnya. Muat ulang feed sebelum publish agar artikel baru tidak tertimpa.',
-                        'warn',
-                        run.html_url
-                    );
+                if (reloaded) {
+                    setAiStatus('Selesai. news.json dimuat ulang.', 'ok', run.html_url);
                 } else {
-                    setAiStatus('Selesai. Artikel baru sudah masuk news.json.', 'ok', run.html_url);
-                    logEvent('generate', 'Workflow selesai; feed dimuat ulang');
+                    setAiStatus('Workflow selesai, tetapi news.json gagal dimuat. Klik Muat ulang.', 'warn', run.html_url);
                 }
-                els.btnGenerate.disabled = false;
+                if (els.btnGenerate) els.btnGenerate.disabled = false;
                 return;
             } else {
                 setAiStatus('Workflow selesai dengan status ' + run.conclusion + '.', 'error', run.html_url);
-                els.btnGenerate.disabled = false;
+                if (els.btnGenerate) els.btnGenerate.disabled = false;
                 return;
             }
         } catch (error) {
             setAiStatus('Gagal membaca status workflow: ' + error.message, 'error');
-            els.btnGenerate.disabled = false;
+            if (els.btnGenerate) els.btnGenerate.disabled = false;
             return;
         }
-
-        pollTimer = setTimeout(() => pollRun(owner, repo, startedAt, attempt + 1), POLL_INTERVAL);
+        pollTimer = setTimeout(() => pollRun(startedAt, attempt + 1), POLL_INTERVAL);
     }
 
     async function generate() {
         const token = activeToken();
         if (!token) {
-            setAiStatus('Verifikasi token GitHub dulu (butuh Actions: read/write).', 'warn');
-            return;
+            const entered = prompt('Masukkan GitHub PAT (Contents/Actions read-write). Disimpan di sessionStorage saja:');
+            if (!entered) {
+                setAiStatus('Token diperlukan untuk memicu workflow.', 'warn');
+                return;
+            }
+            try { sessionStorage.setItem(STORAGE.token, entered.trim()); } catch (e) {}
         }
+        const useToken = activeToken();
+        if (!useToken) return;
 
-        if (hasLocalChanges() && !confirm('Draft lokal belum dipublikasikan. Generator akan menambah artikel ke news.json; draft lokal bisa menimpa artikel baru jika langsung di-publish. Lanjut?')) {
-            return;
-        }
-
-        const settings = getSettings();
-        saveSettings();
         const startedAt = Date.now();
         const inputs = {
-            count: els.aiCount.value,
-            topic: els.aiTopic.value.trim(),
-            category: els.aiCategory.value.trim(),
-            language: els.aiLanguage.value
+            count: els.aiCount ? els.aiCount.value : '1',
+            topic: els.aiTopic ? els.aiTopic.value.trim() : '',
+            category: els.aiCategory ? els.aiCategory.value.trim() : '',
+            language: els.aiLanguage ? els.aiLanguage.value : 'id'
         };
 
         stopPolling();
-        els.btnGenerate.disabled = true;
+        if (els.btnGenerate) els.btnGenerate.disabled = true;
         setAiStatus('Mengirim permintaan ke GitHub Actions...', 'pending');
 
         try {
-            const url =
-                'https://api.github.com/repos/' +
-                encodeURIComponent(settings.owner) +
-                '/' +
-                encodeURIComponent(settings.repo) +
-                '/actions/workflows/' +
-                encodeURIComponent(WORKFLOW_FILE) +
-                '/dispatches';
-
+            const url = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo +
+                '/actions/workflows/' + encodeURIComponent(GH.workflow) + '/dispatches';
             const response = await fetch(url, {
                 method: 'POST',
-                headers: apiHeaders(token),
-                body: JSON.stringify({ ref: settings.branch, inputs })
+                headers: apiHeaders(useToken),
+                body: JSON.stringify({ ref: GH.branch, inputs })
             });
-
             if (response.status !== 204) {
                 const detail = await response.json().catch(() => ({}));
                 throw new Error(detail.message || 'HTTP ' + response.status);
             }
-
-            logEvent('generate', inputs.count + ' artikel · ' + (inputs.topic || 'topik otomatis'));
             setAiStatus('Workflow dijalankan. Menunggu hasil...', 'pending');
-            pollTimer = setTimeout(() => pollRun(settings.owner, settings.repo, startedAt, 0), 3000);
+            pollTimer = setTimeout(() => pollRun(startedAt, 0), 3000);
         } catch (error) {
-            const hint = /404|403/.test(error.message)
-                ? ' Pastikan token punya akses Actions dan file .github/workflows/' + WORKFLOW_FILE + ' ada di branch ' + settings.branch + '.'
-                : '';
-            setAiStatus('Gagal memicu generator: ' + error.message + '.' + hint, 'error');
-            els.btnGenerate.disabled = false;
+            setAiStatus('Gagal memicu generator: ' + error.message, 'error');
+            if (els.btnGenerate) els.btnGenerate.disabled = false;
         }
     }
 
@@ -1293,9 +748,6 @@
         saveWorking(false);
         renderEditor();
         renderList();
-        renderStats();
-        renderIssues();
-        logEvent('reset', 'Draft dikembalikan ke news.json');
     });
 
     els.btnExport.addEventListener('click', downloadJson);
@@ -1325,9 +777,6 @@
             saveWorking(false);
             renderEditor();
             renderList();
-            renderStats();
-            renderIssues();
-            logEvent('import', normalized.length + ' item dari ' + file.name);
             setDataStatus('Import selesai: ' + normalized.length + ' item.', 'ok');
         } catch (error) {
             setDataStatus('Import gagal: ' + error.message, 'error');
@@ -1342,30 +791,11 @@
         await reloadFeed({ force: true, log: true });
     });
 
-    els.btnClearLog.addEventListener('click', () => {
-        if (!confirm('Bersihkan audit log?')) return;
-        writeLog([]);
-    });
-
-    els.btnVerify.addEventListener('click', verifyToken);
-    els.btnForget.addEventListener('click', () => {
-        try {
-            sessionStorage.removeItem(STORAGE.token);
-        } catch (e) {}
-        els.ghToken.value = '';
-        setPublishStatus('Token dihapus dari sesi ini.', '');
-    });
-    els.btnPublish.addEventListener('click', publish);
     els.btnGenerate.addEventListener('click', generate);
-
-    [els.ghOwner, els.ghRepo, els.ghBranch, els.ghPath].forEach((input) => {
-        input.addEventListener('change', saveSettings);
-    });
 
     /* -------------------------------- boot ------------------------------- */
 
     async function boot() {
-        restoreSettings();
         const publishedOk = await loadPublished();
         const hasDraft = loadDraft();
 
@@ -1378,27 +808,13 @@
             draftBaseStamp = currentPublishedStamp;
         }
 
-        let token = '';
-        try {
-            token = sessionStorage.getItem(STORAGE.token) || '';
-        } catch (e) {}
-        if (token) setPublishStatus('Token sesi tersedia. Publish siap dijalankan.', '');
-
         renderList();
-        renderStats();
-        renderIssues();
-        renderLog();
         renderEditor();
 
         if (!publishedOk) {
-            setPublishStatus('news.json belum bisa dibaca. Publish pertama akan membuat berkas baru.', 'warn');
-        } else if (hasDraft && draftBaseStamp && currentPublishedStamp && draftBaseStamp !== currentPublishedStamp) {
-            setDataStatus(
-                'news.json punya update yang belum ada di draft lokal. Muat ulang feed, atau publish akan menimpa update tersebut.',
-                'warn'
-            );
+            setDataStatus('news.json belum bisa dibaca. Export/import tetap bisa digunakan.', 'warn');
         } else {
-            setDataStatus(published.length + ' item terpublikasi dimuat dari news.json.', '');
+            setDataStatus(published.length + ' item dimuat dari news.json.', '');
         }
     }
 
