@@ -2,3 +2,6 @@
 raw_screenshots/
 presentation.html
 *.pdf
+
+# Local-only CMS
+news/audit/
