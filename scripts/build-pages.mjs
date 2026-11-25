@@ -99,7 +99,7 @@ function safeJsonLd(obj) {
 
 function safeHref(raw) {
   const value = String(raw || '').trim();
-  if (/^(https?:\/\/|\/|\.\/|\.\.\/)/i.test(value)) return value;
+  if (/^(https?:\/\/|\/|\.\/|\.\.\/|#[a-zA-Z0-9_-]+)/i.test(value)) return value;
   return '#';
 }
 
@@ -569,7 +569,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.2" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.3" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -637,7 +637,7 @@ function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
   const newsCssHref = lang === 'id' ? 'news.css?v=3.6' : '../../news/news.css?v=3.6';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.9' : '../../news/news.js?v=3.9';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=4.0' : '../../news/news.js?v=4.0';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -700,7 +700,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.2" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.3" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -766,7 +766,7 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
         <script src="${toRoot}ui-core.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.3"></script>
+        <script src="${toRoot}script.js?v=5.4"></script>
         <script src="${newsJsSrc}"></script>
     </body>
 </html>

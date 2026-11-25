@@ -297,14 +297,15 @@ function processReadme(repo, readmeText, branch) {
   let badges = [];
 
   if (fullReadme) {
+    const cleanRel = (raw) => String(raw || '').trim().replace(/^(?:\.\/)+|^\/+/, '');
     const imgRegex = /!\[.*?\]\(((?:[^)(]+|\([^)(]*\))+)\)|<img.*?src=["'](.*?)["']/g;
     let match;
     let extracted = [];
     while ((match = imgRegex.exec(fullReadme)) !== null) {
       let url = match[1] || match[2];
       if (url) {
-        if (!url.startsWith('http')) {
-          url = `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${url.replace(/^[./]+/, '')}`;
+        if (!/^https?:/i.test(url) && !url.startsWith('data:')) {
+          url = `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${cleanRel(url)}`;
         }
         if (url.includes('shields.io') || url.includes('badge')) {
           if (badges.length < 5) badges.push(url);
@@ -315,16 +316,40 @@ function processReadme(repo, readmeText, branch) {
     }
     if (extracted.length > 0) images = extracted;
 
-    // Fix relative paths in full README text so they render correctly in the portfolio modal
+    // Fix relative image and file links outside fenced code blocks so README modals work on web.
+    const isExternalOrSpecial = (u) => /^(?:https?:|mailto:|tel:|data:|#)/i.test(String(u || '').trim());
+    const rewriteSegment = (seg) =>
+      seg
+        .replace(
+          /!\[([^\]]*)\]\((?!https?:|data:|#)([^)\s]+(?:\([^)]*\)[^)\s]*)*)\)/gi,
+          (m, alt, rel) => `![${alt}](https://raw.githubusercontent.com/${repo.full_name}/${branch}/${cleanRel(rel)})`
+        )
+        .replace(
+          /<img\b([^>]*?)\bsrc=["']([^"']+)["']([^>]*)>/gi,
+          (m, pre, src, post) =>
+            isExternalOrSpecial(src)
+              ? m
+              : `<img${pre}src="https://raw.githubusercontent.com/${repo.full_name}/${branch}/${cleanRel(src)}"${post}>`
+        )
+        .replace(
+          /(?<!!)\[([^\]]+)\]\(([^)\s]+)\)/g,
+          (m, label, target) =>
+            isExternalOrSpecial(target)
+              ? m
+              : `[${label}](https://github.com/${repo.full_name}/blob/${branch}/${cleanRel(target)})`
+        )
+        .replace(
+          /<a\b([^>]*?)\bhref=["']([^"']+)["']([^>]*)>/gi,
+          (m, pre, href, post) =>
+            isExternalOrSpecial(href)
+              ? m
+              : `<a${pre}href="https://github.com/${repo.full_name}/blob/${branch}/${cleanRel(href)}"${post}>`
+        );
+
     fullReadme = fullReadme
-      .replace(
-        /!\[([^\]]*)\]\((?!http|https)((?:[^)(]+|\([^)(]*\))+)\)/g,
-        (m, alt, path) => `![${alt}](https://raw.githubusercontent.com/${repo.full_name}/${branch}/${path.replace(/^[./]+/, '')})`
-      )
-      .replace(
-        /<img[^>]+src=["'](?!http|https)([^"']+)["'][^>]*>/g,
-        (match, src) => match.replace(src, `https://raw.githubusercontent.com/${repo.full_name}/${branch}/${src.replace(/^[./]+/, '')}`)
-      );
+      .split(/(```[\s\S]*?```)/g)
+      .map((part, idx) => (idx % 2 === 1 ? part : rewriteSegment(part)))
+      .join('');
   }
 
   const badgeHtml = badges.length > 0

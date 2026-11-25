@@ -527,6 +527,10 @@ function openModal(data) {
                 ${htmlContent}
             </div>
         `;
+        modalDescription.querySelectorAll('.markdown-body a[href^="http"]').forEach((a) => {
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+        });
     } else {
         // Fallback for Experience or if README fails
         modalDescription.innerHTML = `

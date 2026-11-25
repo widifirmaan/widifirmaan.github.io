@@ -210,6 +210,10 @@
         if (!container || typeof marked === 'undefined') return;
         const htmlContent = marked.parse(buildReadme(item));
         container.innerHTML = '<div class="markdown-body">' + htmlContent + '</div>';
+        container.querySelectorAll('.markdown-body a[href^="http"]').forEach((a) => {
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+        });
         applyModalImageDimensions();
     }
 
