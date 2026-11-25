@@ -1,6 +1,6 @@
 {
   "chunk": "chunk-0001.json",
-  "total": 1,
+  "total": 2,
   "items": [
     {
       "id": "news-artcraft-rust-open-source-suite",
@@ -14,6 +14,21 @@
       ],
       "badges": [],
       "url": "https://getartcraft.com",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen"
+    },
+    {
+      "id": "news-nfsu2recomp-static-recompilation-apple-silicon",
+      "title": "NFSU2Recomp: Rekompilasi Statis Need for Speed Underground 2 di Apple Silicon",
+      "slug": "nfsu2recomp-static-recompilation-apple-silicon",
+      "date": "2026-11-25",
+      "category": "Performance",
+      "excerpt": "Mengenal NFSU2Recomp, proyek rekompilasi statis x86 ke ARM64 dan Direct3D 9 ke Metal agar Need for Speed Underground 2 berjalan native di Mac Apple Silicon.",
+      "images": [
+        "/news/assets/nfsu2recomp-github-repo-d4a25fe4.webp"
+      ],
+      "badges": [],
+      "url": "https://github.com/TalhaMudo/NFSU2Recomp",
       "source": "ai",
       "model": "Gemini 4 Hydrogen"
     }

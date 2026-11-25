@@ -131,9 +131,21 @@
         if (!container) return;
         container.querySelectorAll('img').forEach((img) => {
             const src = img.getAttribute('src') || '';
-            if (src.includes('/news/assets/') && !img.getAttribute('width')) {
-                img.setAttribute('width', '1200');
-                img.setAttribute('height', '630');
+            if (!src.includes('/news/assets/')) return;
+            const syncNatural = () => {
+                if (img.naturalWidth && img.naturalHeight) {
+                    img.setAttribute('width', String(img.naturalWidth));
+                    img.setAttribute('height', String(img.naturalHeight));
+                }
+            };
+            if (img.complete && img.naturalWidth) {
+                syncNatural();
+            } else {
+                if (!img.getAttribute('width')) {
+                    img.setAttribute('width', '1200');
+                    img.setAttribute('height', '630');
+                }
+                img.addEventListener('load', syncNatural, { once: true });
             }
         });
     }
