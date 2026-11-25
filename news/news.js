@@ -209,7 +209,7 @@
         const container = document.getElementById('modal-description');
         if (!container || typeof marked === 'undefined') return;
         const htmlContent = marked.parse(buildReadme(item));
-        container.innerHTML = '<div class="modal-actions" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; padding-top: 1rem;"></div><div class="markdown-body">' + htmlContent + '</div>';
+        container.innerHTML = '<div class="markdown-body">' + htmlContent + '</div>';
         applyModalImageDimensions();
     }
 
@@ -336,7 +336,10 @@
         prevBtn.className = 'news-page-btn';
         prevBtn.textContent = t('news-prev') || 'Sebelumnya';
         prevBtn.disabled = currentPage <= 0;
-        prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+        prevBtn.addEventListener('click', () => {
+            goToPage(currentPage - 1);
+            feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
 
         const status = document.createElement('span');
         status.className = 'news-page-status';
@@ -348,7 +351,10 @@
         nextBtn.className = 'news-page-btn';
         nextBtn.textContent = t('news-next') || 'Berikutnya';
         nextBtn.disabled = currentPage >= totalPages - 1;
-        nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+        nextBtn.addEventListener('click', () => {
+            goToPage(currentPage + 1);
+            feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
 
         paginationEl.append(prevBtn, status, nextBtn);
     }

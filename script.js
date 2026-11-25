@@ -520,10 +520,9 @@ function openModal(data) {
     // If we have README content, parse it with marked
     if (data.readme && typeof marked !== 'undefined') {
         const htmlContent = marked.parse(data.readme);
+        const actionsHtml = data.desc && data.desc.includes('Source Code') ? data.desc.substring(data.desc.indexOf('<a')) : '';
         modalDescription.innerHTML = `
-            <div class="modal-actions" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; padding-top: 1rem;">
-                ${data.desc.includes('Source Code') ? data.desc.substring(data.desc.indexOf('<a')) : ''}
-            </div>
+            ${actionsHtml ? `<div class="modal-actions" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; padding-top: 1rem;">${actionsHtml}</div>` : ''}
             <div class="markdown-body">
                 ${htmlContent}
             </div>
@@ -537,10 +536,10 @@ function openModal(data) {
         `;
     }
 
-    // Show modal container and reset scroll offset from previous items
+    // Show modal container first so scrollTop resets cleanly on visible layout
+    modal.style.display = 'flex';
     const scrollArea = modal.querySelector('.modal-scroll-area');
     if (scrollArea) scrollArea.scrollTop = 0;
-    modal.style.display = 'flex';
 
     // Animate with GSAP
     const modalTl = gsap.timeline();

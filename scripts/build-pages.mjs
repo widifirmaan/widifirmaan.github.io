@@ -240,7 +240,7 @@ async function readImageDimensions(assetPath) {
 function formatEmphasis(raw) {
   let out = escapeHtml(raw);
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  out = out.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
+  out = out.replace(/(^|[^*\w])\*([^\s*][^*]*?[^\s*]|[^\s*])\*(?![*\w])/g, '$1<em>$2</em>');
   return out;
 }
 
@@ -429,11 +429,11 @@ function navbarHtml(toRoot, newsHref, activeLang) {
   return `        <nav class="glass-panel">
             <a class="logo" href="${escapeHtml(toRoot)}">WDPORT</a>
             <ul class="nav-links">
-                <li><a href="${escapeHtml(toRoot)}index.html#home" data-i18n="nav-home">Home</a></li>
-                <li><a href="${escapeHtml(toRoot)}index.html#about" data-i18n="nav-about">About</a></li>
-                <li><a href="${escapeHtml(toRoot)}index.html#works" data-i18n="nav-works">Works</a></li>
+                <li><a href="${escapeHtml(toRoot)}#home" data-i18n="nav-home">Home</a></li>
+                <li><a href="${escapeHtml(toRoot)}#about" data-i18n="nav-about">About</a></li>
+                <li><a href="${escapeHtml(toRoot)}#works" data-i18n="nav-works">Works</a></li>
                 <li><a href="${escapeHtml(newsHref)}" class="is-current" aria-current="page" data-i18n="nav-news">News</a></li>
-                <li><a href="${escapeHtml(toRoot)}index.html#contact" data-i18n="nav-contact">Contact</a></li>
+                <li><a href="${escapeHtml(toRoot)}#contact" data-i18n="nav-contact">Contact</a></li>
                 <li class="theme-switcher-container">
                     <button
                         type="button"
@@ -485,7 +485,7 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.5' : '../../../news/news.css?v=3.5';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.6' : '../../../news/news.css?v=3.6';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -520,6 +520,10 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const aiNote =
     article.source === 'ai'
       ? `<p class="news-article-ai-note" data-i18n="news-ai-note">${escapeHtml(meta.aiNote)}</p>`
+      : '';
+  const articleFooter =
+    sourceLink || aiNote
+      ? `\n                        <footer class="news-article-footer">\n                            ${sourceLink}\n                            ${aiNote}\n                        </footer>`
       : '';
 
   return `<!doctype html>
@@ -593,12 +597,7 @@ ${navbarHtml(toRoot, '../', lang)}
 
                         <div class="markdown-body">
 ${bodyHtml}
-                        </div>
-
-                        <footer class="news-article-footer">
-                            ${sourceLink}
-                            ${aiNote}
-                        </footer>
+                        </div>${articleFooter}
                     </article>
 
                     <footer>
@@ -637,8 +636,8 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.5' : '../../news/news.css?v=3.5';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.8' : '../../news/news.js?v=3.8';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.6' : '../../news/news.css?v=3.6';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.9' : '../../news/news.js?v=3.9';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -767,7 +766,7 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
         <script src="${toRoot}ui-core.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.2"></script>
+        <script src="${toRoot}script.js?v=5.3"></script>
         <script src="${newsJsSrc}"></script>
     </body>
 </html>

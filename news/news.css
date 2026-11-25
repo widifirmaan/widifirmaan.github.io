@@ -10,6 +10,11 @@
     padding-top: 150px;
 }
 
+body[data-page="news"] .section-title {
+    opacity: 1;
+    transform: none;
+}
+
 .news-subtitle {
     max-width: 640px;
     margin-top: -1.5rem;
