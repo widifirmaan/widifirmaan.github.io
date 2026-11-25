@@ -916,7 +916,6 @@ section {
 body[data-page="news"] .markdown-body img[src*="/news/assets/"] {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
     height: auto;
     margin: 1.25rem 0;
 }

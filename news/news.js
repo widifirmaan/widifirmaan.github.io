@@ -132,8 +132,8 @@
         container.querySelectorAll('img').forEach((img) => {
             const src = img.getAttribute('src') || '';
             if (src.includes('/news/assets/') && !img.getAttribute('width')) {
-                img.setAttribute('width', '1600');
-                img.setAttribute('height', '900');
+                img.setAttribute('width', '1200');
+                img.setAttribute('height', '630');
             }
         });
     }

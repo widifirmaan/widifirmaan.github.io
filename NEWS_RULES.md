@@ -4,7 +4,10 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 
 ## Gaya Penulisan
 
-- Gunakan bahasa jurnalistik: jelas, faktual, ringkas, aktif, dan terverifikasi.
+- Gunakan bahasa jurnalistik: jelas, faktual, dinamis, aktif, dan terverifikasi.
+- Lakukan riset langsung ke sumber primer sebelum menulis (situs resmi proyek, repositori GitHub/README, katalog aplikasi, halaman rilis, dan panduan instalasi resmi). Dilarang menyimpulkan sesuatu tanpa riset.
+- Tautan referensi pihak ketiga yang diberikan sebagai konteks riset tidak perlu disertakan di isi artikel maupun `url` jika sumber resmi primer tersedia.
+- Hindari format daftar berlabel bold kaku (`- **Label:** ...`); utamakan paragraf mengalir atau daftar kalimat alami yang substansial.
 - Dilarang menggunakan emoji.
 - Dilarang pola tanda hubung panjang khas AI (`—`, `--` sebagai pengganti kalimat). Gunakan koma, titik, atau pisahkan kalimat.
 - Dilarang filler generik: "Di era digital...", "Penting untuk dicatat...", "Kesimpulannya..." tanpa isi konkret.
@@ -49,11 +52,12 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 
 ## Media dan Watermark
 
-- Gambar/video artikel disimpan di `news/assets/` di repo, lalu di-commit/push agar ter-host di GitHub.
+- **Search image, don't create**: cari dan gunakan gambar, foto, atau screenshot asli dari sumber resmi yang izinnya jelas (press kit resmi, repositori resmi, dokumentasi proyek, atau lisensi terbuka). Dilarang men-generate gambar AI baru atau membuat ilustrasi/kolase buatan.
+- Gambar/video artikel disimpan di `news/assets/` di repo (disarankan format WebP agar ringan), lalu di-commit/push agar ter-host di GitHub.
 - Semua gambar artikel wajib diberi watermark sebelum publish.
-- Gunakan watermark standar: `news/assets/watermark.png`.
+- Gunakan watermark standar: `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut).
 - Terapkan watermark: `node scripts/apply-watermark.mjs <input> [output]`.
-- Jangan mengunggah gambar tanpa watermark, gambar hak cipta tidak jelas, atau screenshot sensitif.
+- Jangan mengunggah gambar tanpa watermark, gambar hasil generate AI, gambar hak cipta tidak jelas, atau screenshot sensitif.
 
 ## API Lokal dan Penyimpanan Sharded
 
@@ -67,9 +71,10 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 
 - [ ] Tidak ada emoji.
 - [ ] Tidak ada em dash / pola tanda hubung khas AI.
-- [ ] Bahasa jurnalistik, faktual, tidak mengada-ada.
+- [ ] Bahasa jurnalistik, dinamis, faktual, hasil riset sumber primer tanpa asumsi.
+- [ ] Tidak menyertakan referensi blog pihak ketiga jika sumber resmi primer tersedia.
 - [ ] Slug unik, tanggal valid, kategori valid.
 - [ ] Title/excerpt memenuhi aturan SEO, tidak clickbait, tidak keyword stuffing.
 - [ ] `sitemap.xml` diperbarui jika ada halaman publik baru/perubahan URL yang dapat diindeks.
-- [ ] Gambar memiliki watermark WDPORT.
+- [ ] Gambar berasal dari pencarian sumber resmi/berizin jelas (bukan hasil generate/create) dan memiliki 1 watermark `widifirmaan.web.id` transparan di tengah gambar.
 - [ ] `source` dan `model` terisi untuk konten AI.
