@@ -201,6 +201,13 @@ async function readImageDimensions(assetPath) {
   return null;
 }
 
+function formatEmphasis(raw) {
+  let out = escapeHtml(raw);
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
+  return out;
+}
+
 function formatInline(text, imageDimsMap) {
   const placeholders = [];
   const hold = (html) => {
@@ -220,12 +227,10 @@ function formatInline(text, imageDimsMap) {
   s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
     const cleanHref = safeHref(href);
     const external = /^https?:\/\//i.test(cleanHref) ? ' target="_blank" rel="noopener noreferrer"' : '';
-    return hold(`<a href="${escapeHtml(cleanHref)}"${external}>${escapeHtml(label)}</a>`);
+    return hold(`<a href="${escapeHtml(cleanHref)}"${external}>${formatEmphasis(label)}</a>`);
   });
 
-  s = escapeHtml(s);
-  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
+  s = formatEmphasis(s);
   return s.replace(/\u0000PH(\d+)\u0000/g, (_, idx) => placeholders[Number(idx)] || '');
 }
 

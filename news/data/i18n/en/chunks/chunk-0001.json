@@ -1,7 +1,7 @@
 {
   "chunk": "chunk-0001.json",
   "lang": "en",
-  "total": 2,
+  "total": 3,
   "items": [
     {
       "id": "news-artcraft-rust-open-source-suite",
@@ -31,6 +31,22 @@
       ],
       "badges": [],
       "url": "https://github.com/TalhaMudo/NFSU2Recomp",
+      "source": "ai",
+      "model": "Gemini 4 Hydrogen",
+      "lang": "en"
+    },
+    {
+      "id": "news-tryngo-in-browser-wasm-programming-platform",
+      "title": "TryNGo: Learn 28 Tech Stacks with In-Browser WebAssembly Playgrounds",
+      "slug": "tryngo-in-browser-wasm-programming-platform",
+      "date": "2026-11-25",
+      "category": "Frontend",
+      "excerpt": "Explore TryNGo at tryngo.widifirmaan.web.id featuring 28 structured coding tracks, Monaco Editor playgrounds, in-browser WebAssembly runtimes, and React 19 stack.",
+      "images": [
+        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
+      ],
+      "badges": [],
+      "url": "https://tryngo.widifirmaan.web.id",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "en"

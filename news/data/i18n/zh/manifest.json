@@ -1,14 +1,14 @@
 {
   "version": 1,
   "lang": "zh",
-  "lastUpdated": "2026-11-25T07:10:28.133Z",
-  "total": 2,
+  "lastUpdated": "2026-11-25T07:17:27.122Z",
+  "total": 3,
   "pageSize": 25,
   "latestChunk": "chunk-0001.json",
   "chunks": [
     {
       "file": "chunk-0001.json",
-      "count": 2,
+      "count": 3,
       "newestDate": "2026-11-25",
       "oldestDate": "2026-11-25"
     }
