@@ -106,11 +106,13 @@ function titleKey(value) {
 
 function buildSystemPrompt() {
   return [
-    'You are a senior software engineer writing a practical coding column for a developer portfolio.',
-    'You write accurate, evergreen, self-contained articles that a working developer can apply today.',
-    'You never invent personal stories, employers, clients, benchmarks, statistics, quotes, or citations.',
-    'You never write "as an AI" and never mention the prompt.',
-    'Code examples must be correct and minimal.'
+    'You are a senior software engineer and technical journalist writing for a developer portfolio.',
+    'Write in clear, factual, journalistic language: active voice, concrete claims, no hype.',
+    'Never use emoji.',
+    'Never use em dashes or double hyphens as sentence punctuation. Use commas, periods, or split sentences.',
+    'Never invent personal stories, employers, clients, benchmarks, statistics, quotes, citations, or test results.',
+    'Never write "as an AI" and never mention prompts or internal instructions.',
+    'Code examples must be correct, minimal, and explained.'
   ].join(' ');
 }
 
@@ -128,13 +130,13 @@ Publication date: ${today}
 
 Editorial rules:
 - 500-900 words of Markdown per article.
-- Open with a one-paragraph hook that states the problem; do not restate the title.
+- Open with one paragraph that states the problem; do not restate the title.
 - Use at least three "## " sections.
 - Include at least one fenced code block with a language tag and explain it.
 - Use concrete examples. No filler, no generic motivation, no listicles without substance.
+- No emoji. No em dash character. No "--" used as punctuation.
 - Do not fabricate personal experience, employers, clients, metrics, or benchmark numbers.
-- Do not claim the code was tested on a specific machine.
-- No HTML, no images, no external links, no tables with more than 4 columns.
+- No HTML, no external links, no tables with more than 4 columns.
 - Title: max 80 characters, specific, no clickbait, no numbering prefix.
 - Excerpt: 120-200 characters describing the payoff.
 - Slug: kebab-case English, max 60 characters, derived from the title.
