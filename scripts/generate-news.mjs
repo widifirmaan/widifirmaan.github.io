@@ -138,8 +138,11 @@ Editorial rules:
 - Do not fabricate personal experience, employers, clients, metrics, or benchmark numbers.
 - No HTML, no external links, no tables with more than 4 columns.
 - Title: max 80 characters, specific, no clickbait, no numbering prefix.
-- Excerpt: 120-200 characters describing the payoff.
+- Excerpt: 120-200 characters describing the payoff and acting as meta description.
 - Slug: kebab-case English, max 60 characters, derived from the title.
+- Category must be one of: ${CATEGORIES.join(', ')}.
+- Use natural SEO keywords in title/excerpt/body; never keyword stuffing.
+- If any image is referenced, use a descriptive kebab-case filename and assume watermark is applied before publish.
 
 Return ONLY valid JSON without prose or code fences:
 {"articles":[{"title":"...","slug":"...","category":"...","excerpt":"...","body":"markdown"}]}`;
