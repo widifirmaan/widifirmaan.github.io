@@ -162,7 +162,7 @@ textarea.mono { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size
 }
 .spacer { flex: 1; }
 
-.audit-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.5rem; }
+.audit-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.5rem; align-items: start; }
 .audit-bottom-grid .audit-card { margin-bottom: 0; }
 .panel-sub { margin-bottom: 1rem; font-size: 0.85rem; line-height: 1.65; opacity: 0.65; }
 .panel-status { min-height: 1.2em; margin-top: 0.85rem; font-size: 0.8rem; line-height: 1.5; opacity: 0.85; }
