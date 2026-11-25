@@ -3,6 +3,8 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: ['master']
+  issues:
+    types: [labeled, unlabeled, edited, closed, reopened, deleted]
   workflow_run:
     workflows: ['Daily News Generation', 'Daily Projects Sync']
     types: [completed]
@@ -10,6 +12,7 @@ on:
 
 permissions:
   contents: read
+  issues: read
   pages: write
   id-token: write
 
@@ -19,7 +22,16 @@ concurrency:
 
 jobs:
   build:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: >-
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') &&
+      (github.event_name != 'issues' || (
+        github.event.issue.user.login == github.repository_owner &&
+        (
+          (github.event.action == 'labeled' && github.event.label.name == 'news:published') ||
+          (github.event.action == 'unlabeled' && github.event.label.name == 'news:published') ||
+          contains(github.event.issue.labels.*.name, 'news:published')
+        )
+      ))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,6 +43,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Ensure ffmpeg for issue image watermarking
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+
+      - name: Sync published GitHub Issues articles (zero-push CMS)
+        run: node scripts/sync-issue-articles.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ALLOWED_AUTHOR: ${{ github.repository_owner }}
 
       - name: Build static pages and sitemap
         run: node scripts/build-pages.mjs

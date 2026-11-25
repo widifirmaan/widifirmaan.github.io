@@ -89,17 +89,17 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - Semua gambar artikel wajib diberi watermark standar `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut) melalui `node scripts/apply-watermark.mjs <input> [output]`.
 - Dilarang mengunggah gambar tanpa watermark, gambar hasil generate AI, gambar dengan overlay UI pihak ketiga (seperti player YouTube/watermark situs lain), atau screenshot sensitif.
 
-## API Lokal dan Penyimpanan Sharded
+## API Lokal, Mode Zero-Push (GitHub Issues), dan Penyimpanan Sharded
 
-- CRUD artikel: `node scripts/news-api.mjs` (`GET/POST/PUT/DELETE /api/articles`).
-- Upload media base64: `POST /api/media` menyimpan file ke `news/assets/` dan mengembalikan path repo.
-- Penyimpanan publik memakai skema sharded yang dikelola `scripts/news-store.mjs`:
-  - `news/data/articles/<slug>.json` sebagai satu-satunya sumber artikel lengkap (berisi edisi `id` serta `locales.{en,zh}`).
-  - `news/data/manifest.json` dan `news/data/chunks/chunk-XXXX.json` untuk ringkasan feed bahasa default (`id`).
-  - `news/data/i18n/<lang>/chunks/chunk-XXXX.json` untuk ringkasan feed bahasa tambahan (`en`, `zh`).
-  - `news.json` menyimpan cerminan maksimal 50 artikel terbaru khusus kompatibilitas CMS lokal `news/audit/`.
-- Jalankan `node scripts/news-store.mjs --rebuild` bila perlu membangun ulang seluruh indeks sharded dan file i18n.
-- Setelah upload media dan update feed, jalankan `node scripts/build-pages.mjs` untuk memverifikasi build statis di `_site/`, lalu commit dan push file sumber berita (`news.json`, `news/data/`, `news/assets/`, dan skrip terkait; jangan commit `_site/` atau `news/audit/`).
+- **Mode Zero-Push lewat GitHub Issues**: Untuk menerbitkan artikel baru tanpa `git commit` atau `git push` file ke branch `master`, buat Issue memakai template `.github/ISSUE_TEMPLATE/news-article.md`, tempel/drag screenshot langsung ke editor Issue, lalu pasang label `news:published`.
+  - Hanya Issue buatan pemilik repositori (`github.repository_owner`) dengan label `news:published` yang diproses oleh `scripts/sync-issue-articles.mjs` di workflow `.github/workflows/deploy-pages.yml`.
+  - Screenshot yang diunggah ke Issue otomatis diunduh saat build, diberi 1 watermark `widifirmaan.web.id` transparan di tengah lewat `scripts/apply-watermark.mjs`, dan masuk ke `_site/news/assets/`.
+  - Mengubah isi Issue otomatis memperbarui situs, sedangkan mencabut label `news:published` menghapus artikel dari hasil build.
+- **Mode Repo & API Lokal**:
+  - CRUD artikel lokal: `node scripts/news-api.mjs` (`GET/POST/PUT/DELETE /api/articles`), upload media ke `news/assets/` lewat `POST /api/media`.
+  - File sumber tunggal artikel per slug tersimpan di `news/data/articles/<slug>.json` (memuat `id` serta `locales.{en,zh}`), sedangkan `news.json` menyimpan cerminan maksimal 50 artikel untuk kompatibilitas CMS lokal `news/audit/`.
+  - File indeks turunan (`news/data/manifest.json`, `news/data/chunks/`, `news/data/i18n/`) tidak lagi perlu di-commit ke Git (masuk `.gitignore`) dan langsung dibuat bersih ke `_site/news/data/` saat `node scripts/build-pages.mjs` berjalan (lokal maupun di GitHub Actions).
+  - Setelah menambah atau mengubah file artikel di repo, cukup jalankan `node scripts/build-pages.mjs` untuk memverifikasi `_site/` lalu commit/push file sumber artikel (`news/data/articles/` + aset baru) tanpa membengkakkan diff dengan file turunan; jangan commit `_site/`, `.build-issues/`, atau `news/audit/`.
 
 ## Checklist Sebelum Publish
 

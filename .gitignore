@@ -3,8 +3,12 @@ raw_screenshots/
 presentation.html
 *.pdf
 
-# Local-only CMS
+# Local-only CMS & derived sharded indices (generated into _site/ at build time)
 news/audit/
+.build-issues/
+news/data/chunks/
+news/data/i18n/
+news/data/manifest.json
 
 # Generated static deploy output
 _site/

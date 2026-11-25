@@ -6,6 +6,7 @@ import {
   EXTRA_LOCALES,
   localizeArticle,
   readAllArticles,
+  writeDerivedShardedData,
 } from './news-store.mjs';
 
 const SITE_URL = 'https://widifirmaan.web.id';
@@ -160,11 +161,27 @@ function buildLangSwitcher(activeLang) {
     .join('\n');
 }
 
+async function readHeaderBytes(filePath, maxBytes = 65536) {
+  let handle;
+  try {
+    handle = await fs.open(filePath, 'r');
+    const buf = Buffer.allocUnsafe(maxBytes);
+    const { bytesRead } = await handle.read(buf, 0, maxBytes, 0);
+    return buf.subarray(0, bytesRead);
+  } catch {
+    return null;
+  } finally {
+    if (handle) await handle.close().catch(() => {});
+  }
+}
+
 async function readImageDimensions(assetPath) {
   if (!assetPath || !assetPath.startsWith('/news/assets/')) return null;
-  const fullPath = path.join(ROOT_DIR, assetPath.replace(/^\/+/, ''));
+  const rel = assetPath.replace(/^\/+/, '');
+  // Check _site first (includes transient assets fetched from GitHub Issues) then repo root.
+  const buf = (await readHeaderBytes(path.join(OUT_DIR, rel))) || (await readHeaderBytes(path.join(ROOT_DIR, rel)));
+  if (!buf) return null;
   try {
-    const buf = await fs.readFile(fullPath);
     if (buf.length >= 24 && buf.readUInt32BE(0) === 0x89504e47) {
       return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
     }
@@ -822,14 +839,30 @@ async function main() {
     }
   }
 
-  // Copy news/ excluding local-only CMS news/audit/
+  // Copy news/ excluding local-only audit/ and derived data indices (rebuilt cleanly below).
   await copyDirFiltered(
     path.join(ROOT_DIR, 'news'),
     path.join(OUT_DIR, 'news'),
-    new Set(['audit'])
+    new Set(['audit', 'data/chunks', 'data/i18n', 'data/manifest.json'])
   );
 
-  const { items } = await readAllArticles();
+  // Merge transient assets & articles prepared from GitHub Issues (when present).
+  const issueDir = path.join(ROOT_DIR, '.build-issues');
+  try {
+    await copyDirFiltered(
+      path.join(issueDir, 'assets'),
+      path.join(OUT_DIR, 'news', 'assets')
+    );
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
+
+  const { items } = await readAllArticles({
+    extraArticlesDir: path.join(issueDir, 'articles'),
+  });
+
+  // Build sharded chunks & manifest straight into _site/news/data/ so git history never bloats.
+  await writeDerivedShardedData(items, path.join(OUT_DIR, 'news', 'data'));
 
   // Pre-collect image dimensions for all /news/assets/* references
   const imageDimsMap = new Map();
