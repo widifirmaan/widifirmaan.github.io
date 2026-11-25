@@ -588,7 +588,7 @@ function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
   const newsCssHref = lang === 'id' ? 'news.css?v=3.2' : '../../news/news.css?v=3.2';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.4' : '../../news/news.js?v=3.4';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.5' : '../../news/news.js?v=3.5';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 

@@ -101,6 +101,19 @@
         };
     }
 
+    function timestampOf(value) {
+        const parsed = value ? Date.parse(String(value)) : NaN;
+        return isNaN(parsed) ? 0 : parsed;
+    }
+
+    function compareNewsDesc(a, b) {
+        const dateDiff = String(b.date || '').localeCompare(String(a.date || ''));
+        if (dateDiff !== 0) return dateDiff;
+        const timeDiff = timestampOf(b.publishedAt) - timestampOf(a.publishedAt);
+        if (timeDiff !== 0) return timeDiff;
+        return String(b.slug || '').localeCompare(String(a.slug || ''));
+    }
+
     function normalizeEntry(item, index, lang) {
         const active = resolveLocalizedFields(item, lang || currentLang());
         return {
@@ -108,6 +121,7 @@
             title: active.title,
             slug: item.slug || '',
             date: item.date || '',
+            publishedAt: item.publishedAt || '',
             category: item.category || '',
             excerpt: active.excerpt,
             images: Array.isArray(item.images) ? item.images.filter(Boolean) : [],
@@ -370,7 +384,7 @@
         const normalized = list
             .filter((item) => item && (item.title || item.slug))
             .map((item, idx) => normalizeEntry(item, idx, lang))
-            .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            .sort(compareNewsDesc);
         chunkCache.set(key, normalized);
         return normalized;
     }
@@ -417,7 +431,7 @@
                           : [];
                     legacyItems = list
                         .filter((item) => item && (item.title || item.slug))
-                        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+                        .sort(compareNewsDesc);
                     lastUpdatedRaw = data && data.lastUpdated ? data.lastUpdated : '';
                     loadedOk = true;
                     totalPages = Math.max(1, Math.ceil(legacyItems.length / LEGACY_PAGE_SIZE));
@@ -476,7 +490,7 @@
                       : [];
                 legacyItems = list
                     .filter((item) => item && (item.title || item.slug))
-                    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+                    .sort(compareNewsDesc);
                 lastUpdatedRaw = data && data.lastUpdated ? data.lastUpdated : '';
                 loadedOk = true;
                 manifest = null;

@@ -68,11 +68,13 @@ export function normalizeArticle(raw = {}) {
   const title = asString(item.title);
   const slug = safeSlug(asString(item.slug) || title, asString(item.id));
   const locales = normalizeLocales(item.locales);
+  const publishedAt = asString(item.publishedAt);
   const normalized = {
     id: asString(item.id) || `news-${slug}`,
     title,
     slug,
     date: asString(item.date) || new Date().toISOString().slice(0, 10),
+    ...(publishedAt ? { publishedAt } : {}),
     category: asString(item.category),
     excerpt: asString(item.excerpt),
     images: asStringArray(item.images),
@@ -95,6 +97,7 @@ export function localizeArticle(item, lang = 'id') {
     title: (loc && loc.title) || item.title,
     slug: item.slug,
     date: item.date,
+    ...(item.publishedAt ? { publishedAt: item.publishedAt } : {}),
     category: item.category,
     excerpt: (loc && loc.excerpt) || item.excerpt,
     images: item.images,
@@ -114,6 +117,7 @@ export function toSummary(item, lang = 'id') {
     title: localized.title,
     slug: localized.slug,
     date: localized.date,
+    ...(localized.publishedAt ? { publishedAt: localized.publishedAt } : {}),
     category: localized.category,
     excerpt: localized.excerpt,
     images: localized.images,
@@ -125,16 +129,21 @@ export function toSummary(item, lang = 'id') {
   };
 }
 
+function timestampOf(value) {
+  const parsed = value ? Date.parse(String(value)) : NaN;
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function compareDesc(a, b) {
   const dateDiff = String(b.date || '').localeCompare(String(a.date || ''));
   if (dateDiff !== 0) return dateDiff;
-  return String(a.slug || '').localeCompare(String(b.slug || ''));
+  const timeDiff = timestampOf(b.publishedAt) - timestampOf(a.publishedAt);
+  if (timeDiff !== 0) return timeDiff;
+  return String(b.slug || '').localeCompare(String(a.slug || ''));
 }
 
 function compareAsc(a, b) {
-  const dateDiff = String(a.date || '').localeCompare(String(b.date || ''));
-  if (dateDiff !== 0) return dateDiff;
-  return String(a.slug || '').localeCompare(String(b.slug || ''));
+  return -compareDesc(a, b);
 }
 
 async function readJsonSafe(filePath) {

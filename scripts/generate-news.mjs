@@ -313,6 +313,7 @@ function normalizeArticle(raw, config, today, index, usedSlugs) {
     title: title.slice(0, 90),
     slug: candidate,
     date: today,
+    publishedAt: new Date(Date.now() - index * 1000).toISOString(),
     category,
     excerpt,
     images: [],

@@ -133,7 +133,10 @@ async function handler(req, res) {
 
     if (req.method === 'POST' && !id) {
       const body = await readBody(req);
-      const item = normalize(body);
+      const item = normalize({
+        ...body,
+        publishedAt: asString(body.publishedAt) || new Date().toISOString(),
+      });
       if (!item.title && !item.slug) return send(res, 400, { error: 'title or slug is required' });
       if (news.items.some(i => i.id === item.id || (item.slug && i.slug === item.slug))) {
         return send(res, 409, { error: 'Article with same id/slug already exists' });

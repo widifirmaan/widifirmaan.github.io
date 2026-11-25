@@ -4,17 +4,18 @@
   "total": 3,
   "items": [
     {
-      "id": "news-artcraft-rust-open-source-suite",
-      "title": "ArtCraft（storytold）：基于 Rust 的 17 款开源创意与办公套件",
-      "slug": "artcraft-rust-open-source-suite",
+      "id": "news-tryngo-in-browser-wasm-programming-platform",
+      "title": "TryNGo：内置浏览器 Wasm 沙箱的 28 门交互编程学习平台",
+      "slug": "tryngo-in-browser-wasm-programming-platform",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T07:17:00.000Z",
       "category": "Open Source",
-      "excerpt": "解析 storytold 开源项目 ArtCraft：17 款纯 Rust 原生 Crafting Apps、全平台安装包及 Cargo 编译指南。",
+      "excerpt": "全面解析在线编程平台 TryNGo 及其生产地址 tryngo.widifirmaan.web.id：28 门双语课程、Monaco 编辑器与浏览器 WebAssembly 运行时。",
       "images": [
-        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
+        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
       ],
       "badges": [],
-      "url": "https://getartcraft.com",
+      "url": "https://tryngo.widifirmaan.web.id",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "zh"
@@ -24,6 +25,7 @@
       "title": "NFSU2Recomp 功能解析：苹果芯片原生极品飞车地下狂飙2",
       "slug": "nfsu2recomp-static-recompilation-apple-silicon",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:55:00.000Z",
       "category": "Open Source",
       "excerpt": "全面介绍 NFSU2Recomp 在 Apple Silicon Mac 上的核心特性：Metal 原生与 HD 引擎、画面调校、SwiftUI 启动器及隔离 Mod 管理。",
       "images": [
@@ -36,17 +38,18 @@
       "lang": "zh"
     },
     {
-      "id": "news-tryngo-in-browser-wasm-programming-platform",
-      "title": "TryNGo：内置浏览器 Wasm 沙箱的 28 门交互编程学习平台",
-      "slug": "tryngo-in-browser-wasm-programming-platform",
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft（storytold）：基于 Rust 的 17 款开源创意与办公套件",
+      "slug": "artcraft-rust-open-source-suite",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:20:00.000Z",
       "category": "Open Source",
-      "excerpt": "全面解析在线编程平台 TryNGo 及其生产地址 tryngo.widifirmaan.web.id：28 门双语课程、Monaco 编辑器与浏览器 WebAssembly 运行时。",
+      "excerpt": "解析 storytold 开源项目 ArtCraft：17 款纯 Rust 原生 Crafting Apps、全平台安装包及 Cargo 编译指南。",
       "images": [
-        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
+        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
       ],
       "badges": [],
-      "url": "https://tryngo.widifirmaan.web.id",
+      "url": "https://getartcraft.com",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "zh"

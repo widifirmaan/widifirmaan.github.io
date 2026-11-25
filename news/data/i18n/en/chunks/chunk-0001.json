@@ -4,17 +4,18 @@
   "total": 3,
   "items": [
     {
-      "id": "news-artcraft-rust-open-source-suite",
-      "title": "ArtCraft (storytold): 17 Rust Native Creative and Office Apps",
-      "slug": "artcraft-rust-open-source-suite",
+      "id": "news-tryngo-in-browser-wasm-programming-platform",
+      "title": "TryNGo: Learn 28 Tech Stacks with In-Browser WebAssembly Playgrounds",
+      "slug": "tryngo-in-browser-wasm-programming-platform",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T07:17:00.000Z",
       "category": "Open Source",
-      "excerpt": "Explore storytold ArtCraft and its 17 open-source Crafting Apps built in native Rust, cross-platform installers, Flatpak OCI packages, and Cargo build steps.",
+      "excerpt": "Explore TryNGo at tryngo.widifirmaan.web.id featuring 28 structured coding tracks, Monaco Editor playgrounds, in-browser WebAssembly runtimes, and React 19 stack.",
       "images": [
-        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
+        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
       ],
       "badges": [],
-      "url": "https://getartcraft.com",
+      "url": "https://tryngo.widifirmaan.web.id",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "en"
@@ -24,6 +25,7 @@
       "title": "NFSU2Recomp Features: Native Need for Speed Underground 2 on Mac",
       "slug": "nfsu2recomp-static-recompilation-apple-silicon",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:55:00.000Z",
       "category": "Open Source",
       "excerpt": "Overview of NFSU2Recomp features on Apple Silicon: native Metal and HD engines, Picture options, SwiftUI launcher, XtendedInput controls, and mod isolation.",
       "images": [
@@ -36,17 +38,18 @@
       "lang": "en"
     },
     {
-      "id": "news-tryngo-in-browser-wasm-programming-platform",
-      "title": "TryNGo: Learn 28 Tech Stacks with In-Browser WebAssembly Playgrounds",
-      "slug": "tryngo-in-browser-wasm-programming-platform",
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft (storytold): 17 Rust Native Creative and Office Apps",
+      "slug": "artcraft-rust-open-source-suite",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:20:00.000Z",
       "category": "Open Source",
-      "excerpt": "Explore TryNGo at tryngo.widifirmaan.web.id featuring 28 structured coding tracks, Monaco Editor playgrounds, in-browser WebAssembly runtimes, and React 19 stack.",
+      "excerpt": "Explore storytold ArtCraft and its 17 open-source Crafting Apps built in native Rust, cross-platform installers, Flatpak OCI packages, and Cargo build steps.",
       "images": [
-        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
+        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
       ],
       "badges": [],
-      "url": "https://tryngo.widifirmaan.web.id",
+      "url": "https://getartcraft.com",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "en"

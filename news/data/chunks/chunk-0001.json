@@ -4,17 +4,18 @@
   "total": 3,
   "items": [
     {
-      "id": "news-artcraft-rust-open-source-suite",
-      "title": "ArtCraft (storytold): Suite 17 Aplikasi Kreatif dan Kantor Berbasis Rust",
-      "slug": "artcraft-rust-open-source-suite",
+      "id": "news-tryngo-in-browser-wasm-programming-platform",
+      "title": "TryNGo: Platform Belajar Coding 28 Track dengan Wasm Runtime di Browser",
+      "slug": "tryngo-in-browser-wasm-programming-platform",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T07:17:00.000Z",
       "category": "Open Source",
-      "excerpt": "Mengulas ekosistem open-source ArtCraft dari storytold, daftar 17 aplikasi Crafting Apps berbasis Rust, cara instalasi lintas OS, dan perintah build Cargo.",
+      "excerpt": "Mengulas platform TryNGo dan url produksi tryngo.widifirmaan.web.id: 28 kurikulum interaktif, Monaco Editor, WebAssembly runtime, kuis, dan arsitektur React 19.",
       "images": [
-        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
+        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
       ],
       "badges": [],
-      "url": "https://getartcraft.com",
+      "url": "https://tryngo.widifirmaan.web.id",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "id"
@@ -24,6 +25,7 @@
       "title": "Fitur NFSU2Recomp: Need for Speed Underground 2 Native di Apple Silicon",
       "slug": "nfsu2recomp-static-recompilation-apple-silicon",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:55:00.000Z",
       "category": "Open Source",
       "excerpt": "Mengulas fitur lengkap NFSU2Recomp di Mac Apple Silicon: engine Metal Original dan HD, opsi Picture, launcher SwiftUI, kontroler XtendedInput, hingga manajer mod.",
       "images": [
@@ -36,17 +38,18 @@
       "lang": "id"
     },
     {
-      "id": "news-tryngo-in-browser-wasm-programming-platform",
-      "title": "TryNGo: Platform Belajar Coding 28 Track dengan Wasm Runtime di Browser",
-      "slug": "tryngo-in-browser-wasm-programming-platform",
+      "id": "news-artcraft-rust-open-source-suite",
+      "title": "ArtCraft (storytold): Suite 17 Aplikasi Kreatif dan Kantor Berbasis Rust",
+      "slug": "artcraft-rust-open-source-suite",
       "date": "2026-11-25",
+      "publishedAt": "2026-11-25T06:20:00.000Z",
       "category": "Open Source",
-      "excerpt": "Mengulas platform TryNGo dan url produksi tryngo.widifirmaan.web.id: 28 kurikulum interaktif, Monaco Editor, WebAssembly runtime, kuis, dan arsitektur React 19.",
+      "excerpt": "Mengulas ekosistem open-source ArtCraft dari storytold, daftar 17 aplikasi Crafting Apps berbasis Rust, cara instalasi lintas OS, dan perintah build Cargo.",
       "images": [
-        "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
+        "/news/assets/artcraft-open-source-tools-72b72d44.webp"
       ],
       "badges": [],
-      "url": "https://tryngo.widifirmaan.web.id",
+      "url": "https://getartcraft.com",
       "source": "ai",
       "model": "Gemini 4 Hydrogen",
       "lang": "id"

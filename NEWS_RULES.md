@@ -38,7 +38,8 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - Panjang `title` (spesifik, memuat topik utama secara alami, tanpa clickbait atau penomoran): `id` dan `en` maksimal 80 karakter; `zh` disarankan 18 sampai 45 karakter.
 - Panjang `excerpt` (meta description yang menjelaskan manfaat nyata): `id` dan `en` 120 sampai 200 karakter; `zh` 60 sampai 110 karakter.
 - Panjang `body`: `id` dan `en` 500 sampai 900 kata Markdown; `zh` sepadan secara substansi (sekitar 800 sampai 2200 karakter Han dengan kelengkapan bagian yang sama).
-- `date` wajib berformat `YYYY-MM-DD`; `url` bersifat opsional dengan format `https://` menuju sumber resmi primer.
+- `date` wajib berformat `YYYY-MM-DD`; `publishedAt` (ISO-8601 timestamp) disarankan untuk menjaga urutan artikel terbaru di hari yang sama agar tidak terurut alfabetis terbalik.
+- `url` bersifat opsional dengan format `https://` menuju sumber resmi primer.
 - Dilarang keyword stuffing; gunakan istilah teknis yang benar-benar dibahas di dalam isi artikel.
 - Setiap halaman HTML statis per bahasa yang dihasilkan `node scripts/build-pages.mjs` (ke `_site/` via `.github/workflows/deploy-pages.yml`) wajib memiliki:
   - `<html lang="id|en|zh">` dan metadata `<title>` / `<meta name="description">` sesuai bahasa halaman.

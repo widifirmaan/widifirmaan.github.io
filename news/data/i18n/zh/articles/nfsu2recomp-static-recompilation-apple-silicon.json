@@ -3,6 +3,7 @@
   "title": "NFSU2Recomp 功能解析：苹果芯片原生极品飞车地下狂飙2",
   "slug": "nfsu2recomp-static-recompilation-apple-silicon",
   "date": "2026-11-25",
+  "publishedAt": "2026-11-25T06:55:00.000Z",
   "category": "Open Source",
   "excerpt": "全面介绍 NFSU2Recomp 在 Apple Silicon Mac 上的核心特性：Metal 原生与 HD 引擎、画面调校、SwiftUI 启动器及隔离 Mod 管理。",
   "images": [
