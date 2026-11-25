@@ -9,19 +9,19 @@ import {
   writeDerivedShardedData,
 } from './news-store.mjs';
 
-const SITE_URL = 'https://widifirmaan.web.id';
+const SITE_URL = (process.env.SITE_URL || 'https://widifirmaan.web.id').replace(/\/+$/, '');
 const OUT_DIR = path.join(ROOT_DIR, '_site');
 const ROOT_FILES = [
   'CNAME',
   'favicon.png',
   'memoji.png',
-  'animoji.glb',
   'index.html',
   'style.css',
   'ui-core.js',
   'script.js',
   'translations.js',
   'projects.json',
+  'news.json',
   'robots.txt',
 ];
 const STATIC_DIRS = ['v1'];
@@ -465,7 +465,7 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.3' : '../../../news/news.css?v=3.3';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.4' : '../../../news/news.css?v=3.4';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -544,7 +544,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.0" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.1" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -616,7 +616,7 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.3' : '../../news/news.css?v=3.3';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.4' : '../../news/news.css?v=3.4';
   const newsJsSrc = lang === 'id' ? 'news.js?v=3.7' : '../../news/news.js?v=3.7';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
@@ -680,7 +680,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.0" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.1" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -740,7 +740,6 @@ ${navbarHtml(toRoot, './', lang)}
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>

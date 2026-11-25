@@ -915,9 +915,10 @@ section {
 
 body[data-page="news"] .markdown-body img[src*="/news/assets/"] {
     display: block;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: auto;
-    margin: 1.25rem 0;
+    margin: 1.25rem auto;
 }
 
 .markdown-body table {
@@ -1027,18 +1028,24 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1140px) {
+    nav {
+        max-width: calc(100vw - 2rem);
+        gap: 2rem;
+        padding: 0.9rem 1.75rem;
+    }
+
+    .nav-links {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 900px) {
     nav {
         width: 90%;
         padding: 1rem 1.5rem;
         gap: 0;
         /* Remove invalid gap auto */
-    }
-
-    .section-title {
-        font-size: 2rem;
-        /* Prevents overflow */
-        margin-bottom: 2rem;
     }
 
     .hamburger {
@@ -1059,7 +1066,7 @@ footer {
         -webkit-backdrop-filter: blur(15px);
         justify-content: center;
         align-items: center;
-        gap: 3rem;
+        gap: 2.25rem;
         /* Must be positive or it hides behind the parent glass-panel */
         z-index: 99;
         opacity: 0;
@@ -1104,6 +1111,14 @@ footer {
         transition-delay: 0.5s;
     }
 
+    .nav-links.active li:nth-child(6) {
+        transition-delay: 0.55s;
+    }
+
+    .nav-links.active li:nth-child(7) {
+        transition-delay: 0.6s;
+    }
+
     .nav-links a {
         font-size: 1.5rem;
     }
@@ -1111,6 +1126,14 @@ footer {
     .lang-btn {
         padding: 0.5rem 1rem;
         font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+        /* Prevents overflow */
+        margin-bottom: 2rem;
     }
 
     .hero-content h1 {
@@ -1232,6 +1255,7 @@ footer {
 html[data-theme="light"] {
     --bg-color: #ffffff;
     --text-color: #000000;
+    --accent-color: #c81042;
     color-scheme: light;
 }
 
@@ -1462,12 +1486,15 @@ html[data-theme="light"] .markdown-body li {
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     html[data-theme="light"] .nav-links {
         background: #ffffff;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
     }
+}
+
+@media (max-width: 768px) {
 
     html[data-theme="light"] .modal-close {
         background: rgba(255, 255, 255, 0.8);
