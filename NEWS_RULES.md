@@ -10,7 +10,10 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - Paragraf pembuka (`lead`) harus langsung menyatakan masalah, kemampuan inti, atau nilai praktis proyek tanpa mengulang redaksi judul.
 - Gunakan 3 sampai 5 subjudul `##` yang deskriptif dan spesifik per topik, disusun dengan paragraf mengalir atau daftar kalimat bernas.
 - Hindari format daftar berlabel bold kaku (`- **Label:** keterangan...`) dan hindari filler generik ("Di era digital...", "Penting untuk dicatat...", "Kesimpulannya...").
-- Sertakan minimal 1 fenced code block dengan language tag yang sesuai; kode harus minimal, benar, relevan dengan pembahasan, dan dijelaskan secara singkat di bawah blok kode.
+- Sertakan minimal 1 fenced code block dengan language tag yang sesuai (misalnya perintah instalasi resmi per OS, cara menjalankan aplikasi, atau contoh kode praktik di platform); isi code block harus benar, ringkas, relevan, dan dijelaskan singkat di bawah blok kode.
+- **Tutorial Install/Pakai Resmi, Bukan Kompilasi**: Panduan pengguna wajib mengikuti instruksi instalasi dan penggunaan resmi dari README atau halaman Releases repositori (misalnya paket installer Windows/macOS/Linux, package manager resmi, rilis `.zip`/`.dmg`/`.msi`/`.AppImage`, atau langsung memakai URL aplikasi web produksi). Hindari mewajibkan pembaca melakukan build/kompilasi source code (`cargo run`, `./build.sh`, `npm run build`) kecuali proyek tersebut memang library atau tool developer yang belum menyediakan paket rilis.
+- **Tutorial Lintas OS**: Untuk proyek multi-platform (Web, Windows, macOS, Linux), contoh tutorial, instalasi, dan perintah CLI dilarang hanya mengkhususkan satu sistem operasi. Sajikan langkah yang setara untuk semua OS yang didukung (atau gunakan perintah universal), kecuali proyek tersebut memang khusus satu platform.
+- **Copywriting Berbasis Nilai (Product-First)**: Fokus pada masalah pembaca, manfaat nyata fitur, pengalaman pemakaian, serta ajakan langsung (CTA faktual ke aplikasi produksi atau repo resmi) alih-alih sekadar menumpuk nama file internal proyek; hindari buzzword hype kosong.
 - Dilarang menggunakan emoji.
 - Dilarang pola tanda hubung panjang (`—`) maupun `--` sebagai tanda baca jeda di dalam teks prosa (tanda `--` hanya sah di dalam code block atau inline command CLI). Gunakan koma, titik, atau pisahkan menjadi dua kalimat.
 - Dilarang mengarang pengalaman pribadi, nama klien, pemberi kerja, kutipan, metrik, atau hasil uji tanpa sumber terverifikasi. Jangan menulis "sebagai AI" atau menyinggung prompt internal.
@@ -23,7 +26,7 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - **Pemisahan ketat dari translator global (`translations.js`)**: dilarang menggabungkan judul, ringkasan (`excerpt`), atau isi artikel (`body`) ke `translations.js`. File `translations.js` khusus menampung label UI antarmuka (navbar, hero/about homepage, label tombol/status halaman berita, dan footer) agar halaman utama tidak ikut lambat.
 - **Lazy-load per bahasa untuk feed dinamis**:
   - Data utama `id` disimpan terpecah pada `news/data/manifest.json` dan `news/data/chunks/chunk-XXXX.json` (hanya ringkasan tanpa `body`).
-  - Bahasa tambahan (`en`, `zh`) disimpan terpisah pada `news/data/i18n/<lang>/manifest.json`, `news/data/i18n/<lang>/chunks/chunk-XXXX.json`, dan `news/data/i18n/<lang>/articles/<slug>.json`.
+  - Bahasa tambahan (`en`, `zh`) hanya menyimpan ringkasan feed di `news/data/i18n/<lang>/chunks/chunk-XXXX.json` tanpa menduplikasi file `articles/` per bahasa; isi artikel lengkap lintas bahasa tetap tersimpan tunggal pada `news/data/articles/<slug>.json`.
   - Pengunjung hanya mengunduh chunk bahasa yang sedang aktif; saat mengganti bahasa di `/news/`, hanya chunk bahasa tujuan yang diambil secara lazy.
 - Pada halaman artikel statis, tombol bahasa (`ID` / `EN` / `中`) mengarahkan browser ke halaman statis khusus bahasa tersebut sehingga tiap halaman HTML hanya membawa 1 bahasa aktif dengan ukuran muat minimum.
 
@@ -91,9 +94,10 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - CRUD artikel: `node scripts/news-api.mjs` (`GET/POST/PUT/DELETE /api/articles`).
 - Upload media base64: `POST /api/media` menyimpan file ke `news/assets/` dan mengembalikan path repo.
 - Penyimpanan publik memakai skema sharded yang dikelola `scripts/news-store.mjs`:
-  - `news/data/manifest.json`, `news/data/chunks/chunk-XXXX.json`, dan `news/data/articles/<slug>.json` untuk bahasa default (`id`).
-  - `news/data/i18n/<lang>/manifest.json`, `news/data/i18n/<lang>/chunks/chunk-XXXX.json`, dan `news/data/i18n/<lang>/articles/<slug>.json` untuk tiap bahasa tambahan (`en`, `zh`).
-  - `news.json` menyimpan cerminan maksimal 50 artikel terbaru (tanpa membengkakkan chunk per halaman publik).
+  - `news/data/articles/<slug>.json` sebagai satu-satunya sumber artikel lengkap (berisi edisi `id` serta `locales.{en,zh}`).
+  - `news/data/manifest.json` dan `news/data/chunks/chunk-XXXX.json` untuk ringkasan feed bahasa default (`id`).
+  - `news/data/i18n/<lang>/chunks/chunk-XXXX.json` untuk ringkasan feed bahasa tambahan (`en`, `zh`).
+  - `news.json` menyimpan cerminan maksimal 50 artikel terbaru khusus kompatibilitas CMS lokal `news/audit/`.
 - Jalankan `node scripts/news-store.mjs --rebuild` bila perlu membangun ulang seluruh indeks sharded dan file i18n.
 - Setelah upload media dan update feed, jalankan `node scripts/build-pages.mjs` untuk memverifikasi build statis di `_site/`, lalu commit dan push file sumber berita (`news.json`, `news/data/`, `news/assets/`, dan skrip terkait; jangan commit `_site/` atau `news/audit/`).
 

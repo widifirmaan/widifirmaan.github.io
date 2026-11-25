@@ -225,31 +225,8 @@ export async function readAllArticles() {
   };
 }
 
-async function writeShardedLocale({ baseDir, itemsDesc, itemsAsc, lang, includeFullSource, nowIso }) {
-  const chunksDir = path.join(baseDir, 'chunks');
-  const articlesDir = path.join(baseDir, 'articles');
-  const manifestFile = path.join(baseDir, 'manifest.json');
+async function writeLocaleChunks({ chunksDir, itemsAsc, lang }) {
   await fs.mkdir(chunksDir, { recursive: true });
-  await fs.mkdir(articlesDir, { recursive: true });
-
-  // Write individual article payloads (only changed or new files are rewritten).
-  const expectedArticleFiles = new Set();
-  for (const item of itemsDesc) {
-    const fileName = `${item.slug}.json`;
-    expectedArticleFiles.add(fileName);
-    const payload = includeFullSource ? item : localizeArticle(item, lang);
-    await writeIfChanged(
-      path.join(articlesDir, fileName),
-      JSON.stringify(payload, null, 2) + '\n'
-    );
-  }
-
-  // Remove orphaned article files.
-  for (const existingFile of await fs.readdir(articlesDir)) {
-    if (existingFile.endsWith('.json') && !expectedArticleFiles.has(existingFile)) {
-      await fs.unlink(path.join(articlesDir, existingFile));
-    }
-  }
 
   // Slice oldest-first into fixed-capacity chunks so older chunks stay immutable.
   const chunkMeta = [];
@@ -281,19 +258,7 @@ async function writeShardedLocale({ baseDir, itemsDesc, itemsAsc, lang, includeF
     }
   }
 
-  // Manifest lists chunks from highest number (newest) to lowest (oldest).
-  const chunksDesc = chunkMeta.slice().reverse();
-  const manifest = {
-    version: 1,
-    lang,
-    lastUpdated: nowIso,
-    total: itemsDesc.length,
-    pageSize: CHUNK_SIZE,
-    latestChunk: chunksDesc[0]?.file || '',
-    chunks: chunksDesc,
-  };
-  await fs.writeFile(manifestFile, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
-  return manifest;
+  return chunkMeta;
 }
 
 export async function writeNewsStore(rawItems) {
@@ -308,27 +273,46 @@ export async function writeNewsStore(rawItems) {
   const itemsAsc = itemsDesc.slice().sort(compareAsc);
   const nowIso = new Date().toISOString();
 
-  const manifest = await writeShardedLocale({
-    baseDir: DATA_DIR,
-    itemsDesc,
-    itemsAsc,
-    lang: 'id',
-    includeFullSource: true,
-    nowIso,
-  });
-
-  for (const lang of EXTRA_LOCALES) {
-    await writeShardedLocale({
-      baseDir: path.join(I18N_DIR, lang),
-      itemsDesc,
-      itemsAsc,
-      lang,
-      includeFullSource: false,
-      nowIso,
-    });
+  // Write canonical single source of truth per article (with localized editions inside).
+  await fs.mkdir(ARTICLES_DIR, { recursive: true });
+  const expectedArticleFiles = new Set();
+  for (const item of itemsDesc) {
+    const fileName = `${item.slug}.json`;
+    expectedArticleFiles.add(fileName);
+    await writeIfChanged(
+      path.join(ARTICLES_DIR, fileName),
+      JSON.stringify(item, null, 2) + '\n'
+    );
+  }
+  for (const existingFile of await fs.readdir(ARTICLES_DIR)) {
+    if (existingFile.endsWith('.json') && !expectedArticleFiles.has(existingFile)) {
+      await fs.unlink(path.join(ARTICLES_DIR, existingFile));
+    }
   }
 
-  // Keep legacy news.json capped at the latest N full items for audit CMS & <noscript>.
+  // Write summary-only chunks for id + extra locales (no duplicated body files per locale).
+  const chunkMeta = await writeLocaleChunks({ chunksDir: CHUNKS_DIR, itemsAsc, lang: 'id' });
+  for (const lang of EXTRA_LOCALES) {
+    const localeDir = path.join(I18N_DIR, lang);
+    await writeLocaleChunks({ chunksDir: path.join(localeDir, 'chunks'), itemsAsc, lang });
+    // Prune unused legacy duplicate files from earlier schema versions.
+    await fs.rm(path.join(localeDir, 'articles'), { recursive: true, force: true });
+    await fs.rm(path.join(localeDir, 'manifest.json'), { force: true });
+  }
+
+  // Manifest lists chunks from highest number (newest) to lowest (oldest).
+  const chunksDesc = chunkMeta.slice().reverse();
+  const manifest = {
+    version: 1,
+    lastUpdated: nowIso,
+    total: itemsDesc.length,
+    pageSize: CHUNK_SIZE,
+    latestChunk: chunksDesc[0]?.file || '',
+    chunks: chunksDesc,
+  };
+  await fs.writeFile(MANIFEST_FILE, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+
+  // Keep legacy news.json capped at the latest N full items for audit CMS compatibility.
   const recent = itemsDesc.slice(0, LEGACY_MIRROR_LIMIT);
   const legacyPayload = {
     lastUpdated: nowIso,
@@ -342,7 +326,7 @@ export async function writeNewsStore(rawItems) {
     lastUpdated: nowIso,
     total: itemsDesc.length,
     latestChunk: manifest.latestChunk,
-    chunks: manifest.chunks.length,
+    chunks: chunksDesc.length,
   };
 }
 

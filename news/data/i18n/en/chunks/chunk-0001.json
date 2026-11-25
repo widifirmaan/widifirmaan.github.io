@@ -5,12 +5,12 @@
   "items": [
     {
       "id": "news-tryngo-in-browser-wasm-programming-platform",
-      "title": "TryNGo: Learn 28 Tech Stacks with In-Browser WebAssembly Playgrounds",
+      "title": "TryNGo: Learn and Run 28 Tech Stacks Straight in Your Browser",
       "slug": "tryngo-in-browser-wasm-programming-platform",
       "date": "2026-11-25",
       "publishedAt": "2026-11-25T07:17:00.000Z",
       "category": "Open Source",
-      "excerpt": "Explore TryNGo at tryngo.widifirmaan.web.id featuring 28 structured coding tracks, Monaco Editor playgrounds, in-browser WebAssembly runtimes, and React 19 stack.",
+      "excerpt": "Try TryNGo live at tryngo.widifirmaan.web.id: 28 structured bilingual coding tracks, VS Code Monaco editor, in-browser WebAssembly execution, quizzes, zero login.",
       "images": [
         "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
       ],
@@ -44,7 +44,7 @@
       "date": "2026-11-25",
       "publishedAt": "2026-11-25T06:20:00.000Z",
       "category": "Open Source",
-      "excerpt": "Explore storytold ArtCraft and its 17 open-source Crafting Apps built in native Rust, cross-platform installers, Flatpak OCI packages, and Cargo build steps.",
+      "excerpt": "Explore storytold ArtCraft and its 17 open-source Crafting Apps in native Rust, plus official launcher installation across Windows, macOS, Linux, and the web.",
       "images": [
         "/news/assets/artcraft-open-source-tools-72b72d44.webp"
       ],

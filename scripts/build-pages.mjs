@@ -17,10 +17,10 @@ const ROOT_FILES = [
   'animoji.glb',
   'index.html',
   'style.css',
+  'ui-core.js',
   'script.js',
   'translations.js',
   'projects.json',
-  'news.json',
   'robots.txt',
 ];
 const STATIC_DIRS = ['v1'];
@@ -515,10 +515,6 @@ ${themeBootstrapScript()}
     </head>
 
     <body data-page="news" data-lang-urls="${escapeHtml(JSON.stringify(urlByLang))}">
-        <div class="cursor-follower"></div>
-
-        <canvas id="webgl"></canvas>
-
 ${navbarHtml(toRoot, '../', lang)}
 
         <main>
@@ -553,13 +549,8 @@ ${bodyHtml}
             </section>
         </main>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.0"></script>
+        <script src="${toRoot}ui-core.js?v=1.0"></script>
     </body>
 </html>
 `;
@@ -588,7 +579,7 @@ function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
   const newsCssHref = lang === 'id' ? 'news.css?v=3.2' : '../../news/news.css?v=3.2';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.5' : '../../news/news.js?v=3.5';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.6' : '../../news/news.js?v=3.6';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -687,8 +678,7 @@ ${navbarHtml(toRoot, './', lang)}
 
                     <noscript>
                         <p class="news-empty">
-                            Arsip berita memerlukan JavaScript. Data mentah tersedia di
-                            <a href="${toRoot}news.json">news.json</a>.
+                            Artikel terbaru sudah dimuat di atas. Aktifkan JavaScript untuk paginasi dan pemindah bahasa langsung.
                         </p>
                     </noscript>
                 </div>
@@ -718,7 +708,8 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.0"></script>
+        <script src="${toRoot}ui-core.js?v=1.0"></script>
+        <script src="${toRoot}script.js?v=5.1"></script>
         <script src="${newsJsSrc}"></script>
     </body>
 </html>

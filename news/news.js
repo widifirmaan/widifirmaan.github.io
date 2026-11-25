@@ -42,11 +42,12 @@
     }
 
     function localePaths(lang) {
-        const base = lang === 'id' ? siteRoot + 'news/data/' : siteRoot + 'news/data/i18n/' + lang + '/';
         return {
-            manifestUrl: base + 'manifest.json',
-            chunksBase: base + 'chunks/',
-            articlesBase: base + 'articles/'
+            manifestUrl: siteRoot + 'news/data/manifest.json',
+            chunksBase: lang === 'id'
+                ? siteRoot + 'news/data/chunks/'
+                : siteRoot + 'news/data/i18n/' + lang + '/chunks/',
+            articlesBase: siteRoot + 'news/data/articles/'
         };
     }
 
@@ -389,6 +390,31 @@
         return normalized;
     }
 
+    async function fetchPageItems(pageIndex, lang) {
+        const pageSize = Number(manifest.pageSize) || LEGACY_PAGE_SIZE;
+        const pageStart = pageIndex * pageSize;
+        const pageEnd = pageStart + pageSize;
+        const collected = [];
+        let cursor = 0;
+
+        for (let i = 0; i < manifest.chunks.length; i += 1) {
+            const count = Number(manifest.chunks[i].count) || 0;
+            const chunkStart = cursor;
+            const chunkEnd = cursor + count;
+            cursor = chunkEnd;
+
+            if (chunkEnd <= pageStart) continue;
+            if (chunkStart >= pageEnd) break;
+
+            const chunkItems = await fetchChunk(i, lang);
+            const sliceFrom = Math.max(0, pageStart - chunkStart);
+            const sliceTo = Math.min(chunkItems.length, pageEnd - chunkStart);
+            collected.push(...chunkItems.slice(sliceFrom, sliceTo));
+        }
+
+        return collected;
+    }
+
     async function goToPage(pageIndex) {
         if (pageIndex < 0 || pageIndex >= totalPages) return;
         currentPage = pageIndex;
@@ -396,7 +422,7 @@
 
         if (manifest && Array.isArray(manifest.chunks)) {
             try {
-                currentItems = await fetchChunk(pageIndex, lang);
+                currentItems = await fetchPageItems(pageIndex, lang);
                 loadedOk = true;
             } catch (e) {
                 currentItems = [];
@@ -445,7 +471,7 @@
         if (previewBadge) previewBadge.hidden = true;
 
         try {
-            let parsed = manifestCache.get(lang);
+            let parsed = manifestCache.get('shared');
             if (!parsed) {
                 const paths = localePaths(lang);
                 const response = await fetch(paths.manifestUrl, { cache: 'no-cache' });
@@ -453,7 +479,7 @@
                     const json = await response.json();
                     if (json && Array.isArray(json.chunks)) {
                         parsed = json;
-                        manifestCache.set(lang, parsed);
+                        manifestCache.set('shared', parsed);
                     }
                 }
             }
@@ -463,7 +489,11 @@
             if (parsed) {
                 manifest = parsed;
                 lastUpdatedRaw = parsed.lastUpdated || '';
-                totalPages = parsed.chunks.length;
+                const pageSize = Number(parsed.pageSize) || LEGACY_PAGE_SIZE;
+                const totalCount = Number.isFinite(Number(parsed.total))
+                    ? Number(parsed.total)
+                    : parsed.chunks.reduce((sum, ch) => sum + (Number(ch.count) || 0), 0);
+                totalPages = totalCount === 0 ? 0 : Math.ceil(totalCount / pageSize);
                 if (totalPages === 0) {
                     loadedOk = true;
                     currentItems = [];

@@ -5,12 +5,12 @@
   "items": [
     {
       "id": "news-tryngo-in-browser-wasm-programming-platform",
-      "title": "TryNGo: Platform Belajar Coding 28 Track dengan Wasm Runtime di Browser",
+      "title": "TryNGo: Belajar dan Jalankan 28 Bahasa Pemrograman di Browser",
       "slug": "tryngo-in-browser-wasm-programming-platform",
       "date": "2026-11-25",
       "publishedAt": "2026-11-25T07:17:00.000Z",
       "category": "Open Source",
-      "excerpt": "Mengulas platform TryNGo dan url produksi tryngo.widifirmaan.web.id: 28 kurikulum interaktif, Monaco Editor, WebAssembly runtime, kuis, dan arsitektur React 19.",
+      "excerpt": "Coba TryNGo langsung di tryngo.widifirmaan.web.id: belajar 28 trek coding dwibahasa, editor ala VS Code, runtime WebAssembly di browser, kuis instan, gratis tanpa login.",
       "images": [
         "/news/assets/tryngo-platform-homepage-36ff30f7.webp"
       ],

@@ -136,8 +136,8 @@ Publication date: ${today}
 Editorial and SEO rules:
 - 500-900 words of Markdown per article for id and en (matching complete Chinese article for zh).
 - Open with one paragraph that states the problem or practical payoff; do not restate the title.
-- Use 3 to 5 descriptive "## " sections with flowing paragraphs; avoid stiff "- **Label:** ..." bold list templates.
-- Include at least one minimal fenced code block with a language tag and explain it concisely below the block.
+- Use 3 to 5 descriptive "## " sections focusing on user benefits and practical workflows; avoid stiff "- **Label:** ..." bold list templates and avoid listing raw internal source file names unless needed.
+- Include at least one minimal fenced code block with a language tag (e.g., official install commands across Windows, macOS, Linux, usage examples, or practical code snippet; prefer official install/usage over compiling from source unless the project has no binary release or live app) and explain it concisely below the block.
 - No filler, no generic motivation, no listicles without substance.
 - No emoji. No em dash character. No "--" used as sentence punctuation outside code blocks.
 - Do not fabricate personal experience, employers, clients, metrics, or benchmark numbers.

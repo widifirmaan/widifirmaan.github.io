@@ -22,58 +22,13 @@ gsap.ticker.add((time) => {
 
 gsap.ticker.lagSmoothing(0);
 
-// Mobile Navigation
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
-
-if (hamburger) {
-    hamburger.addEventListener('click', () => {
-        const isActive = hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active', isActive);
-        hamburger.setAttribute('aria-expanded', String(isActive));
-    });
-
-    // Close menu and smooth scroll when clicking links
-    navLinks.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            const href = e.target.getAttribute('href');
-            
-            // Close mobile menu
-            hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
-            hamburger.setAttribute('aria-expanded', 'false');
-            
-            // Only intercept internal anchor links
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                
-                // Subtle click animation for the link
-                gsap.to(e.target, {
-                    scale: 0.9,
-                    duration: 0.1,
-                    yoyo: true,
-                    repeat: 1,
-                    ease: "power2.inOut"
-                });
-
-                // Smooth scroll to target using Lenis
-                lenis.scrollTo(href, {
-                    offset: 0,
-                    duration: 1.5,
-                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-                });
-            }
-        }
-    });
-}
-
-// Add smooth scroll for desktop nav links as well
+// Smooth anchor scrolling for in-page navigation links (mobile toggle lives in ui-core.js)
 document.querySelectorAll('.nav-links a:not(.lang-btn)').forEach(link => {
     link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
-        if (window.innerWidth > 768 && href.startsWith('#')) {
+        if (href && href.startsWith('#')) {
             e.preventDefault();
-            
+
             gsap.to(link, {
                 color: "var(--accent-color)",
                 duration: 0.2,
@@ -82,7 +37,8 @@ document.querySelectorAll('.nav-links a:not(.lang-btn)').forEach(link => {
             });
 
             lenis.scrollTo(href, {
-                duration: 1.5
+                duration: 1.5,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
             });
         }
     });
@@ -540,91 +496,7 @@ if (character) {
     }
 }
 
-// Language Switcher Logic
-const langBtns = document.querySelectorAll('.lang-btn');
-const pageDeclaredLang = document.documentElement.dataset.pageLang;
-let currentLang = (pageDeclaredLang && ['id', 'en', 'zh'].includes(pageDeclaredLang))
-    ? pageDeclaredLang
-    : (localStorage.getItem('lang') || 'id');
-if (!['id', 'en', 'zh'].includes(currentLang)) currentLang = 'id';
-
-function setLanguage(lang) {
-    if (!['id', 'en', 'zh'].includes(lang)) lang = 'id';
-    currentLang = lang;
-    try {
-        localStorage.setItem('lang', lang);
-    } catch (e) {}
-
-    // Update HTML lang attribute for accessibility & SEO
-    document.documentElement.setAttribute('lang', lang);
-
-    // Update active button state
-    langBtns.forEach(btn => {
-        if (btn.dataset.lang === lang) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-
-    // Update text content safely
-    if (typeof translations !== 'undefined' && translations[lang]) {
-        const dict = translations[lang];
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.dataset.i18n;
-            if (dict[key]) {
-                if (el.classList.contains('glitch')) {
-                    el.setAttribute('data-text', dict[key]);
-                    el.innerText = dict[key];
-                } else {
-                    el.innerText = dict[key];
-                }
-            }
-        });
-
-        // Also update data attributes for experience items
-        document.querySelectorAll('[data-i18n-title]').forEach(el => {
-            const key = el.getAttribute('data-i18n-title');
-            if (dict[key]) el.setAttribute('data-title', dict[key]);
-        });
-        document.querySelectorAll('[data-i18n-subtitle]').forEach(el => {
-            const key = el.getAttribute('data-i18n-subtitle');
-            if (dict[key]) el.setAttribute('data-subtitle', dict[key]);
-        });
-        document.querySelectorAll('[data-i18n-desc]').forEach(el => {
-            const key = el.getAttribute('data-i18n-desc');
-            if (dict[key]) el.setAttribute('data-desc', dict[key]);
-        });
-
-        // Also update meta content
-        document.querySelectorAll('[data-i18n-content]').forEach(el => {
-            const key = el.getAttribute('data-i18n-content');
-            if (dict[key]) el.setAttribute('content', dict[key]);
-        });
-    }
-}
-
-// Initialize on load
-setLanguage(currentLang);
-
-langBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const targetLang = btn.dataset.lang;
-        setLanguage(targetLang);
-        const langUrlsRaw = document.body && document.body.dataset.langUrls;
-        if (langUrlsRaw) {
-            try {
-                const langUrls = JSON.parse(langUrlsRaw);
-                const targetUrl = langUrls && langUrls[targetLang];
-                if (targetUrl && targetUrl !== window.location.pathname) {
-                    window.location.assign(targetUrl);
-                }
-            } catch (e) {}
-        }
-    });
-});
-
-// Modal Logic
+// Modal Logic (language switcher lives in ui-core.js)
 const modal = document.getElementById('detail-modal');
 const modalOverlay = modal ? modal.querySelector('.modal-overlay') : null;
 const modalContent = modal ? modal.querySelector('.modal-content') : null;
@@ -740,206 +612,32 @@ if (modal) {
     });
 }
 
-// ============================================
-// Theme Manager — 3 states: system / light / dark
-// - Default & fallback: system (follows OS)
-// - html[data-theme] is ALWAYS explicit "light" or "dark",
-//   so CSS never depends on media queries.
-// - Dark appearance is unchanged (see style.css base rules).
-// ============================================
-const ThemeManager = (() => {
-    const STORAGE_KEY = 'theme';
-    const CYCLE = ['system', 'light', 'dark']; // click order
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIconEl = document.getElementById('theme-icon-active');
-    const themeLabelEl = document.getElementById('theme-label');
-    const root = document.documentElement;
-
-    // Monochrome (B&W) SVG icons — inherit button color via currentColor,
-    // so they stay white in dark mode and black in light mode.
-    const SVG_OPEN =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
-    const ICONS = {
-        system:
-            SVG_OPEN +
-            '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
-        light:
-            SVG_OPEN +
-            '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
-        dark:
-            SVG_OPEN +
-            '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-    };
-
-    const META = {
-        system: { icon: ICONS.system, label: 'system', next: 'light' },
-        light: { icon: ICONS.light, label: 'light', next: 'dark' },
-        dark: { icon: ICONS.dark, label: 'dark', next: 'system' }
-    };
-
-    let currentMode = 'system'; // system | light | dark
-    let lastToggleAt = 0;
-
-    function getSystemEffective() {
-        try {
-            return window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light'
-                : 'dark';
-        } catch (e) {
-            return 'dark';
-        }
-    }
-
-    function getStoredMode() {
-        try {
-            const v = localStorage.getItem(STORAGE_KEY);
-            return v === 'light' || v === 'dark' || v === 'system' ? v : 'system';
-        } catch (e) {
-            return 'system';
-        }
-    }
-
-    function resolveEffective(mode) {
-        if (mode === 'light' || mode === 'dark') return mode;
-        return getSystemEffective();
-    }
-
-    function updateButton(mode) {
-        const meta = META[mode] || META.system;
-        if (themeToggleBtn) {
-            themeToggleBtn.setAttribute('aria-label', 'Theme: ' + meta.label);
-            themeToggleBtn.setAttribute(
-                'title',
-                'Theme: ' + meta.label + ' (click for ' + META[meta.next].label + ')'
-            );
-        }
-        if (themeLabelEl) {
-            themeLabelEl.textContent = meta.label;
-        }
-        if (!themeIconEl) return;
-        themeIconEl.classList.remove('visible');
-        themeIconEl.classList.add('hidden');
-        setTimeout(() => {
-            themeIconEl.innerHTML = meta.icon;
-            themeIconEl.classList.remove('hidden');
-            themeIconEl.classList.add('visible');
-        }, 150);
-    }
-
-    function updateMetaTheme(effective) {
-        let meta = document.querySelector('meta[name="theme-color"]');
-        if (!meta) {
-            meta = document.createElement('meta');
-            meta.setAttribute('name', 'theme-color');
-            document.head.appendChild(meta);
-        }
-        meta.setAttribute('content', effective === 'light' ? '#ffffff' : '#050505');
-        try {
-            root.style.colorScheme = effective;
-        } catch (e) {}
-    }
-
-    function updateThreeJS(effective) {
-        try {
-            if (typeof particlesMaterial !== 'undefined' && typeof THREE !== 'undefined') {
-                if (effective === 'light') {
-                    // Darker pink + normal blending: stays visible on white
-                    particlesMaterial.color.setHex(0xcc1848);
-                    particlesMaterial.opacity = 0.55;
-                    particlesMaterial.blending = THREE.NormalBlending;
-                } else {
-                    // Original dark-mode look — untouched
-                    particlesMaterial.color.setHex(0xff3366);
-                    particlesMaterial.opacity = 0.8;
-                    particlesMaterial.blending = THREE.AdditiveBlending;
-                }
-                particlesMaterial.needsUpdate = true;
+// Sync Three.js particle appearance with ui-core.js theme state
+function updateThreeJS(effective) {
+    try {
+        if (typeof particlesMaterial !== 'undefined' && typeof THREE !== 'undefined') {
+            if (effective === 'light') {
+                particlesMaterial.color.setHex(0xcc1848);
+                particlesMaterial.opacity = 0.55;
+                particlesMaterial.blending = THREE.NormalBlending;
+            } else {
+                particlesMaterial.color.setHex(0xff3366);
+                particlesMaterial.opacity = 0.8;
+                particlesMaterial.blending = THREE.AdditiveBlending;
             }
-            if (typeof renderer !== 'undefined' && renderer && renderer.setClearColor) {
-                renderer.setClearColor(0x000000, 0); // transparent: body bg shows through
-            }
-        } catch (e) {}
-    }
-
-    function applyMode(mode) {
-        if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
-        currentMode = mode;
-        const effective = resolveEffective(mode);
-
-        // Explicit attribute drives all CSS (light rules only match data-theme="light")
-        root.setAttribute('data-theme', effective);
-
-        if (effective === 'light') {
-            document.documentElement.style.backgroundColor = '#ffffff';
-            document.body.style.backgroundColor = '#ffffff';
-            document.body.style.color = '#000000';
-        } else {
-            document.documentElement.style.backgroundColor = '#050505';
-            document.body.style.backgroundColor = '#050505';
-            document.body.style.color = '#ffffff';
+            particlesMaterial.needsUpdate = true;
         }
-
-        updateButton(mode);
-        updateMetaTheme(effective);
-        updateThreeJS(effective);
-    }
-
-    function init() {
-        applyMode(getStoredMode());
-
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', (e) => {
-                if (e && e.preventDefault) e.preventDefault();
-                if (e && e.stopPropagation) e.stopPropagation();
-                const now =
-                    typeof performance !== 'undefined' && performance.now
-                        ? performance.now()
-                        : Date.now();
-                if (now - lastToggleAt < 350) return; // ignore accidental double-fire
-                lastToggleAt = now;
-
-                const next = META[currentMode] ? META[currentMode].next : 'system';
-                try {
-                    localStorage.setItem(STORAGE_KEY, next);
-                } catch (err) {}
-                applyMode(next);
-            });
+        if (typeof renderer !== 'undefined' && renderer && renderer.setClearColor) {
+            renderer.setClearColor(0x000000, 0);
         }
+    } catch (e) {}
+}
 
-        // In system mode, follow OS changes live
-        try {
-            const mq = window.matchMedia('(prefers-color-scheme: light)');
-            const onChange = () => {
-                if (currentMode === 'system') applyMode('system');
-            };
-            if (mq.addEventListener) mq.addEventListener('change', onChange);
-            else if (mq.addListener) mq.addListener(onChange);
-        } catch (e) {}
+if (window.__theme && window.__theme.effective) {
+    updateThreeJS(window.__theme.effective);
+}
+window.addEventListener('themechange', (e) => {
+    if (e && e.detail && e.detail.effective) {
+        updateThreeJS(e.detail.effective);
     }
-
-    return {
-        init,
-        applyMode,
-        get mode() {
-            return currentMode;
-        },
-        get effective() {
-            return resolveEffective(currentMode);
-        }
-    };
-})();
-
-ThemeManager.init();
-
-// Debug helper: window.__theme.mode / .effective / .set('light'|'dark'|'system')
-try {
-    window.__theme = {
-        get mode() {
-            return ThemeManager.mode;
-        },
-        get effective() {
-            return ThemeManager.effective;
-        },
-        set: (m) => ThemeManager.applyMode(m)
-    };
-} catch (e) {}
+});
