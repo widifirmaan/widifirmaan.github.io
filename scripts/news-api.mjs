@@ -2,11 +2,13 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const NEWS_FILE = path.join(ROOT, 'news.json');
+const MEDIA_DIR = path.join(ROOT, 'news', 'assets');
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
 const TOKEN = process.env.NEWS_API_TOKEN || '';
@@ -20,6 +22,20 @@ function send(res, status, data) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   });
   res.end(body);
+}
+
+function safeName(name) {
+  const base = path.basename(String(name || '')).replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  return base.slice(0, 120);
+}
+
+function extFromMime(mime) {
+  const map = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif', 'image/avif': '.avif', 'video/mp4': '.mp4', 'video/webm': '.webm', 'video/quicktime': '.mov' };
+  return map[mime] || '';
+}
+
+async function ensureMediaDir() {
+  await fs.mkdir(MEDIA_DIR, { recursive: true });
 }
 
 function unauthorized(res) {
@@ -120,8 +136,32 @@ async function handler(req, res) {
   const parts = url.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
 
   try {
-    if (parts[0] !== 'api' || parts[1] !== 'articles') {
-      return send(res, 404, { error: 'Not found', endpoints: ['/api/articles', '/api/articles/:id'] });
+    if (parts[0] !== 'api') {
+      return send(res, 404, { error: 'Not found' });
+    }
+
+    if (parts[1] === 'media') {
+      if (req.method !== 'POST' || parts[2]) return send(res, 405, { error: 'Method not allowed' });
+      const body = await readBody(req);
+      const filename = safeName(body.filename || body.name || 'media');
+      const mime = asString(body.mimeType || body.contentType);
+      const data = asString(body.data || body.base64 || body.content);
+      if (!data) return send(res, 400, { error: 'data/base64 is required' });
+      const allowed = /^(image|video)\//.test(mime);
+      if (mime && !allowed) return send(res, 400, { error: 'Only image/* or video/* allowed' });
+      const buf = Buffer.from(data.replace(/^data:[^;]+;base64,/, ''), 'base64');
+      if (!buf.length) return send(res, 400, { error: 'Invalid base64 data' });
+      const ext = path.extname(filename) || extFromMime(mime);
+      const stem = (path.basename(filename, path.extname(filename)) || 'media').slice(0, 80);
+      const outName = `${stem}-${crypto.randomUUID().slice(0, 8)}${ext}`;
+      await ensureMediaDir();
+      await fs.writeFile(path.join(MEDIA_DIR, outName), buf);
+      const filePath = `news/assets/${outName}`;
+      return send(res, 201, { path: `/${filePath}`, raw: `https://raw.githubusercontent.com/widifirmaan/widifirmaan.github.io/master/${filePath}`, mimeType: mime, bytes: buf.length });
+    }
+
+    if (parts[1] !== 'articles') {
+      return send(res, 404, { error: 'Not found', endpoints: ['/api/articles', '/api/articles/:id', '/api/media'] });
     }
 
     const id = parts[2] ? decodeURIComponent(parts[2]) : '';

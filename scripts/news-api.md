@@ -19,12 +19,25 @@ Jika `NEWS_API_TOKEN` diset, kirim header `Authorization: Bearer <token>`.
 - `POST /api/articles` - buat artikel
 - `PUT /api/articles/:id` - update by `id` atau `slug`
 - `DELETE /api/articles/:id` - hapus by `id` atau `slug`
+- `POST /api/media` - upload gambar/video ke `news/assets/` (base64)
 
-## Contoh
+## Media (gambar/video)
+
+Body JSON:
+
+```json
+{
+  "filename": "diagram.png",
+  "mimeType": "image/png",
+  "data": "<base64 atau data URL>"
+}
+```
+
+Response berisi `path` (`/news/assets/...`) dan `raw` GitHub raw URL. Setelah file di-commit/push, gunakan `path` atau `raw` di `images`/konten artikel.
+
+## Contoh artikel
 
 ```bash
-curl http://127.0.0.1:8787/api/articles
-
 curl -X POST http://127.0.0.1:8787/api/articles \
   -H 'Content-Type: application/json' \
   -d '{
@@ -34,15 +47,10 @@ curl -X POST http://127.0.0.1:8787/api/articles \
     "category":"Backend",
     "excerpt":"Gunakan batch fetching.",
     "body":"## Masalah\n...",
+    "images":["/news/assets/diagram-abc123.png"],
     "source":"ai",
     "model":"gemini-2.5-flash"
   }'
-
-curl -X PUT http://127.0.0.1:8787/api/articles/fix-n1-query \
-  -H 'Content-Type: application/json' \
-  -d '{"excerpt":"Ringkasan diperbarui"}'
-
-curl -X DELETE http://127.0.0.1:8787/api/articles/fix-n1-query
 ```
 
 ## Format item
