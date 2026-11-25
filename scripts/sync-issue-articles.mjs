@@ -8,6 +8,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import {
   ROOT_DIR,
@@ -69,7 +70,12 @@ function stripLeadingMetadata(block) {
   while (i < lines.length) {
     const line = lines[i].trim();
     if (!line) {
-      i += 1;
+      const nextNonEmpty = lines.slice(i + 1).find((l) => l.trim() !== '');
+      if (nextNonEmpty && /^(title|excerpt)\s*:\s*(.+)$/i.test(nextNonEmpty.trim())) {
+        i += 1;
+        continue;
+      }
+      if (Object.keys(meta).length > 0) i += 1;
       break;
     }
     const m = line.match(/^(title|excerpt)\s*:\s*(.+)$/i);
@@ -111,6 +117,18 @@ function normalizeGitHubHtmlImages(markdown) {
 function findFirstImageUrl(markdown) {
   const m = String(markdown || '').match(/!\[[^\]]*\]\((https?:\/\/[^)\s]+|\/news\/assets\/[^)\s]+)\)/i);
   return m ? m[1].trim() : '';
+}
+
+function findAllExternalImageUrls(...texts) {
+  const urls = new Set();
+  const mdRegex = /!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/gi;
+  for (const text of texts) {
+    if (!text) continue;
+    for (const match of String(text).matchAll(mdRegex)) {
+      if (match[1]) urls.add(match[1].trim());
+    }
+  }
+  return Array.from(urls);
 }
 
 export function parseIssueToDraft(issue) {
@@ -179,9 +197,23 @@ export function parseIssueToDraft(issue) {
     findFirstImageUrl(locales.en?.body) ||
     findFirstImageUrl(locales.zh?.body);
 
+  const externalSet = new Set();
+  if (/^https?:\/\//i.test(asString(meta.image))) {
+    externalSet.add(asString(meta.image));
+  }
+  for (const extUrl of findAllExternalImageUrls(preamble, body, locales.en?.body, locales.zh?.body)) {
+    externalSet.add(extUrl);
+  }
+
+  const localImages = [];
+  if (heroImageUrl && heroImageUrl.startsWith('/news/assets/')) {
+    localImages.push(heroImageUrl);
+  }
+
   return {
     issueNumber: issue.number,
     heroImageUrl,
+    externalImageUrls: Array.from(externalSet),
     article: {
       id: `issue-${issue.number}-${slug}`,
       title,
@@ -190,7 +222,7 @@ export function parseIssueToDraft(issue) {
       publishedAt,
       category,
       excerpt: idSection.excerpt || meta.excerpt || deriveExcerpt(body),
-      images: heroImageUrl && heroImageUrl.startsWith('/news/assets/') ? [heroImageUrl] : [],
+      images: localImages,
       badges: [],
       body,
       ...(Object.keys(locales).length ? { locales } : {}),
@@ -261,25 +293,36 @@ async function materializeImage(slug, url, token, skipWatermark) {
   return `/news/assets/${outName}`;
 }
 
-function rewriteImageRefs(article, oldUrl, newPath) {
-  if (!newPath) return article;
-  const replaceInBody = (text) => {
+function rewriteImageRefs(article, urlReplacements, primaryLocalPath) {
+  const uniquePaths = Array.from(
+    new Set([...(article.images || []), ...urlReplacements.map((r) => r.newPath)].filter(Boolean))
+  );
+  if (uniquePaths.length === 0 && !primaryLocalPath) return article;
+
+  const fallbackPath = primaryLocalPath || uniquePaths[0] || '';
+  const replaceInBody = (text, fallbackTitle) => {
     let s = String(text || '');
-    if (oldUrl) s = s.split(oldUrl).join(newPath);
-    s = s.replace(/\((HERO_IMAGE|URL_GAMBAR)\)/gi, `(${newPath})`);
-    if (!s.includes(newPath)) {
-      const idx = s.indexOf('\n\n');
-      const imgMd = `\n\n![${article.title}](${newPath})`;
-      s = idx !== -1 ? s.slice(0, idx) + imgMd + s.slice(idx) : s + imgMd;
+    for (const { oldUrl, newPath } of urlReplacements) {
+      if (oldUrl && newPath) s = s.split(oldUrl).join(newPath);
+    }
+    if (fallbackPath) {
+      s = s.replace(/\((HERO_IMAGE|URL_GAMBAR)\)/gi, `(${fallbackPath})`);
+      const hasLocalImage = /!\[[^\]]*\]\(\/news\/assets\/[^)]+\)/.test(s);
+      if (!hasLocalImage) {
+        const idx = s.indexOf('\n\n');
+        const imgMd = `\n\n![${fallbackTitle}](${fallbackPath})`;
+        s = idx !== -1 ? s.slice(0, idx) + imgMd + s.slice(idx) : s + imgMd;
+      }
     }
     return s;
   };
 
-  article.images = [newPath];
-  article.body = replaceInBody(article.body);
+  article.images = uniquePaths;
+  article.body = replaceInBody(article.body, article.title);
   if (article.locales) {
     for (const lang of Object.keys(article.locales)) {
-      article.locales[lang].body = replaceInBody(article.locales[lang].body);
+      const loc = article.locales[lang];
+      loc.body = replaceInBody(loc.body, loc.title || article.title);
     }
   }
   return article;
@@ -288,7 +331,7 @@ function rewriteImageRefs(article, oldUrl, newPath) {
 async function fetchPublishedIssues(repoFullName, token) {
   const issues = [];
   for (let page = 1; page <= 10; page += 1) {
-    const apiUrl = `https://api.github.com/repos/${repoFullName}/issues?labels=${encodeURIComponent(PUBLISH_LABEL)}&state=all&per_page=100&page=${page}`;
+    const apiUrl = `https://api.github.com/repos/${repoFullName}/issues?labels=${encodeURIComponent(PUBLISH_LABEL)}&state=open&per_page=100&page=${page}`;
     const headers = {
       Accept: 'application/vnd.github+json',
       'User-Agent': 'widifirmaan-news-builder',
@@ -327,6 +370,10 @@ async function main() {
   let savedCount = 0;
   for (const issue of rawIssues) {
     if (!issue || issue.pull_request) continue;
+    if (issue.state && String(issue.state).toLowerCase() !== 'open') {
+      console.log(`Skipped issue #${issue.number}: state "${issue.state}" != "open".`);
+      continue;
+    }
     const author = String(issue.user?.login || '').toLowerCase();
     if (author !== allowedAuthor) {
       console.log(`Skipped issue #${issue.number}: author "${author}" != "${allowedAuthor}".`);
@@ -343,9 +390,23 @@ async function main() {
       continue;
     }
 
-    if (draft.heroImageUrl && /^https?:\/\//i.test(draft.heroImageUrl)) {
-      const localPath = await materializeImage(draft.article.slug, draft.heroImageUrl, token, skipWatermark);
-      rewriteImageRefs(draft.article, draft.heroImageUrl, localPath);
+    const urlCache = new Map();
+    const urlReplacements = [];
+    for (const extUrl of draft.externalImageUrls) {
+      let localPath = urlCache.get(extUrl);
+      if (!localPath) {
+        localPath = await materializeImage(draft.article.slug, extUrl, token, skipWatermark);
+        urlCache.set(extUrl, localPath);
+      }
+      if (localPath) {
+        urlReplacements.push({ oldUrl: extUrl, newPath: localPath });
+      }
+    }
+    const primaryLocalPath =
+      urlReplacements[0]?.newPath ||
+      (draft.heroImageUrl && draft.heroImageUrl.startsWith('/news/assets/') ? draft.heroImageUrl : '');
+    if (urlReplacements.length > 0 || primaryLocalPath) {
+      rewriteImageRefs(draft.article, urlReplacements, primaryLocalPath);
     }
 
     const normalized = normalizeArticle(draft.article);
@@ -355,13 +416,15 @@ async function main() {
       'utf8'
     );
     savedCount += 1;
-    console.log(`Synced issue #${issue.number} -> ${normalized.slug}`);
+    console.log(`Synced issue #${issue.number} -> ${normalized.slug} (${normalized.images.length} image(s))`);
   }
 
   console.log(`Synced ${savedCount} published issue article(s) into .build-issues/.`);
 }
 
-main().catch((err) => {
-  console.error('sync-issue-articles failed:', err);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error('sync-issue-articles failed:', err);
+    process.exit(1);
+  });
+}

@@ -357,7 +357,7 @@ export async function writeNewsStore(rawItems) {
     lastUpdated: nowIso,
     total: itemsDesc.length,
     latestChunk: manifest.latestChunk,
-    chunks: chunksDesc.length,
+    chunks: manifest.chunks.length,
   };
 }
 

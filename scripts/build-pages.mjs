@@ -856,6 +856,14 @@ async function main() {
   } catch (err) {
     if (err.code !== 'ENOENT') throw err;
   }
+  try {
+    await copyDirFiltered(
+      path.join(issueDir, 'articles'),
+      path.join(OUT_DIR, 'news', 'data', 'articles')
+    );
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
 
   const { items } = await readAllArticles({
     extraArticlesDir: path.join(issueDir, 'articles'),
