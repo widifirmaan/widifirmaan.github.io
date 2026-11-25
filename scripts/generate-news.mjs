@@ -292,7 +292,8 @@ function normalizeArticle(raw, config, today, index, usedSlugs) {
   }
   usedSlugs.add(candidate);
 
-  const category = String(config.category || raw.category || 'Coding').trim().slice(0, 40);
+  const rawCategory = String(config.category || raw.category || '').trim();
+  const category = CATEGORIES.includes(rawCategory) ? rawCategory : 'Tooling';
   const excerpt = cleanExcerpt(raw.excerpt, body);
 
   const rawLocales = raw.locales && typeof raw.locales === 'object' ? raw.locales : {};

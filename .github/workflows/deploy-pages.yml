@@ -29,7 +29,10 @@ jobs:
         (
           (github.event.action == 'labeled' && github.event.label.name == 'news:published') ||
           (github.event.action == 'unlabeled' && github.event.label.name == 'news:published') ||
-          contains(github.event.issue.labels.*.name, 'news:published')
+          (
+            contains(fromJSON('["edited","closed","reopened","deleted"]'), github.event.action) &&
+            contains(github.event.issue.labels.*.name, 'news:published')
+          )
         )
       ))
     runs-on: ubuntu-latest
@@ -43,12 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Ensure ffmpeg for issue image watermarking
-        run: |
-          if ! command -v ffmpeg >/dev/null 2>&1; then
-            sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
-          fi
 
       - name: Sync published GitHub Issues articles (zero-push CMS)
         run: node scripts/sync-issue-articles.mjs

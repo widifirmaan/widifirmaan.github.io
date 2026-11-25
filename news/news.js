@@ -32,11 +32,11 @@
 
     function currentLang() {
         const declared = document.documentElement.dataset.pageLang;
+        if (declared && ['id', 'en', 'zh'].includes(declared)) return declared;
         try {
             const stored = localStorage.getItem('lang');
             if (stored && ['id', 'en', 'zh'].includes(stored)) return stored;
         } catch (e) {}
-        if (declared && ['id', 'en', 'zh'].includes(declared)) return declared;
         const htmlLang = document.documentElement.lang;
         return ['id', 'en', 'zh'].includes(htmlLang) ? htmlLang : 'id';
     }

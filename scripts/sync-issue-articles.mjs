@@ -115,13 +115,13 @@ function normalizeGitHubHtmlImages(markdown) {
 }
 
 function findFirstImageUrl(markdown) {
-  const m = String(markdown || '').match(/!\[[^\]]*\]\((https?:\/\/[^)\s]+|\/news\/assets\/[^)\s]+)\)/i);
+  const m = String(markdown || '').match(/!\[[^\]]*\]\(((?:https?:\/\/|\/news\/assets\/)[^)\s]+)(?:\s+["'][^"']*["'])?\)/i);
   return m ? m[1].trim() : '';
 }
 
 function findAllExternalImageUrls(...texts) {
   const urls = new Set();
-  const mdRegex = /!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/gi;
+  const mdRegex = /!\[[^\]]*\]\((https?:\/\/[^)\s]+)(?:\s+["'][^"']*["'])?\)/gi;
   for (const text of texts) {
     if (!text) continue;
     for (const match of String(text).matchAll(mdRegex)) {
@@ -255,21 +255,50 @@ async function downloadBuffer(url, token) {
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} downloading ${url}`);
   }
+  const contentType = res.headers.get('content-type') || '';
+  if (
+    contentType &&
+    !/^image\/(png|jpe?g|webp|avif)/i.test(contentType) &&
+    !/^application\/octet-stream/i.test(contentType)
+  ) {
+    throw new Error(`Unsupported image content-type "${contentType}" from ${url}`);
+  }
   return {
     buf: Buffer.from(await res.arrayBuffer()),
-    contentType: res.headers.get('content-type') || '',
+    contentType,
   };
 }
 
 function extFromContentType(ct, url) {
   if (/png/i.test(ct)) return '.png';
   if (/webp/i.test(ct)) return '.webp';
+  if (/avif/i.test(ct)) return '.avif';
   if (/jpe?g/i.test(ct)) return '.jpg';
   try {
     const ext = path.extname(new URL(url).pathname).toLowerCase();
-    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) return ext;
+    if (['.png', '.jpg', '.jpeg', '.webp', '.avif'].includes(ext)) return ext;
   } catch {}
   return '.png';
+}
+
+let ffmpegEnsured = false;
+async function ensureFfmpeg() {
+  if (ffmpegEnsured) return;
+  try {
+    await execFileAsync('ffmpeg', ['-version']);
+    ffmpegEnsured = true;
+    return;
+  } catch {
+    if (process.env.CI !== 'true') {
+      throw new Error('ffmpeg is not installed locally; install ffmpeg or pass --no-watermark');
+    }
+    console.log('Installing ffmpeg on demand for issue image watermarking...');
+    await execFileAsync('sudo', ['apt-get', 'update'], { maxBuffer: 10 * 1024 * 1024 });
+    await execFileAsync('sudo', ['apt-get', 'install', '-y', '--no-install-recommends', 'ffmpeg'], {
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    ffmpegEnsured = true;
+  }
 }
 
 async function materializeImage(slug, url, token, skipWatermark) {
@@ -288,6 +317,7 @@ async function materializeImage(slug, url, token, skipWatermark) {
   if (skipWatermark) {
     await fs.copyFile(rawPath, outPath);
   } else {
+    await ensureFfmpeg();
     await execFileAsync('node', [WATERMARK_SCRIPT, rawPath, outPath], { cwd: ROOT_DIR });
   }
   return `/news/assets/${outName}`;

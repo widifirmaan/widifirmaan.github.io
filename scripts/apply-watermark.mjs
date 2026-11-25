@@ -16,8 +16,8 @@ if (!input) {
 const src = path.resolve(input);
 const out = path.resolve(process.argv[3] || src);
 const ext = path.extname(src).toLowerCase();
-if (!['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
-  console.error('Supported: png, jpg, jpeg, webp');
+if (!['.png', '.jpg', '.jpeg', '.webp', '.avif'].includes(ext)) {
+  console.error('Supported: png, jpg, jpeg, webp, avif');
   process.exit(1);
 }
 await fs.access(src);

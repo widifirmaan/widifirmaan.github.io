@@ -91,6 +91,13 @@ function safeHref(raw) {
   return '#';
 }
 
+function parseMarkdownImageTarget(raw) {
+  return String(raw || '')
+    .trim()
+    .replace(/\s+(?:"[^"]*"|'[^']*')\s*$/, '')
+    .trim();
+}
+
 function hostOf(raw) {
   try {
     return new URL(raw).host;
@@ -236,7 +243,7 @@ function formatInline(text, imageDimsMap) {
   let s = String(text || '');
   s = s.replace(/`([^`]+)`/g, (_, code) => hold(`<code>${escapeHtml(code)}</code>`));
   s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
-    const cleanSrc = safeHref(src);
+    const cleanSrc = safeHref(parseMarkdownImageTarget(src));
     const dims = imageDimsMap.get(cleanSrc);
     const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : '';
     return hold(`<img src="${escapeHtml(cleanSrc)}" alt="${escapeHtml(alt)}"${dimAttrs} decoding="async" />`);
@@ -292,10 +299,18 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
+    if (line.trim().startsWith('<!--')) {
+      while (i < lines.length && !lines[i].includes('-->')) {
+        i += 1;
+      }
+      if (i < lines.length) i += 1;
+      continue;
+    }
+
     const imgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (imgMatch) {
       const alt = imgMatch[1];
-      const src = safeHref(imgMatch[2]);
+      const src = safeHref(parseMarkdownImageTarget(imgMatch[2]));
       const dims = imageDimsMap.get(src);
       const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : '';
       out.push(
@@ -355,6 +370,7 @@ function renderMarkdown(markdown, imageDimsMap) {
       i < lines.length &&
       lines[i].trim() &&
       !/^(#{1,4}\s+|```|>|[-*]\s+|\d+\.\s+|(-{3,}|\*{3,})\s*$)/.test(lines[i]) &&
+      !lines[i].trim().startsWith('<!--') &&
       !lines[i].trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
     ) {
       paraLines.push(lines[i].trim());
@@ -596,7 +612,7 @@ function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
   const newsCssHref = lang === 'id' ? 'news.css?v=3.2' : '../../news/news.css?v=3.2';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.6' : '../../news/news.js?v=3.6';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.7' : '../../news/news.js?v=3.7';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -619,7 +635,7 @@ function renderFeedPage(items, lang) {
   };
 
   return `<!doctype html>
-<html lang="${meta.htmlLang}"${lang !== 'id' ? ` data-page-lang="${lang}"` : ''} data-theme="dark">
+<html lang="${meta.htmlLang}" data-page-lang="${lang}" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -667,7 +683,7 @@ ${themeBootstrapScript()}
         />
     </head>
 
-    <body data-page="news" data-site-root="${toRoot}">
+    <body data-page="news" data-site-root="${toRoot}" data-lang-urls="${escapeHtml(JSON.stringify(urlByLang))}">
         <div class="cursor-follower"></div>
 
         <canvas id="webgl"></canvas>
@@ -885,7 +901,7 @@ async function main() {
     for (const body of bodies) {
       const matches = String(body || '').matchAll(/!\[[^\]]*\]\(([^)]+)\)/g);
       for (const m of matches) {
-        const src = m[1].trim();
+        const src = parseMarkdownImageTarget(m[1]);
         if (!imageDimsMap.has(src)) {
           const dims = await readImageDimensions(src);
           if (dims) imageDimsMap.set(src, dims);
