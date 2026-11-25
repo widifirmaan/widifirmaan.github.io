@@ -213,15 +213,15 @@
         const title = item.title || item.slug;
         const meta = [formatDate(item.date), item.category].filter(Boolean).join(' · ');
 
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'news-entry';
-        button.dataset.lazy = '1';
-        button.setAttribute('aria-label', title);
-        button.dataset.title = title;
-        button.dataset.subtitle = meta;
-        button.dataset.image = (Array.isArray(item.images) && item.images[0]) || '';
-        button.dataset.desc = buildFallback(item, meta);
+        const entry = document.createElement(previewMode ? 'button' : 'a');
+        entry.className = 'news-entry';
+        if (previewMode) {
+            entry.type = 'button';
+            entry.dataset.lazy = '1';
+        } else {
+            entry.href = './' + encodeURIComponent(item.slug) + '/';
+        }
+        entry.setAttribute('aria-label', title);
 
         const head = document.createElement('div');
         head.className = 'news-entry-head';
@@ -244,9 +244,11 @@
         const excerpt = document.createElement('p');
         excerpt.textContent = item.excerpt || '';
 
-        button.append(head, heading, excerpt);
-        button.addEventListener('click', () => handleOpenArticle(item));
-        return button;
+        entry.append(head, heading, excerpt);
+        if (previewMode) {
+            entry.addEventListener('click', () => handleOpenArticle(item));
+        }
+        return entry;
     }
 
     function render() {

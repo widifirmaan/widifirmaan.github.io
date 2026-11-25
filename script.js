@@ -607,9 +607,9 @@ langBtns.forEach(btn => {
 
 // Modal Logic
 const modal = document.getElementById('detail-modal');
-const modalOverlay = modal.querySelector('.modal-overlay');
-const modalContent = modal.querySelector('.modal-content');
-const modalClose = modal.querySelector('.modal-close');
+const modalOverlay = modal ? modal.querySelector('.modal-overlay') : null;
+const modalContent = modal ? modal.querySelector('.modal-content') : null;
+const modalClose = modal ? modal.querySelector('.modal-close') : null;
 const modalImage = document.getElementById('modal-image');
 const modalTitle = document.getElementById('modal-title');
 const modalSubtitle = document.getElementById('modal-subtitle');
@@ -617,7 +617,9 @@ const modalDescription = document.getElementById('modal-description');
 const clickableItems = document.querySelectorAll('.experience-item, .project-card');
 
 function openModal(data) {
-    const currentLang = document.querySelector('.lang-btn.active').dataset.lang;
+    if (!modal || !modalDescription) return;
+    const activeLangBtn = document.querySelector('.lang-btn.active');
+    const currentLang = activeLangBtn ? activeLangBtn.dataset.lang : 'id';
     
     // If it's an experience item, check for translated data
     if (data.type === 'experience') {
@@ -689,33 +691,35 @@ function closeModal() {
         }, "-=0.1");
 }
 
-// Use event delegation for clickable items (Experience, Projects, non-lazy News)
-document.addEventListener('click', (e) => {
-    const clickable = e.target.closest('.experience-item, .project-card, .news-entry');
-    if (clickable) {
-        if (clickable.classList.contains('news-entry') && clickable.dataset.lazy === '1') {
-            return;
+// Use event delegation for clickable items (Experience, Projects, preview News)
+if (modal) {
+    document.addEventListener('click', (e) => {
+        const clickable = e.target.closest('.experience-item, .project-card, .news-entry');
+        if (clickable) {
+            if (clickable.classList.contains('news-entry') && (clickable.tagName === 'A' || clickable.dataset.lazy === '1')) {
+                return;
+            }
+            const data = {
+                title: clickable.dataset.title,
+                subtitle: clickable.dataset.subtitle,
+                desc: clickable.dataset.desc,
+                image: clickable.dataset.image,
+                readme: clickable.dataset.readme
+            };
+            openModal(data);
         }
-        const data = {
-            title: clickable.dataset.title,
-            subtitle: clickable.dataset.subtitle,
-            desc: clickable.dataset.desc,
-            image: clickable.dataset.image,
-            readme: clickable.dataset.readme
-        };
-        openModal(data);
-    }
-});
+    });
 
-modalClose.addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', closeModal);
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
 
-// Close on ESC
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display === 'flex') {
-        closeModal();
-    }
-});
+    // Close on ESC
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+}
 
 // ============================================
 // Theme Manager — 3 states: system / light / dark

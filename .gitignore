@@ -5,3 +5,6 @@ presentation.html
 
 # Local-only CMS
 news/audit/
+
+# Generated static deploy output
+_site/

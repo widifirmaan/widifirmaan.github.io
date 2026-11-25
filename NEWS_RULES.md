@@ -29,7 +29,7 @@ Aturan ini wajib dipakai oleh AI/CLI/script apa pun yang membuat, mengedit, atau
 - Gambar di `images[]` harus punya konteks di artikel; gunakan nama file deskriptif kebab-case sebelum upload/watermark.
 - Jangan keyword stuffing. Gunakan istilah teknis yang memang dibahas di body.
 - Jika artikel punya halaman statis tersendiri di masa depan, halaman itu wajib punya canonical, meta title/description, Open Graph/Twitter card, dan structured data `Article`/`TechArticle`.
-- Saat menambah/mengubah halaman publik yang dapat diindeks, perbarui `sitemap.xml` (`<loc>`, `<lastmod>`, `<changefreq>`, `<priority>` sesuai halaman). Feed `/news/` tetap ada di sitemap.
+- Halaman statis `/news/<slug>/index.html` dan `sitemap.xml` untuk deploy dibangun otomatis saat deploy oleh `node scripts/build-pages.mjs` lewat `.github/workflows/deploy-pages.yml` (ke folder `_site/` yang tidak di-commit ke Git). Feed `/news/` tetap ada di sitemap.
 
 ## Struktur Data Artikel
 
