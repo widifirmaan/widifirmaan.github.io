@@ -166,9 +166,14 @@ export function parseIssueToDraft(issue) {
   }
 
   const idSection = sections.id || { title: '', excerpt: '', body: '' };
+  const primarySection = idSection.body
+    ? idSection
+    : sections.en?.body
+      ? sections.en
+      : sections.zh || idSection;
   const cleanIssueTitle = asString(issue.title).replace(/^\[(?:news|draft|artikel)\]\s*/i, '');
-  const title = idSection.title || meta.title || cleanIssueTitle;
-  const body = idSection.body;
+  const title = primarySection.title || meta.title || cleanIssueTitle;
+  const body = primarySection.body;
   if (!title || !body) return null;
 
   const slug = safeSlug(meta.slug || title, `issue-${issue.number}`);
@@ -221,7 +226,7 @@ export function parseIssueToDraft(issue) {
       date,
       publishedAt,
       category,
-      excerpt: idSection.excerpt || meta.excerpt || deriveExcerpt(body),
+      excerpt: primarySection.excerpt || meta.excerpt || deriveExcerpt(body),
       images: localImages,
       badges: [],
       body,
@@ -243,13 +248,17 @@ async function downloadBuffer(url, token) {
     }
   };
 
-  let res = await fetch(url, { headers: { 'User-Agent': 'widifirmaan-news-builder' } });
+  let res = await fetch(url, {
+    headers: { 'User-Agent': 'widifirmaan-news-builder' },
+    signal: AbortSignal.timeout(20000),
+  });
   if (!res.ok && token && isGitHubHost(url)) {
     res = await fetch(url, {
       headers: {
         'User-Agent': 'widifirmaan-news-builder',
         Authorization: `Bearer ${token}`,
       },
+      signal: AbortSignal.timeout(20000),
     });
   }
   if (!res.ok) {
@@ -367,7 +376,7 @@ async function fetchPublishedIssues(repoFullName, token) {
       'User-Agent': 'widifirmaan-news-builder',
     };
     if (token) headers.Authorization = `Bearer ${token}`;
-    const res = await fetch(apiUrl, { headers });
+    const res = await fetch(apiUrl, { headers, signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`GitHub Issues API HTTP ${res.status}`);
     const batch = await res.json();
     if (!Array.isArray(batch) || batch.length === 0) break;
@@ -398,6 +407,7 @@ async function main() {
   }
 
   let savedCount = 0;
+  const usedSlugs = new Set();
   for (const issue of rawIssues) {
     if (!issue || issue.pull_request) continue;
     if (issue.state && String(issue.state).toLowerCase() !== 'open') {
@@ -419,6 +429,15 @@ async function main() {
       console.warn(`Skipped issue #${issue.number}: missing required title/body.`);
       continue;
     }
+
+    if (usedSlugs.has(draft.article.slug)) {
+      const disambiguated = `${draft.article.slug}-${issue.number}`;
+      console.warn(
+        `Slug collision across issues on "${draft.article.slug}"; using "${disambiguated}" for issue #${issue.number}.`
+      );
+      draft.article.slug = disambiguated;
+    }
+    usedSlugs.add(draft.article.slug);
 
     const urlCache = new Map();
     const urlReplacements = [];

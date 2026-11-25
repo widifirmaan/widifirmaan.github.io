@@ -140,7 +140,7 @@
         <!-- Performance / Preconnect -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="style.css?v=4.8" />
+        <link rel="stylesheet" href="style.css?v=5.0" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
@@ -182,11 +182,11 @@
                     </div>
                 </li>
             </ul>
-            <div class="hamburger">
+            <button type="button" class="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
-            </div>
+            </button>
         </nav>
 
         <main>
@@ -310,7 +310,7 @@
         <div id="detail-modal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content glass-panel" data-lenis-prevent>
-                <button class="modal-close">&times;</button>
+                <button type="button" class="modal-close" aria-label="Tutup modal">&times;</button>
                 <div class="modal-scroll-area">
                     <div class="modal-body">
                         <div
@@ -331,7 +331,7 @@
         <!-- Custom Script & Translation -->
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="translations.js?v=1.1"></script>
-        <script src="ui-core.js?v=1.0"></script>
+        <script src="ui-core.js?v=1.1"></script>
         <script src="script.js?v=5.1"></script>
     </body>
 </html>

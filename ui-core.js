@@ -51,6 +51,12 @@
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
+        if (document.body && document.body.dataset.page === 'home') {
+            document.querySelectorAll('a[data-i18n="nav-news"]').forEach((link) => {
+                link.setAttribute('href', lang === 'id' ? 'news/' : lang + '/news/');
+            });
+        }
+
         if (typeof translations !== 'undefined' && translations[lang]) {
             const dict = translations[lang];
             document.querySelectorAll('[data-i18n]').forEach((el) => {

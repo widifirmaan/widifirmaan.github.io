@@ -255,7 +255,12 @@ function formatInline(text, imageDimsMap) {
   });
 
   s = formatEmphasis(s);
-  return s.replace(/\u0000PH(\d+)\u0000/g, (_, idx) => placeholders[Number(idx)] || '');
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(/\u0000PH(\d+)\u0000/g, (_, idx) => placeholders[Number(idx)] || '');
+  } while (s !== prev);
+  return s;
 }
 
 function renderMarkdown(markdown, imageDimsMap) {
@@ -285,7 +290,7 @@ function renderMarkdown(markdown, imageDimsMap) {
       continue;
     }
 
-    const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
+    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
     if (headingMatch) {
       const level = headingMatch[1].length;
       out.push(`<h${level}>${formatInline(headingMatch[2].trim(), imageDimsMap)}</h${level}>`);
@@ -369,7 +374,7 @@ function renderMarkdown(markdown, imageDimsMap) {
     while (
       i < lines.length &&
       lines[i].trim() &&
-      !/^(#{1,4}\s+|```|>|[-*]\s+|\d+\.\s+|(-{3,}|\*{3,})\s*$)/.test(lines[i]) &&
+      !/^(#{1,6}\s+|```|>|[-*]\s+|\d+\.\s+|(-{3,}|\*{3,})\s*$)/.test(lines[i]) &&
       !lines[i].trim().startsWith('<!--') &&
       !lines[i].trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
     ) {
@@ -460,7 +465,7 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.2' : '../../../news/news.css?v=3.2';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.3' : '../../../news/news.css?v=3.3';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -583,7 +588,7 @@ ${bodyHtml}
         </main>
 
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.0"></script>
+        <script src="${toRoot}ui-core.js?v=1.1"></script>
     </body>
 </html>
 `;
@@ -611,7 +616,7 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.2' : '../../news/news.css?v=3.2';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.3' : '../../news/news.css?v=3.3';
   const newsJsSrc = lang === 'id' ? 'news.js?v=3.7' : '../../news/news.js?v=3.7';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
@@ -741,7 +746,7 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.0"></script>
+        <script src="${toRoot}ui-core.js?v=1.1"></script>
         <script src="${toRoot}script.js?v=5.1"></script>
         <script src="${newsJsSrc}"></script>
     </body>

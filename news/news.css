@@ -236,6 +236,19 @@ html[data-theme="light"] .news-entry:hover {
     background: rgba(0, 0, 0, 0.03);
 }
 
+html[data-theme="light"] .news-status {
+    opacity: 0.65;
+}
+
+html[data-theme="light"] .news-empty {
+    opacity: 0.72;
+}
+
+html[data-theme="light"] .news-label {
+    color: #c81042;
+    background: rgba(200, 16, 66, 0.1);
+}
+
 html[data-theme="light"] .news-label.is-ai {
     color: #2563eb;
     background: rgba(37, 99, 235, 0.1);
