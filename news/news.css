@@ -254,6 +254,12 @@ html[data-theme="light"] .news-label.is-ai {
     background: rgba(37, 99, 235, 0.1);
 }
 
+html[data-theme="light"] .news-preview-badge {
+    color: #92400e;
+    background: rgba(245, 158, 11, 0.14);
+    border-color: rgba(180, 83, 9, 0.45);
+}
+
 html[data-theme="light"] .news-page-btn {
     border-color: rgba(0, 0, 0, 0.15);
     background: #ffffff;

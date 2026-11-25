@@ -537,7 +537,9 @@ function openModal(data) {
         `;
     }
 
-    // Show modal container
+    // Show modal container and reset scroll offset from previous items
+    const scrollArea = modal.querySelector('.modal-scroll-area');
+    if (scrollArea) scrollArea.scrollTop = 0;
     modal.style.display = 'flex';
 
     // Animate with GSAP

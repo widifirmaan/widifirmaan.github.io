@@ -39,6 +39,10 @@ const LOCALE_META = {
     feedSubtitle: 'Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan, bukan sekadar dibaca.',
     feedDescription: 'Berita, tips, dan trik seputar coding oleh Widi Firmansyah, arsip artikel praktis tentang backend, frontend, dan rekayasa perangkat lunak.',
     emptyText: 'Belum ada berita yang dipublikasikan.',
+    menuAria: 'Buka menu navigasi',
+    closeAria: 'Tutup',
+    paginationAria: 'Paginasi berita',
+    noscriptNote: 'Artikel terbaru sudah dimuat di atas. Aktifkan JavaScript untuk paginasi dan pemindah bahasa langsung.',
   },
   en: {
     htmlLang: 'en',
@@ -52,6 +56,10 @@ const LOCALE_META = {
     feedSubtitle: 'News, tips, and tricks about coding, written to be practised, not just read.',
     feedDescription: 'Coding news, tips, and practical technical articles by Widi Firmansyah covering systems, tooling, and open-source software.',
     emptyText: 'No news has been published yet.',
+    menuAria: 'Open navigation menu',
+    closeAria: 'Close',
+    paginationAria: 'News pagination',
+    noscriptNote: 'Latest articles are shown above. Enable JavaScript for pagination and direct language switching.',
   },
   zh: {
     htmlLang: 'zh',
@@ -65,6 +73,10 @@ const LOCALE_META = {
     feedSubtitle: '关于编程的新闻、技巧与实践：为动手实践而写，而不只是阅读。',
     feedDescription: 'Widi Firmansyah 整理的编程新闻、开源项目分析与实用工程技术文章归档。',
     emptyText: '暂无已发布的新闻。',
+    menuAria: '打开导航菜单',
+    closeAria: '关闭',
+    paginationAria: '新闻分页',
+    noscriptNote: '上方已加载最新文章。请启用 JavaScript 以使用分页和直接切换语言功能。',
   },
 };
 
@@ -413,6 +425,7 @@ function themeBootstrapScript() {
 }
 
 function navbarHtml(toRoot, newsHref, activeLang) {
+  const menuAria = (LOCALE_META[activeLang] && LOCALE_META[activeLang].menuAria) || LOCALE_META.id.menuAria;
   return `        <nav class="glass-panel">
             <a class="logo" href="${escapeHtml(toRoot)}">WDPORT</a>
             <ul class="nav-links">
@@ -439,7 +452,7 @@ ${buildLangSwitcher(activeLang)}
                     </div>
                 </li>
             </ul>
-            <button type="button" class="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
+            <button type="button" class="hamburger" aria-label="${escapeHtml(menuAria)}" aria-expanded="false">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
@@ -459,13 +472,20 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const canonicalUrl = `${SITE_URL}${articlePath(article.slug, lang)}`;
   const heroImage = Array.isArray(article.images) && article.images[0] ? article.images[0] : '/memoji.png';
   const absoluteImage = heroImage.startsWith('http') ? heroImage : `${SITE_URL}${heroImage}`;
+  const heroDims = imageDimsMap.get(heroImage);
+  const ogImageDims = heroDims
+    ? `\n        <meta property="og:image:width" content="${heroDims.width}" />\n        <meta property="og:image:height" content="${heroDims.height}" />`
+    : '';
+  const isoTimestamp =
+    article.publishedAt ||
+    (article.date && article.date.length === 10 ? `${article.date}T00:00:00Z` : article.date);
   const formattedDate = formatDate(article.date, lang);
   const category = article.category || (article.source === 'ai' ? 'AI' : 'News');
   const labelClass = article.source === 'ai' ? 'news-label is-ai' : 'news-label';
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.4' : '../../../news/news.css?v=3.4';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.5' : '../../../news/news.css?v=3.5';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -473,8 +493,8 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
     headline: article.title,
     description: article.excerpt,
     inLanguage: meta.inLanguage,
-    datePublished: article.date,
-    dateModified: article.date,
+    datePublished: isoTimestamp,
+    dateModified: isoTimestamp,
     url: canonicalUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -522,7 +542,8 @@ ${buildHreflangLinks(urlByLang, articlePath(article.slug, 'id'))}
         <meta property="og:title" content="${escapeHtml(article.title)}" />
         <meta property="og:description" content="${escapeHtml(article.excerpt)}" />
         <meta property="og:image" content="${escapeHtml(absoluteImage)}" />
-        <meta property="article:published_time" content="${escapeHtml(article.date)}" />
+        <meta property="og:image:alt" content="${escapeHtml(article.title)}" />${ogImageDims}
+        <meta property="article:published_time" content="${escapeHtml(isoTimestamp)}" />
         <meta property="article:section" content="${escapeHtml(category)}" />
         <meta property="og:locale" content="${meta.ogLocale}" />
 ${buildOgAlternateLocales(lang, avail)}
@@ -544,7 +565,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.1" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.2" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -616,8 +637,8 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.4' : '../../news/news.css?v=3.4';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=3.7' : '../../news/news.js?v=3.7';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.5' : '../../news/news.css?v=3.5';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=3.8' : '../../news/news.js?v=3.8';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -680,7 +701,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.1" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.2" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -698,7 +719,7 @@ ${navbarHtml(toRoot, './', lang)}
         <main>
             <section id="news" class="news">
                 <div class="container">
-                    <h2 class="section-title" data-i18n="news-title">NEWS</h2>
+                    <h1 class="section-title" data-i18n="news-title">NEWS</h1>
                     <p class="news-subtitle" data-i18n="news-subtitle">
                         ${escapeHtml(meta.feedSubtitle)}
                     </p>
@@ -710,13 +731,13 @@ ${navbarHtml(toRoot, './', lang)}
                         ${buildFeedPreRender(items, lang)}
                     </div>
 
-                    <nav id="news-pagination" class="news-pagination" aria-label="Paginasi berita" hidden></nav>
+                    <nav id="news-pagination" class="news-pagination" aria-label="${escapeHtml(meta.paginationAria)}" hidden></nav>
 
                     <p id="news-updated" class="news-status"></p>
 
                     <noscript>
                         <p class="news-empty">
-                            Artikel terbaru sudah dimuat di atas. Aktifkan JavaScript untuk paginasi dan pemindah bahasa langsung.
+                            ${escapeHtml(meta.noscriptNote)}
                         </p>
                     </noscript>
                 </div>
@@ -730,7 +751,7 @@ ${navbarHtml(toRoot, './', lang)}
         <div id="detail-modal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content glass-panel" data-lenis-prevent>
-                <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
+                <button type="button" class="modal-close" aria-label="${escapeHtml(meta.closeAria)}">&times;</button>
                 <div class="modal-scroll-area">
                     <div class="modal-body">
                         <div id="modal-description" class="modal-description"></div>
@@ -746,7 +767,7 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
         <script src="${toRoot}ui-core.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.1"></script>
+        <script src="${toRoot}script.js?v=5.2"></script>
         <script src="${newsJsSrc}"></script>
     </body>
 </html>
@@ -763,7 +784,7 @@ function sitemapAlternateTags(alternates) {
 }
 
 function buildSitemap(items) {
-  const latestDate = items[0]?.date || new Date().toISOString().slice(0, 10);
+  const latestDate = items[0]?.publishedAt || items[0]?.date || new Date().toISOString().slice(0, 10);
   const feedAlternates = [
     { hreflang: 'id', href: `${SITE_URL}/news/` },
     { hreflang: 'en', href: `${SITE_URL}/en/news/` },
@@ -791,7 +812,7 @@ ${sitemapAlternateTags(feedAlternates)}
     for (const lang of avail) {
       articleEntries.push(`  <url>
     <loc>${escapeXml(SITE_URL + articlePath(item.slug, lang))}</loc>
-    <lastmod>${escapeXml(item.date || latestDate)}</lastmod>
+    <lastmod>${escapeXml(item.publishedAt || item.date || latestDate)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
 ${sitemapAlternateTags(alternates)}

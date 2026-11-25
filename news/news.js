@@ -540,6 +540,7 @@
 
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.lang-btn')) return;
+        if (document.body && document.body.dataset.langUrls) return;
         setTimeout(() => {
             loadLocale(currentPage);
         }, 0);
