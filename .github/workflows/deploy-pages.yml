@@ -29,8 +29,9 @@ jobs:
         (
           (github.event.action == 'labeled' && github.event.label.name == 'news:published') ||
           (github.event.action == 'unlabeled' && github.event.label.name == 'news:published') ||
+          github.event.action == 'deleted' ||
           (
-            contains(fromJSON('["edited","closed","reopened","deleted"]'), github.event.action) &&
+            contains(fromJSON('["edited","closed","reopened"]'), github.event.action) &&
             contains(github.event.issue.labels.*.name, 'news:published')
           )
         )
