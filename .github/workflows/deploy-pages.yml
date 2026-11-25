@@ -6,7 +6,7 @@ on:
   issues:
     types: [labeled, unlabeled, edited, closed, reopened, deleted]
   workflow_run:
-    workflows: ['Daily News Generation', 'Daily Projects Sync']
+    workflows: ['Daily Projects Sync']
     types: [completed]
   workflow_dispatch:
 
