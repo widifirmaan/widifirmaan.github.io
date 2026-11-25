@@ -60,9 +60,15 @@
     gap: 0.5rem;
     max-height: 360px;
     overflow-y: auto;
-    padding-right: 2px;
+    overflow-x: hidden;
+    padding-right: 4px;
     margin-bottom: 0.75rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
 }
+.audit-list::-webkit-scrollbar { width: 6px; }
+.audit-list::-webkit-scrollbar-track { background: transparent; }
+.audit-list::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 20px; }
 .audit-list-item {
     display: flex;
     align-items: center;
