@@ -1,0 +1,73 @@
+name: Daily News Generation
+
+on:
+  schedule:
+    # 01:00 WIB (UTC+7) = 18:00 UTC
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Jumlah artikel (1-3)'
+        required: false
+        default: '1'
+      topic:
+        description: 'Topik spesifik (opsional)'
+        required: false
+        default: ''
+      category:
+        description: 'Kategori (opsional, mis. Backend)'
+        required: false
+        default: ''
+      language:
+        description: 'Bahasa artikel'
+        type: choice
+        options: [id, en, zh]
+        default: id
+
+permissions:
+  contents: write
+
+concurrency:
+  group: news-generation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate news.json
+        run: node scripts/generate-news.mjs
+        env:
+          NEWS_AI_API_KEY: ${{ secrets.NEWS_AI_API_KEY }}
+          NEWS_AI_PROVIDER: ${{ vars.NEWS_AI_PROVIDER || 'openai' }}
+          NEWS_AI_BASE_URL: ${{ vars.NEWS_AI_BASE_URL }}
+          NEWS_AI_MODEL: ${{ vars.NEWS_AI_MODEL }}
+          NEWS_COUNT: ${{ inputs.count || '1' }}
+          NEWS_TOPIC: ${{ inputs.topic || '' }}
+          NEWS_CATEGORY: ${{ inputs.category || '' }}
+          NEWS_LANGUAGE: ${{ inputs.language || 'id' }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add news.json
+          if git diff --staged --quiet; then
+            echo "No changes in news.json"
+          else
+            git commit -m "chore(news): auto-generate articles"
+            git pull origin master --rebase || true
+            git push origin master
+          fi

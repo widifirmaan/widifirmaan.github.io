@@ -90,6 +90,8 @@ document.querySelectorAll('.nav-links a:not(.lang-btn)').forEach(link => {
 async function fetchGitHubProjects() {
     const projectsGrid = document.querySelector('.projects-grid');
     if (!projectsGrid) return;
+    // The home page owns projects.json; subpages render their own feeds.
+    if (document.body.dataset.page !== 'home') return;
 
     let projects = [];
 
@@ -315,9 +317,18 @@ scene.add(characterGroup);
 character = characterGroup; // Assign langsung agar terdefinisi saat GSAP dipanggil
 
 // Load the image texture
+// Resolve from this script's folder so /news and /news/audit reuse the same asset.
+const siteRoot = (() => {
+    const self = document.currentScript;
+    try {
+        return new URL('.', (self && self.src) || window.location.href).href;
+    } catch (e) {
+        return '/';
+    }
+})();
 const textureLoader = new THREE.TextureLoader();
 textureLoader.load(
-    'memoji.png', // Pastikan gambar user dinamakan memoji.png
+    siteRoot + 'memoji.png', // Pastikan gambar user dinamakan memoji.png
     (texture) => {
         // Create a plane geometry
         const geometry = new THREE.PlaneGeometry(2, 2);
@@ -403,42 +414,44 @@ tick();
 
 // GSAP Animations
 
-// Hero Timeline
-const tl = gsap.timeline();
-tl.from('.nav-links li, .logo', {
-    y: -20,
-    opacity: 0,
-    duration: 0.5,
-    stagger: 0.05,
-    ease: "power3.out"
-})
-    .from('.hero-content h1', {
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power4.out"
-    }, "-=0.3")
-    .from('.hero-content p', {
-        y: 15,
+// Hero Timeline (home page only)
+if (document.querySelector('.hero-content')) {
+    const tl = gsap.timeline();
+    tl.from('.nav-links li, .logo', {
+        y: -20,
         opacity: 0,
         duration: 0.5,
-        ease: "power2.out"
-    }, "-=0.3")
-    .from('.cta-btn', {
-        scale: 0.9,
-        opacity: 0,
-        duration: 0.4,
-        ease: "back.out(1.7)"
-    }, "-=0.2")
-    .from('.scroll-indicator', {
-        opacity: 0,
-        duration: 0.6,
-        delay: 0.2
-    });
+        stagger: 0.05,
+        ease: "power3.out"
+    })
+        .from('.hero-content h1', {
+            y: 40,
+            opacity: 0,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power4.out"
+        }, "-=0.3")
+        .from('.hero-content p', {
+            y: 15,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.out"
+        }, "-=0.3")
+        .from('.cta-btn', {
+            scale: 0.9,
+            opacity: 0,
+            duration: 0.4,
+            ease: "back.out(1.7)"
+        }, "-=0.2")
+        .from('.scroll-indicator', {
+            opacity: 0,
+            duration: 0.6,
+            delay: 0.2
+        });
+}
 
 // View Work Click Animation
-const viewWorkBtn = document.querySelector('.cta-btn');
+const viewWorkBtn = document.querySelector('.hero .cta-btn');
 if (viewWorkBtn) {
     viewWorkBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -491,34 +504,38 @@ gsap.utils.toArray('.section-title').forEach(title => {
 });
 
 // About Text Scroll Reveal
-gsap.to('.reveal-text', {
-    scrollTrigger: {
-        trigger: '.about',
-        start: "top 60%",
-        end: "bottom 40%",
-        scrub: 1
-    },
-    opacity: 1,
-    ease: "none"
-});
+if (document.querySelector('.reveal-text')) {
+    gsap.to('.reveal-text', {
+        scrollTrigger: {
+            trigger: '.about',
+            start: "top 60%",
+            end: "bottom 40%",
+            scrub: 1
+        },
+        opacity: 1,
+        ease: "none"
+    });
+}
 
 // Character pops up at Contact section (Menempel di bawah layar)
 if (character) {
     // Ensure it starts fully hidden
     character.visible = false;
 
-    gsap.to(character.position, {
-        y: -3.8,
-        ease: "power2.out",
-        scrollTrigger: {
-            trigger: ".contact",
-            start: "top 90%",
-            end: "top 30%",
-            scrub: 1,
-            onEnter: () => { character.visible = true; },
-            onLeaveBack: () => { character.visible = false; }
-        }
-    });
+    if (document.querySelector('.contact')) {
+        gsap.to(character.position, {
+            y: -3.8,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: ".contact",
+                start: "top 90%",
+                end: "top 30%",
+                scrub: 1,
+                onEnter: () => { character.visible = true; },
+                onLeaveBack: () => { character.visible = false; }
+            }
+        });
+    }
 }
 
 // Language Switcher Logic

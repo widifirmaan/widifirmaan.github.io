@@ -1,5 +1,6 @@
 # robots.txt for https://widifirmaan.web.id
 User-agent: *
 Allow: /
+Disallow: /news/audit/
 
 Sitemap: https://widifirmaan.web.id/sitemap.xml

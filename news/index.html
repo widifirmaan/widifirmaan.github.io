@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="id" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>News | Widi Firmansyah</title>
+
+        <!-- Primary Meta Tags -->
+        <meta name="title" content="News | Widi Firmansyah" />
+        <meta
+            name="description"
+            content="Berita, tips, dan trik seputar coding oleh Widi Firmansyah — arsip artikel praktis tentang backend, frontend, dan rekayasa perangkat lunak."
+        />
+        <meta name="author" content="Widi Firmansyah" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+        <link rel="canonical" href="https://widifirmaan.web.id/news/" />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Widi Firmansyah Portfolio" />
+        <meta property="og:url" content="https://widifirmaan.web.id/news/" />
+        <meta property="og:title" content="News | Widi Firmansyah" />
+        <meta
+            property="og:description"
+            content="Berita, tips, dan trik seputar coding oleh Widi Firmansyah."
+        />
+        <meta property="og:image" content="https://widifirmaan.web.id/memoji.png" />
+        <meta property="og:image:alt" content="Avatar Widi Firmansyah" />
+        <meta property="og:locale" content="id_ID" />
+        <meta property="og:locale:alternate" content="en_US" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://widifirmaan.web.id/news/" />
+        <meta name="twitter:title" content="News | Widi Firmansyah" />
+        <meta
+            name="twitter:description"
+            content="Berita, tips, dan trik seputar coding oleh Widi Firmansyah."
+        />
+        <meta name="twitter:image" content="https://widifirmaan.web.id/memoji.png" />
+
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="../favicon.png" />
+        <link rel="apple-touch-icon" href="../memoji.png" />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "News | Widi Firmansyah",
+            "url": "https://widifirmaan.web.id/news/",
+            "description": "Berita, tips, dan trik seputar coding oleh Widi Firmansyah.",
+            "isPartOf": {
+                "@type": "WebSite",
+                "url": "https://widifirmaan.web.id/"
+            },
+            "about": {
+                "@type": "Person",
+                "name": "Widi Firmansyah",
+                "url": "https://widifirmaan.web.id/"
+            }
+        }
+        </script>
+
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#050505" />
+        <script>
+            // Anti-FOUC: apply theme (dark/light/system) before first paint
+            (function () {
+                try {
+                    var stored = localStorage.getItem('theme');
+                    var mode =
+                        stored === 'light' || stored === 'dark' || stored === 'system'
+                            ? stored
+                            : 'system';
+                    var effective =
+                        mode === 'light' || mode === 'dark'
+                            ? mode
+                            : window.matchMedia('(prefers-color-scheme: light)').matches
+                              ? 'light'
+                              : 'dark';
+                    document.documentElement.setAttribute('data-theme', effective);
+                    document.documentElement.style.backgroundColor =
+                        effective === 'light' ? '#ffffff' : '#050505';
+                    var meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta)
+                        meta.setAttribute(
+                            'content',
+                            effective === 'light' ? '#ffffff' : '#050505'
+                        );
+                } catch (e) {}
+            })();
+        </script>
+
+        <!-- Performance / Preconnect -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="../style.css?v=4.8" />
+        <link rel="stylesheet" href="news.css?v=1.0" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+
+    <body data-page="news">
+        <div class="cursor-follower"></div>
+
+        <canvas id="webgl"></canvas>
+
+        <nav class="glass-panel">
+            <a class="logo" href="../">WDPORT</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#home" data-i18n="nav-home">Home</a></li>
+                <li><a href="../index.html#about" data-i18n="nav-about">About</a></li>
+                <li><a href="../index.html#works" data-i18n="nav-works">Works</a></li>
+                <li>
+                    <a href="./" class="is-current" aria-current="page" data-i18n="nav-news">News</a>
+                </li>
+                <li><a href="../index.html#contact" data-i18n="nav-contact">Contact</a></li>
+                <li class="theme-switcher-container">
+                    <button
+                        type="button"
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Theme: system"
+                        title="Theme: system (click for light)"
+                    >
+                        <span class="theme-icon visible" id="theme-icon-active"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+                        <span class="theme-label" id="theme-label">System</span>
+                    </button>
+                </li>
+                <li class="lang-switcher-container">
+                    <div class="lang-switcher">
+                        <button class="lang-btn active" data-lang="id">
+                            ID
+                        </button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                        <button class="lang-btn" data-lang="zh">中</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </nav>
+
+        <main>
+            <section id="news" class="news">
+                <div class="container">
+                    <h2 class="section-title" data-i18n="news-title">NEWS</h2>
+                    <p class="news-subtitle" data-i18n="news-subtitle">
+                        Berita, tips, dan trik seputar coding — ditulis untuk dipraktikkan,
+                        bukan sekadar dibaca.
+                    </p>
+                    <p id="news-preview-badge" class="news-preview-badge" hidden data-i18n="news-preview">
+                        Pratinjau lokal — belum dipublikasikan
+                    </p>
+
+                    <div class="projects-grid" id="news-grid">
+                        <p class="news-empty" data-i18n="news-loading">Memuat berita...</p>
+                    </div>
+
+                    <div
+                        id="news-pagination"
+                        class="pagination"
+                        role="navigation"
+                        aria-label="News pagination"
+                        hidden
+                    ></div>
+
+                    <p id="news-updated" class="news-status"></p>
+
+                    <noscript>
+                        <p class="news-empty">
+                            Arsip berita memerlukan JavaScript. Data mentah tersedia di
+                            <a href="../news.json">news.json</a>.
+                        </p>
+                    </noscript>
+
+                    <footer>
+                        <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
+                    </footer>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal Structure (shared with the showcase) -->
+        <div id="detail-modal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content glass-panel" data-lenis-prevent>
+                <button class="modal-close">&times;</button>
+                <div class="modal-scroll-area">
+                    <div class="modal-body">
+                        <div id="modal-description" class="modal-description"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Three.js, GSAP, & Lenis -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="../translations.js"></script>
+        <script src="../script.js?v=4.6"></script>
+        <script src="news.js?v=1.0"></script>
+    </body>
+</html>
