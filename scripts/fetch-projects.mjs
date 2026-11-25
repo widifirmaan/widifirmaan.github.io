@@ -218,12 +218,26 @@ function processReadme(repo, readmeText, branch) {
   const ogImage = `https://opengraph.githubassets.com/1/${repo.full_name}`;
   let fullReadme = readmeText || '';
 
-  // Extract tagline from blockquote `> Tagline` if description is not set
+  // Extract tagline from blockquote `> Tagline` or first summary paragraph if description is not set
   let description = repo.description || '';
   if (!description && fullReadme) {
     const taglineMatch = fullReadme.match(/^>\s*(.+)$/m);
     if (taglineMatch) {
       description = taglineMatch[1].trim();
+    } else {
+      const lines = fullReadme.split(/\r?\n/);
+      let pastH1 = false;
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        if (!pastH1 && /^#\s+/.test(line)) {
+          pastH1 = true;
+          continue;
+        }
+        if (/^(#|!\[|\[!\[|<img|---|\*\*\*|\|)/.test(line)) break;
+        description = line;
+        break;
+      }
     }
   }
   if (!description) description = 'No description available.';
@@ -265,9 +279,17 @@ function processReadme(repo, readmeText, branch) {
     ? repo.homepage
     : '';
   if (!homepage && fullReadme) {
-    const demoMatch = fullReadme.match(/\[(?:Live Demo|Demo Web|Website)\]\((https:\/\/[^)]+)\)/i);
+    const demoMatch = fullReadme.match(/\[(?:Live Demo|Demo Web|Website|Production)\]\((https:\/\/[^)]+)\)/i);
     if (demoMatch && !demoMatch[1].includes('github.com')) {
       homepage = demoMatch[1];
+    } else {
+      const liveSectionMatch = fullReadme.match(/##\s+Live\s+URL\b([\s\S]*?)(?:\n##\s+|$)/i);
+      if (liveSectionMatch) {
+        const urlMatch = liveSectionMatch[1].match(/https:\/\/[^\s)\]>]+/);
+        if (urlMatch && !urlMatch[0].includes('github.com') && !urlMatch[0].includes('shields.io')) {
+          homepage = urlMatch[0];
+        }
+      }
     }
   }
 

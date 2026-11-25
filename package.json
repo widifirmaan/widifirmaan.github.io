@@ -1,0 +1,15 @@
+{
+  "name": "widifirmaan-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal portfolio and multilingual static news site for Widi Firmansyah",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-pages.mjs",
+    "dev": "npm run build && npx serve _site -p 3000",
+    "sync:projects": "node scripts/fetch-projects.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
