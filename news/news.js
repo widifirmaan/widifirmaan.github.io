@@ -175,8 +175,10 @@
     function applyModalImageDimensions() {
         const container = document.getElementById('modal-description');
         if (!container) return;
-        container.querySelectorAll('img').forEach((img) => {
+        container.querySelectorAll('img').forEach((img, index) => {
             const src = img.getAttribute('src') || '';
+            img.setAttribute('decoding', 'async');
+            img.setAttribute('loading', index === 0 ? 'eager' : 'lazy');
             if (!src.includes('/news/assets/')) return;
             const syncNatural = () => {
                 if (img.naturalWidth && img.naturalHeight) {
@@ -196,6 +198,23 @@
         });
     }
 
+    function upgradeModalMedia() {
+        const container = document.getElementById('modal-description');
+        if (!container) return;
+        container.querySelectorAll('.markdown-body p').forEach((p) => {
+            if (p.children.length !== 1 || !p.firstElementChild || p.firstElementChild.tagName !== 'IMG') return;
+            const hasText = Array.from(p.childNodes).some(
+                (node) => node.nodeType === 3 && node.textContent.trim().length > 0
+            );
+            if (hasText) return;
+            const figure = document.createElement('figure');
+            figure.className = 'news-article-figure';
+            figure.appendChild(p.firstElementChild);
+            p.replaceWith(figure);
+        });
+        applyModalImageDimensions();
+    }
+
     function renderModalArticle(item) {
         const meta = [formatDate(item.date), item.category].filter(Boolean).join(' · ');
         if (typeof openModal !== 'function') return;
@@ -206,7 +225,7 @@
             image: (Array.isArray(item.images) && item.images[0]) || '',
             readme: buildReadme(item)
         });
-        applyModalImageDimensions();
+        upgradeModalMedia();
     }
 
     function updateOpenModalBody(item) {
@@ -218,7 +237,7 @@
             a.setAttribute('target', '_blank');
             a.setAttribute('rel', 'noopener noreferrer');
         });
-        applyModalImageDimensions();
+        upgradeModalMedia();
     }
 
     async function handleOpenArticle(item) {

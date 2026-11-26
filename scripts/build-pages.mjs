@@ -36,9 +36,14 @@ const LOCALE_META = {
     backLabel: '← Semua Berita',
     sourceLabel: 'Sumber',
     aiNote: 'Konten ini dibuat dengan bantuan AI.',
+    feedHeading: 'NEWS',
     feedTitle: 'Berita | Widi Firmansyah',
     feedSubtitle: 'Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan, bukan sekadar dibaca.',
     feedDescription: 'Berita, tips, dan trik seputar coding oleh Widi Firmansyah, arsip artikel praktis tentang backend, frontend, dan rekayasa perangkat lunak.',
+    ogImageAlt: 'Avatar Widi Firmansyah',
+    previewBadge: 'Pratinjau lokal: belum dipublikasikan',
+    footerCopy: '© 2026 WDPORT. Hak cipta dilindungi undang-undang.',
+    nav: { home: 'Home', about: 'About', works: 'Works', news: 'News', contact: 'Contact' },
     emptyText: 'Belum ada berita yang dipublikasikan.',
     menuAria: 'Buka menu navigasi',
     closeAria: 'Tutup',
@@ -53,9 +58,14 @@ const LOCALE_META = {
     backLabel: '← All News',
     sourceLabel: 'Source',
     aiNote: 'This content was created with AI assistance.',
+    feedHeading: 'NEWS',
     feedTitle: 'News | Widi Firmansyah',
     feedSubtitle: 'News, tips, and tricks about coding, written to be practised, not just read.',
     feedDescription: 'Coding news, tips, and practical technical articles by Widi Firmansyah covering systems, tooling, and open-source software.',
+    ogImageAlt: 'Widi Firmansyah Avatar',
+    previewBadge: 'Local preview: not published',
+    footerCopy: '© 2026 WDPORT. All rights reserved.',
+    nav: { home: 'Home', about: 'About', works: 'Works', news: 'News', contact: 'Contact' },
     emptyText: 'No news has been published yet.',
     menuAria: 'Open navigation menu',
     closeAria: 'Close',
@@ -70,9 +80,14 @@ const LOCALE_META = {
     backLabel: '← 全部新闻',
     sourceLabel: '来源',
     aiNote: '本内容由 AI 辅助生成。',
+    feedHeading: '新闻',
     feedTitle: '新闻 | Widi Firmansyah',
     feedSubtitle: '关于编程的新闻、技巧与实践：为动手实践而写，而不只是阅读。',
     feedDescription: 'Widi Firmansyah 整理的编程新闻、开源项目分析与实用工程技术文章归档。',
+    ogImageAlt: 'Widi Firmansyah 头像',
+    previewBadge: '本地预览：尚未发布',
+    footerCopy: '© 2026 WDPORT。保留所有权利。',
+    nav: { home: '首页', about: '关于', works: '作品', news: '新闻', contact: '联系' },
     emptyText: '暂无已发布的新闻。',
     menuAria: '打开导航菜单',
     closeAria: '关闭',
@@ -432,15 +447,17 @@ function themeBootstrapScript() {
 }
 
 function navbarHtml(toRoot, newsHref, activeLang) {
-  const menuAria = (LOCALE_META[activeLang] && LOCALE_META[activeLang].menuAria) || LOCALE_META.id.menuAria;
+  const meta = LOCALE_META[activeLang] || LOCALE_META.id;
+  const menuAria = meta.menuAria;
+  const nav = meta.nav;
   return `        <nav class="glass-panel">
             <a class="logo" href="${escapeHtml(toRoot)}">WDPORT</a>
             <ul class="nav-links">
-                <li><a href="${escapeHtml(toRoot)}#home" data-i18n="nav-home">Home</a></li>
-                <li><a href="${escapeHtml(toRoot)}#about" data-i18n="nav-about">About</a></li>
-                <li><a href="${escapeHtml(toRoot)}#works" data-i18n="nav-works">Works</a></li>
-                <li><a href="${escapeHtml(newsHref)}" class="is-current" aria-current="page" data-i18n="nav-news">News</a></li>
-                <li><a href="${escapeHtml(toRoot)}#contact" data-i18n="nav-contact">Contact</a></li>
+                <li><a href="${escapeHtml(toRoot)}#home" data-i18n="nav-home">${escapeHtml(nav.home)}</a></li>
+                <li><a href="${escapeHtml(toRoot)}#about" data-i18n="nav-about">${escapeHtml(nav.about)}</a></li>
+                <li><a href="${escapeHtml(toRoot)}#works" data-i18n="nav-works">${escapeHtml(nav.works)}</a></li>
+                <li><a href="${escapeHtml(newsHref)}" class="is-current" aria-current="page" data-i18n="nav-news">${escapeHtml(nav.news)}</a></li>
+                <li><a href="${escapeHtml(toRoot)}#contact" data-i18n="nav-contact">${escapeHtml(nav.contact)}</a></li>
                 <li class="theme-switcher-container">
                     <button
                         type="button"
@@ -492,7 +509,7 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.7' : '../../../news/news.css?v=3.7';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.8' : '../../../news/news.css?v=3.8';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -567,6 +584,7 @@ ${buildOgAlternateLocales(lang, avail)}
         <meta name="twitter:description" content="${escapeHtml(article.excerpt)}" />
         <meta name="twitter:image" content="${escapeHtml(absoluteImage)}" />
 
+        <link rel="icon" href="${toRoot}favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" href="${toRoot}favicon.png" />
         <link rel="apple-touch-icon" href="${toRoot}memoji.png" />
 
@@ -578,7 +596,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.4" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.5" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -610,7 +628,7 @@ ${bodyHtml}
                     </article>
 
                     <footer>
-                        <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
+                        <p data-i18n="footer-copy">${escapeHtml(meta.footerCopy)}</p>
                     </footer>
                 </div>
             </section>
@@ -645,8 +663,8 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.7' : '../../news/news.css?v=3.7';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=4.1' : '../../news/news.js?v=4.1';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.8' : '../../news/news.css?v=3.8';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=4.2' : '../../news/news.js?v=4.2';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -688,7 +706,9 @@ ${buildHreflangLinks(urlByLang, feedPath('id'))}
         <meta property="og:title" content="${escapeHtml(meta.feedTitle)}" />
         <meta property="og:description" content="${escapeHtml(meta.feedDescription)}" />
         <meta property="og:image" content="${SITE_URL}/memoji.png" />
-        <meta property="og:image:alt" content="Avatar Widi Firmansyah" />
+        <meta property="og:image:alt" content="${escapeHtml(meta.ogImageAlt)}" />
+        <meta property="og:image:width" content="500" />
+        <meta property="og:image:height" content="500" />
         <meta property="og:locale" content="${meta.ogLocale}" />
 ${buildOgAlternateLocales(lang, ['id', 'en', 'zh'])}
 
@@ -698,6 +718,7 @@ ${buildOgAlternateLocales(lang, ['id', 'en', 'zh'])}
         <meta name="twitter:description" content="${escapeHtml(meta.feedDescription)}" />
         <meta name="twitter:image" content="${SITE_URL}/memoji.png" />
 
+        <link rel="icon" href="${toRoot}favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" href="${toRoot}favicon.png" />
         <link rel="apple-touch-icon" href="${toRoot}memoji.png" />
 
@@ -709,7 +730,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.4" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.5" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -727,12 +748,12 @@ ${navbarHtml(toRoot, './', lang)}
         <main>
             <section id="news" class="news">
                 <div class="container">
-                    <h1 class="section-title" data-i18n="news-title">NEWS</h1>
+                    <h1 class="section-title" data-i18n="news-title">${escapeHtml(meta.feedHeading)}</h1>
                     <p class="news-subtitle" data-i18n="news-subtitle">
                         ${escapeHtml(meta.feedSubtitle)}
                     </p>
                     <p id="news-preview-badge" class="news-preview-badge" hidden data-i18n="news-preview">
-                        Pratinjau lokal: belum dipublikasikan
+                        ${escapeHtml(meta.previewBadge)}
                     </p>
 
                     <div id="news-feed" class="news-feed">
@@ -752,7 +773,7 @@ ${navbarHtml(toRoot, './', lang)}
             </section>
 
             <footer>
-                <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
+                <p data-i18n="footer-copy">${escapeHtml(meta.footerCopy)}</p>
             </footer>
         </main>
 
