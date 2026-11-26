@@ -47,6 +47,7 @@ const LOCALE_META = {
     emptyText: 'Belum ada berita yang dipublikasikan.',
     menuAria: 'Buka menu navigasi',
     closeAria: 'Tutup',
+    dialogAria: 'Pratinjau artikel',
     paginationAria: 'Paginasi berita',
     noscriptNote: 'Artikel terbaru sudah dimuat di atas. Aktifkan JavaScript untuk paginasi dan pemindah bahasa langsung.',
   },
@@ -69,6 +70,7 @@ const LOCALE_META = {
     emptyText: 'No news has been published yet.',
     menuAria: 'Open navigation menu',
     closeAria: 'Close',
+    dialogAria: 'Article preview',
     paginationAria: 'News pagination',
     noscriptNote: 'Latest articles are shown above. Enable JavaScript for pagination and direct language switching.',
   },
@@ -91,6 +93,7 @@ const LOCALE_META = {
     emptyText: '暂无已发布的新闻。',
     menuAria: '打开导航菜单',
     closeAria: '关闭',
+    dialogAria: '文章预览',
     paginationAria: '新闻分页',
     noscriptNote: '上方已加载最新文章。请启用 JavaScript 以使用分页和直接切换语言功能。',
   },
@@ -191,7 +194,7 @@ function buildLangSwitcher(activeLang) {
   return ['id', 'en', 'zh']
     .map(
       (lang) =>
-        `                        <button class="lang-btn${lang === activeLang ? ' active' : ''}" data-lang="${lang}">${labels[lang]}</button>`
+        `                        <button type="button" class="lang-btn${lang === activeLang ? ' active' : ''}" data-lang="${lang}">${labels[lang]}</button>`
     )
     .join('\n');
 }
@@ -450,13 +453,14 @@ function navbarHtml(toRoot, newsHref, activeLang) {
   const meta = LOCALE_META[activeLang] || LOCALE_META.id;
   const menuAria = meta.menuAria;
   const nav = meta.nav;
+  const ariaCurrent = newsHref === './' ? ' aria-current="page"' : '';
   return `        <nav class="glass-panel">
             <a class="logo" href="${escapeHtml(toRoot)}">WDPORT</a>
             <ul class="nav-links">
                 <li><a href="${escapeHtml(toRoot)}#home" data-i18n="nav-home">${escapeHtml(nav.home)}</a></li>
                 <li><a href="${escapeHtml(toRoot)}#about" data-i18n="nav-about">${escapeHtml(nav.about)}</a></li>
                 <li><a href="${escapeHtml(toRoot)}#works" data-i18n="nav-works">${escapeHtml(nav.works)}</a></li>
-                <li><a href="${escapeHtml(newsHref)}" class="is-current" aria-current="page" data-i18n="nav-news">${escapeHtml(nav.news)}</a></li>
+                <li><a href="${escapeHtml(newsHref)}" class="is-current"${ariaCurrent} data-i18n="nav-news">${escapeHtml(nav.news)}</a></li>
                 <li><a href="${escapeHtml(toRoot)}#contact" data-i18n="nav-contact">${escapeHtml(nav.contact)}</a></li>
                 <li class="theme-switcher-container">
                     <button
@@ -635,7 +639,7 @@ ${bodyHtml}
         </main>
 
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.2"></script>
+        <script src="${toRoot}ui-core.js?v=1.3"></script>
     </body>
 </html>
 `;
@@ -664,7 +668,7 @@ function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
   const newsCssHref = lang === 'id' ? 'news.css?v=3.8' : '../../news/news.css?v=3.8';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=4.2' : '../../news/news.js?v=4.2';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=4.3' : '../../news/news.js?v=4.3';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -777,7 +781,7 @@ ${navbarHtml(toRoot, './', lang)}
             </footer>
         </main>
 
-        <div id="detail-modal" class="modal">
+        <div id="detail-modal" class="modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(meta.dialogAria)}">
             <div class="modal-overlay"></div>
             <div class="modal-content glass-panel" data-lenis-prevent>
                 <button type="button" class="modal-close" aria-label="${escapeHtml(meta.closeAria)}">&times;</button>
@@ -795,7 +799,7 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.2"></script>
+        <script src="${toRoot}ui-core.js?v=1.3"></script>
         <script src="${toRoot}script.js?v=5.5"></script>
         <script src="${newsJsSrc}"></script>
     </body>

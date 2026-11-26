@@ -7,6 +7,13 @@
     const navLinks = document.querySelector('.nav-links');
 
     if (hamburger && navLinks) {
+        const closeMenu = (restoreFocus = false) => {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            if (restoreFocus) hamburger.focus();
+        };
+
         hamburger.addEventListener('click', () => {
             const isActive = hamburger.classList.toggle('active');
             navLinks.classList.toggle('active', isActive);
@@ -15,9 +22,13 @@
 
         navLinks.addEventListener('click', (e) => {
             if (e.target && e.target.tagName === 'A') {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
+                closeMenu(false);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+                closeMenu(true);
             }
         });
     }

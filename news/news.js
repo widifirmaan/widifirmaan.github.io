@@ -138,7 +138,7 @@
 
     function buildReadme(item) {
         const lines = [];
-        if (item.title) lines.push('# ' + item.title);
+        if (item.title) lines.push('## ' + item.title);
 
         const meta = [formatDate(item.date), item.category].filter(Boolean).join(' · ');
         if (meta) lines.push('> ' + meta);
@@ -150,7 +150,9 @@
         if (item.body) lines.push(item.body);
 
         if (item.url) {
-            lines.push('[' + hostOf(item.url) + '](' + item.url + ')');
+            const sourceLabel = t('news-source');
+            const prefix = sourceLabel ? '**' + sourceLabel + ':** ' : '';
+            lines.push(prefix + '[' + hostOf(item.url) + '](' + item.url + ')');
         }
         if (item.source === 'ai') {
             const note = t('news-ai-note');
