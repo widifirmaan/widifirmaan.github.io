@@ -49,7 +49,7 @@ Personal portfolio and multilingual coding news platform for Widi Firmansyah, fe
 - **Node.js `>=20`** (`22` used in CI) to build `_site/` (including generated `/news/` routes and `sitemap.xml`)
 - **No database required** (uses static JSON files `projects.json`, `news/data/articles/*.json`, and `news.json`)
 
-### Build & Run Locally
+### Quick Start
 
 ```bash
 git clone https://github.com/widifirmaan/widifirmaan.github.io.git
