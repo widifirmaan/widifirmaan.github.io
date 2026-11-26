@@ -33,7 +33,7 @@ Body JSON:
 }
 ```
 
-Response berisi `path` (`/news/assets/...`) dan `raw` GitHub raw URL. Setelah file di-commit/push, gunakan `path` atau `raw` di `images`/konten artikel.
+Response berisi `path` (`/news/assets/...`), `watermarked` (`true` untuk gambar raster yang otomatis dikonversi ke `.webp` ber-watermark `widifirmaan.web.id`), dan `raw` GitHub raw URL. Upload gambar tambahan untuk tutorial atau perbandingan (`compare`) melalui endpoint ini atau `node scripts/apply-watermark.mjs`, lalu commit/push sebelum mereferensikan path tersebut di artikel.
 
 ## Contoh artikel
 

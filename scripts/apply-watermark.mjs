@@ -23,9 +23,12 @@ if (!['.png', '.jpg', '.jpeg', '.webp', '.avif'].includes(ext)) {
 await fs.access(src);
 await fs.access(WM);
 
+const isWebpOut = path.extname(out).toLowerCase() === '.webp';
 const cmd = [
   '-y','-i', src, '-i', WM,
   '-filter_complex', '[1][0]scale2ref=iw:ih[wm][base];[base][wm]overlay=0:0',
+  '-frames:v', '1',
+  ...(isWebpOut ? ['-c:v', 'libwebp', '-quality', '88'] : []),
   out
 ];
 const r = spawnSync('ffmpeg', cmd, { encoding: 'utf8' });

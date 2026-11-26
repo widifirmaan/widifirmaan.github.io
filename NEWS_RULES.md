@@ -85,9 +85,12 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 ## Media dan Watermark
 
 - **Search image, don't create**: cari dan gunakan gambar, foto, atau screenshot asli dari sumber resmi yang izinnya jelas (repositori resmi, dokumentasi resmi, rilis proyek, atau press kit). Dilarang men-generate gambar AI baru atau membuat ilustrasi/kolase buatan.
+- **Wajib upload gambar untuk tutorial, compare, dan kebutuhan visual lainnya**: apabila artikel berita berisi langkah tutorial (tampilan launcher, IDE, setup, konfigurasi UI), perbandingan (`compare`, misalnya before/after, mode `Original` vs `HD`, grid vs table, dua tool/fitur), grafik benchmark, atau penjelasan antarmuka yang membutuhkan bukti visual, penulis/AI/CLI wajib mengunggah gambar nyata yang relevan untuk bagian tersebut. Jangan hanya menaruh 1 gambar hero di pembuka jika isi tutorial atau perbandingan membutuhkan gambar penjelas.
+- Letakkan setiap gambar pendukung di bawah subjudul `##` yang relevan pada seluruh edisi bahasa (`id`, `en`, dan `zh`) dengan teks `alt` deskriptif sesuai bahasa halaman, serta cantumkan seluruh path gambar pada field `images` di JSON artikel.
 - Gambar atau video artikel disimpan di `news/assets/` di repo (disarankan format WebP) dengan nama file kebab-case yang deskriptif.
-- Semua gambar artikel wajib diberi watermark standar `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut) melalui `node scripts/apply-watermark.mjs <input> [output]`.
+- Semua gambar raster artikel (termasuk gambar tambahan untuk tutorial/compare dan upload lewat `POST /api/media`) wajib diberi watermark standar `news/assets/watermark.png` (1 teks `widifirmaan.web.id` transparan tepat di tengah gambar, tanpa pengulangan pola atau badge sudut) melalui `node scripts/apply-watermark.mjs <input> [output]`.
 - Dilarang mengunggah gambar tanpa watermark, gambar hasil generate AI, gambar dengan overlay UI pihak ketiga (seperti player YouTube/watermark situs lain), atau screenshot sensitif.
+- **Audit media wajib**: sebelum publish, pastikan setiap gambar benar-benar tersimpan di `news/assets/` (atau diproses saat build Issue), ber-watermark `widifirmaan.web.id`, konsisten across `id`/`en`/`zh`, tampil proporsional di mobile (`320px`) sampai desktop (`1280px`), dan lolos `npm run audit:news`.
 
 ## API Lokal, Mode Zero-Push (GitHub Issues), dan Penyimpanan Sharded
 
@@ -110,5 +113,6 @@ Aturan ini wajib dipakai oleh AI, CLI, maupun skrip apa pun yang membuat, menerj
 - [ ] Slug kebab-case Inggris konsisten, tanggal valid (`YYYY-MM-DD`), kategori masuk daftar resmi (`Open Source`, `Tooling`, dll.).
 - [ ] Judul dan excerpt memenuhi batas karakter SEO untuk setiap bahasa tanpa clickbait atau keyword stuffing.
 - [ ] Gambar berasal dari pencarian sumber resmi/terverifikasi (bukan hasil generate/create) dan memakai 1 watermark `widifirmaan.web.id` transparan di tengah.
-- [ ] `node scripts/build-pages.mjs` menghasilkan halaman `id`, `en`, `zh`, tag `canonical` + `hreflang`, dan `sitemap.xml` tanpa error.
+- [ ] Bagian tutorial, perbandingan (`compare`), UI, atau konsep yang membutuhkan visual sudah dilengkapi gambar nyata terunggah di `news/assets/`, ditempatkan pada subjudul relevan di `id`, `en`, dan `zh`, serta terdaftar di `images[]`.
+- [ ] `npm run audit:news` dan `node scripts/build-pages.mjs` lulus tanpa error, menghasilkan halaman `id`, `en`, `zh`, tag `canonical` + `hreflang`, dan `sitemap.xml` dengan seluruh gambar valid dan proporsional.
 - [ ] `source` dan `model` terisi untuk konten AI.

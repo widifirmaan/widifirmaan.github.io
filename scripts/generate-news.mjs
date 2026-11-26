@@ -138,6 +138,7 @@ Editorial and SEO rules:
 - Open with one paragraph that states the problem or practical payoff; do not restate the title.
 - Use 3 to 5 descriptive "## " sections focusing on user benefits and practical workflows; avoid stiff "- **Label:** ..." bold list templates and avoid listing raw internal source file names unless needed.
 - Include at least one minimal fenced code block with a language tag (e.g., official install commands across Windows, macOS, Linux, usage examples, or practical code snippet; prefer official install/usage over compiling from source unless the project has no binary release or live app) and explain it concisely below the block.
+- If the article requires visual evidence (such as UI tutorials, feature/output comparisons, charts, or setups), never fabricate image URLs or describe screenshots that were not verified; upload verified official images to news/assets/ with apply-watermark.mjs per NEWS_RULES.md.
 - No filler, no generic motivation, no listicles without substance.
 - No emoji. No em dash character. No "--" used as sentence punctuation outside code blocks.
 - Do not fabricate personal experience, employers, clients, metrics, or benchmark numbers.

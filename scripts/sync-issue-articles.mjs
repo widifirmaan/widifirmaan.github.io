@@ -210,10 +210,18 @@ export function parseIssueToDraft(issue) {
     externalSet.add(extUrl);
   }
 
-  const localImages = [];
+  const localSet = new Set();
   if (heroImageUrl && heroImageUrl.startsWith('/news/assets/')) {
-    localImages.push(heroImageUrl);
+    localSet.add(heroImageUrl);
   }
+  const localAssetRegex = /!\[[^\]]*\]\((\/news\/assets\/[^)\s]+)(?:\s+["'][^"']*["'])?\)/gi;
+  for (const text of [preamble, body, locales.en?.body, locales.zh?.body]) {
+    if (!text) continue;
+    for (const match of String(text).matchAll(localAssetRegex)) {
+      if (match[1]) localSet.add(match[1].trim());
+    }
+  }
+  const localImages = Array.from(localSet);
 
   return {
     issueNumber: issue.number,

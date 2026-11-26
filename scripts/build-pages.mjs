@@ -502,7 +502,9 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
       '@id': canonicalUrl,
     },
     articleSection: category,
-    image: [absoluteImage],
+    image: (Array.isArray(article.images) && article.images.length
+      ? article.images.map((img) => (String(img).startsWith('http') ? img : `${SITE_URL}${img}`))
+      : [absoluteImage]),
     author: {
       '@type': 'Person',
       name: 'Widi Firmansyah',

@@ -21,9 +21,9 @@ Paragraf pembuka langsung membahas masalah dan nilai utama proyek tanpa mengulan
 
 ![Deskripsi tangkapan layar aplikasi](HERO_IMAGE)
 
-## Fitur Utama dan Manfaat Praktis
+## Fitur Utama, Perbandingan, dan Langkah Praktis
 
-Jelaskan fitur inti dan cara instalasi resmi untuk semua OS yang didukung secara seimbang.
+Jika artikel membahas tutorial UI, perbandingan (`compare`), atau langkah instalasi aplikasi desktop/web, unggah screenshot resmi tambahan langsung ke bagian ini di ketiga blok bahasa (`id`, `en`, `zh`). Screenshot yang ditempel otomatis diunduh dan diberi watermark `widifirmaan.web.id` saat build.
 
 ```bash
 # Contoh perintah instalasi resmi atau cara menjalankan aplikasi

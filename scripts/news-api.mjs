@@ -3,7 +3,9 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import {
   ROOT_DIR as ROOT,
   NEWS_FILE,
@@ -14,8 +16,11 @@ import {
   writeNewsStore as writeNews,
 } from './news-store.mjs';
 
+const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const WATERMARK_SCRIPT = path.join(__dirname, 'apply-watermark.mjs');
 const MEDIA_DIR = path.join(ROOT, 'news', 'assets');
+const RASTER_WATERMARK_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.avif']);
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
 const TOKEN = process.env.NEWS_API_TOKEN || '';
@@ -106,13 +111,36 @@ async function handler(req, res) {
       if (mime && !allowed) return send(res, 400, { error: 'Only image/* or video/* allowed' });
       const buf = Buffer.from(data.replace(/^data:[^;]+;base64,/, ''), 'base64');
       if (!buf.length) return send(res, 400, { error: 'Invalid base64 data' });
-      const ext = path.extname(filename) || extFromMime(mime);
+      const ext = path.extname(filename).toLowerCase() || extFromMime(mime);
       const stem = (path.basename(filename, path.extname(filename)) || 'media').slice(0, 80);
-      const outName = `${stem}-${crypto.randomUUID().slice(0, 8)}${ext}`;
+      const tokenId = crypto.randomUUID().slice(0, 8);
       await ensureMediaDir();
+
+      if (RASTER_WATERMARK_EXTS.has(ext)) {
+        const tmpRaw = path.join(MEDIA_DIR, `.tmp-${stem}-${tokenId}${ext}`);
+        const outName = `${stem}-${tokenId}.webp`;
+        const outPath = path.join(MEDIA_DIR, outName);
+        try {
+          await fs.writeFile(tmpRaw, buf);
+          await execFileAsync('node', [WATERMARK_SCRIPT, tmpRaw, outPath], { cwd: ROOT });
+          const stat = await fs.stat(outPath);
+          const filePath = `news/assets/${outName}`;
+          return send(res, 201, {
+            path: `/${filePath}`,
+            raw: `https://raw.githubusercontent.com/widifirmaan/widifirmaan.github.io/master/${filePath}`,
+            mimeType: 'image/webp',
+            bytes: stat.size,
+            watermarked: true,
+          });
+        } finally {
+          await fs.unlink(tmpRaw).catch(() => {});
+        }
+      }
+
+      const outName = `${stem}-${tokenId}${ext}`;
       await fs.writeFile(path.join(MEDIA_DIR, outName), buf);
       const filePath = `news/assets/${outName}`;
-      return send(res, 201, { path: `/${filePath}`, raw: `https://raw.githubusercontent.com/widifirmaan/widifirmaan.github.io/master/${filePath}`, mimeType: mime, bytes: buf.length });
+      return send(res, 201, { path: `/${filePath}`, raw: `https://raw.githubusercontent.com/widifirmaan/widifirmaan.github.io/master/${filePath}`, mimeType: mime, bytes: buf.length, watermarked: false });
     }
 
     if (parts[1] !== 'articles') {
