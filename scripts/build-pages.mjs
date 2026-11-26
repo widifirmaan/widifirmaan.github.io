@@ -376,12 +376,14 @@ function renderMarkdown(markdown, imageDimsMap) {
     }
 
     if (/^\d+\.\s+/.test(line)) {
+      const startNum = Number((lines[i].match(/^(\d+)\./) || [])[1] || '1');
+      const startAttr = startNum !== 1 ? ` start="${startNum}"` : '';
       const items = [];
       while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
         items.push(lines[i].replace(/^\d+\.\s+/, ''));
         i += 1;
       }
-      out.push(`<ol>${items.map((it) => `<li>${formatInline(it, imageDimsMap)}</li>`).join('')}</ol>`);
+      out.push(`<ol${startAttr}>${items.map((it) => `<li>${formatInline(it, imageDimsMap)}</li>`).join('')}</ol>`);
       continue;
     }
 
