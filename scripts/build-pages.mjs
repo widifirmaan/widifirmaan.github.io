@@ -13,6 +13,7 @@ const SITE_URL = (process.env.SITE_URL || 'https://widifirmaan.web.id').replace(
 const OUT_DIR = path.join(ROOT_DIR, '_site');
 const ROOT_FILES = [
   'CNAME',
+  'favicon.ico',
   'favicon.png',
   'memoji.png',
   'index.html',
@@ -35,7 +36,7 @@ const LOCALE_META = {
     backLabel: '← Semua Berita',
     sourceLabel: 'Sumber',
     aiNote: 'Konten ini dibuat dengan bantuan AI.',
-    feedTitle: 'News | Widi Firmansyah',
+    feedTitle: 'Berita | Widi Firmansyah',
     feedSubtitle: 'Berita, tips, dan trik seputar coding, ditulis untuk dipraktikkan, bukan sekadar dibaca.',
     feedDescription: 'Berita, tips, dan trik seputar coding oleh Widi Firmansyah, arsip artikel praktis tentang backend, frontend, dan rekayasa perangkat lunak.',
     emptyText: 'Belum ada berita yang dipublikasikan.',
@@ -636,7 +637,7 @@ function buildFeedPreRender(items, lang) {
       const href = `${siteRoot}${targetLang === 'id' ? 'news' : `${targetLang}/news`}/${encodeURIComponent(item.slug)}/`;
       const labelClass = item.source === 'ai' ? 'news-label is-ai' : 'news-label';
       const category = item.category || (item.source === 'ai' ? 'AI' : 'News');
-      return `<a class="news-entry" href="${escapeHtml(href)}" aria-label="${escapeHtml(item.title)}"><div class="news-entry-head"><span class="${labelClass}">${escapeHtml(category)}</span><span class="news-date">${escapeHtml(formatDate(item.date, lang))}</span></div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt)}</p></a>`;
+      return `<a class="news-entry" href="${escapeHtml(href)}"><div class="news-entry-head"><span class="${labelClass}">${escapeHtml(category)}</span><span class="news-date">${escapeHtml(formatDate(item.date, lang))}</span></div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.excerpt)}</p></a>`;
     })
     .join('\n                        ');
 }

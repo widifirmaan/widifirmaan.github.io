@@ -282,8 +282,6 @@
         } else {
             entry.href = articleHref(item, lang);
         }
-        entry.setAttribute('aria-label', title);
-
         const head = document.createElement('div');
         head.className = 'news-entry-head';
 
@@ -299,7 +297,7 @@
             head.appendChild(date);
         }
 
-        const heading = document.createElement('h3');
+        const heading = document.createElement('h2');
         heading.textContent = title;
 
         const excerpt = document.createElement('p');

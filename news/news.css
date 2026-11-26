@@ -94,6 +94,7 @@ body[data-page="news"] .section-title {
     opacity: 0.65;
 }
 
+.news-entry h2,
 .news-entry h3 {
     margin-bottom: 0.45rem;
     font-size: 1.15rem;
@@ -212,7 +213,8 @@ body[data-page="news"] .section-title {
         padding: 1.25rem 1.1rem;
     }
 
-    .news-entry h3 {
+    .news-entry h2,
+.news-entry h3 {
         font-size: 1.02rem;
     }
 }
