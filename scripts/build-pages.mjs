@@ -279,6 +279,7 @@ function renderMarkdown(markdown, imageDimsMap) {
   const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n');
   const out = [];
   let i = 0;
+  let figureIndex = 0;
 
   while (i < lines.length) {
     const line = lines[i];
@@ -330,8 +331,10 @@ function renderMarkdown(markdown, imageDimsMap) {
       const src = safeHref(parseMarkdownImageTarget(imgMatch[2]));
       const dims = imageDimsMap.get(src);
       const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : '';
+      const loadAttr = figureIndex === 0 ? ' fetchpriority="high"' : ' loading="lazy"';
+      figureIndex += 1;
       out.push(
-        `<figure class="news-article-figure"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"${dimAttrs} decoding="async" /></figure>`
+        `<figure class="news-article-figure"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"${dimAttrs}${loadAttr} decoding="async" /></figure>`
       );
       i += 1;
       continue;
