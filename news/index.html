@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id" data-theme="dark">
+<html lang="id" data-page-lang="id" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,6 +14,10 @@
         <meta name="author" content="Widi Firmansyah" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <link rel="canonical" href="https://widifirmaan.web.id/news/" />
+        <link rel="alternate" hreflang="id" href="https://widifirmaan.web.id/news/" />
+        <link rel="alternate" hreflang="en" href="https://widifirmaan.web.id/en/news/" />
+        <link rel="alternate" hreflang="zh" href="https://widifirmaan.web.id/zh/news/" />
+        <link rel="alternate" hreflang="x-default" href="https://widifirmaan.web.id/news/" />
 
         <!-- Open Graph -->
         <meta property="og:type" content="website" />
@@ -96,15 +100,15 @@
         <!-- Performance / Preconnect -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="../style.css?v=5.3" />
-        <link rel="stylesheet" href="news.css?v=3.6" />
+        <link rel="stylesheet" href="../style.css?v=5.4" />
+        <link rel="stylesheet" href="news.css?v=3.7" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
             rel="stylesheet"
         />
     </head>
 
-    <body data-page="news" data-site-root="../">
+    <body data-page="news" data-site-root="../" data-lang-urls='{"id":"/news/","en":"/en/news/","zh":"/zh/news/"}'>
         <div class="cursor-follower"></div>
 
         <canvas id="webgl"></canvas>
@@ -112,13 +116,13 @@
         <nav class="glass-panel">
             <a class="logo" href="../">WDPORT</a>
             <ul class="nav-links">
-                <li><a href="../index.html#home" data-i18n="nav-home">Home</a></li>
-                <li><a href="../index.html#about" data-i18n="nav-about">About</a></li>
-                <li><a href="../index.html#works" data-i18n="nav-works">Works</a></li>
+                <li><a href="../#home" data-i18n="nav-home">Home</a></li>
+                <li><a href="../#about" data-i18n="nav-about">About</a></li>
+                <li><a href="../#works" data-i18n="nav-works">Works</a></li>
                 <li>
                     <a href="./" class="is-current" aria-current="page" data-i18n="nav-news">News</a>
                 </li>
-                <li><a href="../index.html#contact" data-i18n="nav-contact">Contact</a></li>
+                <li><a href="../#contact" data-i18n="nav-contact">Contact</a></li>
                 <li class="theme-switcher-container">
                     <button
                         type="button"
@@ -174,12 +178,12 @@
                             <a href="./">halaman utama berita</a>.
                         </p>
                     </noscript>
-
-                    <footer>
-                        <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
-                    </footer>
                 </div>
             </section>
+
+            <footer>
+                <p data-i18n="footer-copy">© 2026 WDPORT. Hak cipta dilindungi undang-undang.</p>
+            </footer>
         </main>
 
         <!-- Modal Structure (shared with the showcase) -->
@@ -202,8 +206,8 @@
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="../translations.js?v=1.1"></script>
-        <script src="../ui-core.js?v=1.1"></script>
-        <script src="../script.js?v=5.4"></script>
-        <script src="news.js?v=4.0"></script>
+        <script src="../ui-core.js?v=1.2"></script>
+        <script src="../script.js?v=5.5"></script>
+        <script src="news.js?v=4.1"></script>
     </body>
 </html>

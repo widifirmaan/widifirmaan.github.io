@@ -506,9 +506,14 @@ const modalTitle = document.getElementById('modal-title');
 const modalSubtitle = document.getElementById('modal-subtitle');
 const modalDescription = document.getElementById('modal-description');
 const clickableItems = document.querySelectorAll('.experience-item, .project-card');
+let activeModalTl = null;
 
 function openModal(data) {
     if (!modal || !modalDescription) return;
+    if (activeModalTl) {
+        activeModalTl.kill();
+        activeModalTl = null;
+    }
     const activeLangBtn = document.querySelector('.lang-btn.active');
     const currentLang = activeLangBtn ? activeLangBtn.dataset.lang : 'id';
     
@@ -546,7 +551,12 @@ function openModal(data) {
     if (scrollArea) scrollArea.scrollTop = 0;
 
     // Animate with GSAP
-    const modalTl = gsap.timeline();
+    const modalTl = gsap.timeline({
+        onComplete: () => {
+            if (activeModalTl === modalTl) activeModalTl = null;
+        }
+    });
+    activeModalTl = modalTl;
 
     modalTl.to(modalOverlay, {
         opacity: 1,
@@ -565,13 +575,20 @@ function openModal(data) {
 }
 
 function closeModal() {
+    if (!modal) return;
+    if (activeModalTl) {
+        activeModalTl.kill();
+        activeModalTl = null;
+    }
     const modalTl = gsap.timeline({
         onComplete: () => {
+            if (activeModalTl === modalTl) activeModalTl = null;
             modal.style.display = 'none';
             lenis.start();
             document.body.style.overflow = '';
         }
     });
+    activeModalTl = modalTl;
 
     modalTl.to(modalContent, {
         scale: 0.9,

@@ -260,7 +260,7 @@ function formatInline(text, imageDimsMap) {
     const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : '';
     return hold(`<img src="${escapeHtml(cleanSrc)}" alt="${escapeHtml(alt)}"${dimAttrs} decoding="async" />`);
   });
-  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
+  s = s.replace(/\[([^\]]+)\]\(([^()\s]*(?:\([^()\s]*\)[^()\s]*)*)\)/g, (_, label, href) => {
     const cleanHref = safeHref(href);
     const external = /^https?:\/\//i.test(cleanHref) ? ' target="_blank" rel="noopener noreferrer"' : '';
     return hold(`<a href="${escapeHtml(cleanHref)}"${external}>${formatEmphasis(label)}</a>`);
@@ -388,7 +388,8 @@ function renderMarkdown(markdown, imageDimsMap) {
       lines[i].trim() &&
       !/^(#{1,6}\s+|```|>|[-*]\s+|\d+\.\s+|(-{3,}|\*{3,})\s*$)/.test(lines[i]) &&
       !lines[i].trim().startsWith('<!--') &&
-      !lines[i].trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+      !lines[i].trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/) &&
+      !(lines[i].includes('|') && i + 1 < lines.length && /^\s*\|?(\s*:?-{2,}:?\s*\|)+\s*:?-{2,}:?\s*\|?\s*$/.test(lines[i + 1]))
     ) {
       paraLines.push(lines[i].trim());
       i += 1;
@@ -485,7 +486,7 @@ function renderArticlePage(rawArticle, lang, imageDimsMap) {
   const bodyHtml = renderMarkdown(article.body, imageDimsMap);
 
   const toRoot = lang === 'id' ? '../../' : '../../../';
-  const newsCssHref = lang === 'id' ? '../news.css?v=3.6' : '../../../news/news.css?v=3.6';
+  const newsCssHref = lang === 'id' ? '../news.css?v=3.7' : '../../../news/news.css?v=3.7';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -569,7 +570,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.3" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.4" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -608,7 +609,7 @@ ${bodyHtml}
         </main>
 
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.1"></script>
+        <script src="${toRoot}ui-core.js?v=1.2"></script>
     </body>
 </html>
 `;
@@ -636,8 +637,8 @@ function buildFeedPreRender(items, lang) {
 function renderFeedPage(items, lang) {
   const meta = LOCALE_META[lang] || LOCALE_META.id;
   const toRoot = lang === 'id' ? '../' : '../../';
-  const newsCssHref = lang === 'id' ? 'news.css?v=3.6' : '../../news/news.css?v=3.6';
-  const newsJsSrc = lang === 'id' ? 'news.js?v=4.0' : '../../news/news.js?v=4.0';
+  const newsCssHref = lang === 'id' ? 'news.css?v=3.7' : '../../news/news.css?v=3.7';
+  const newsJsSrc = lang === 'id' ? 'news.js?v=4.1' : '../../news/news.js?v=4.1';
   const canonicalUrl = `${SITE_URL}${feedPath(lang)}`;
   const urlByLang = { id: feedPath('id'), en: feedPath('en'), zh: feedPath('zh') };
 
@@ -700,7 +701,7 @@ ${themeBootstrapScript()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="${toRoot}style.css?v=5.3" />
+        <link rel="stylesheet" href="${toRoot}style.css?v=5.4" />
         <link rel="stylesheet" href="${newsCssHref}" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@700&display=swap"
@@ -765,8 +766,8 @@ ${navbarHtml(toRoot, './', lang)}
         <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="${toRoot}translations.js?v=1.1"></script>
-        <script src="${toRoot}ui-core.js?v=1.1"></script>
-        <script src="${toRoot}script.js?v=5.4"></script>
+        <script src="${toRoot}ui-core.js?v=1.2"></script>
+        <script src="${toRoot}script.js?v=5.5"></script>
         <script src="${newsJsSrc}"></script>
     </body>
 </html>

@@ -810,7 +810,7 @@ section {
 
 .markdown-body p {
     margin-bottom: 1rem;
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.86);
     word-break: break-word;
     overflow-wrap: anywhere;
 }
@@ -823,7 +823,7 @@ section {
 
 .markdown-body li {
     margin-bottom: 0.5rem;
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.86);
     word-break: break-word;
     overflow-wrap: anywhere;
 }
@@ -1038,7 +1038,7 @@ body[data-page="news"] .markdown-body img[src*="/news/assets/"] {
 
 footer {
     margin-top: 50px;
-    opacity: 0.5;
+    opacity: 0.72;
     font-size: 0.9rem;
 }
 
@@ -1506,7 +1506,7 @@ html[data-theme="light"] .markdown-body th {
 
 html[data-theme="light"] .markdown-body p,
 html[data-theme="light"] .markdown-body li {
-    color: #000000;
+    color: rgba(0, 0, 0, 0.86);
 }
 
 /* Mobile */

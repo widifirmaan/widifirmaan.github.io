@@ -98,9 +98,13 @@
             if (langUrlsRaw) {
                 try {
                     const langUrls = JSON.parse(langUrlsRaw);
-                    const targetUrl = langUrls && langUrls[targetLang];
-                    if (targetUrl && targetUrl !== window.location.pathname) {
-                        window.location.assign(targetUrl);
+                    const baseTargetUrl = langUrls && langUrls[targetLang];
+                    if (baseTargetUrl) {
+                        const search = window.location.search === '?preview=1' && !baseTargetUrl.includes('?') ? '?preview=1' : '';
+                        const targetUrl = baseTargetUrl + search;
+                        if (targetUrl !== window.location.pathname + window.location.search) {
+                            window.location.assign(targetUrl);
+                        }
                     }
                 } catch (e) {}
             }

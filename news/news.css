@@ -173,7 +173,7 @@ body[data-page="news"] .section-title {
     text-align: center;
     font-size: 0.8rem;
     letter-spacing: 0.04em;
-    opacity: 0.5;
+    opacity: 0.72;
 }
 
 /* Functional status banner shown only when ?preview=1 renders local unpublished drafts (R-09). */
@@ -242,7 +242,7 @@ html[data-theme="light"] .news-entry:hover {
 }
 
 html[data-theme="light"] .news-status {
-    opacity: 0.65;
+    opacity: 0.72;
 }
 
 html[data-theme="light"] .news-empty {
@@ -255,8 +255,8 @@ html[data-theme="light"] .news-label {
 }
 
 html[data-theme="light"] .news-label.is-ai {
-    color: #2563eb;
-    background: rgba(37, 99, 235, 0.1);
+    color: #1d4ed8;
+    background: rgba(29, 78, 216, 0.1);
 }
 
 html[data-theme="light"] .news-preview-badge {
@@ -356,6 +356,7 @@ html[data-theme="light"] .logo {
     margin-top: 2.25rem;
     padding-top: 1.25rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 1;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -391,7 +392,7 @@ html[data-theme="light"] .logo {
 .news-article-ai-note {
     font-size: 0.84rem;
     font-style: italic;
-    opacity: 0.68;
+    opacity: 0.78;
     margin: 0;
 }
 

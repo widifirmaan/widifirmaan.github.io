@@ -143,6 +143,10 @@
         const meta = [formatDate(item.date), item.category].filter(Boolean).join(' · ');
         if (meta) lines.push('> ' + meta);
         if (item.excerpt) lines.push(item.excerpt);
+        const heroImage = Array.isArray(item.images) && item.images[0] ? item.images[0] : '';
+        if (heroImage && (!item.body || !item.body.includes(heroImage))) {
+            lines.push('![' + (item.title || 'Screenshot') + '](' + heroImage + ')');
+        }
         if (item.body) lines.push(item.body);
 
         if (item.url) {
