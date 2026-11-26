@@ -236,6 +236,10 @@ section {
     position: relative;
 }
 
+.hero-line {
+    display: block;
+}
+
 .hero-content p {
     font-size: 1.2rem;
     max-width: 600px;
