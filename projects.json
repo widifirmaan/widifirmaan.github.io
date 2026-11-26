@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-11-26T02:39:26.985Z",
+  "lastUpdated": "2026-11-26T02:46:53.545Z",
   "total": 9,
   "projects": [
     {
       "name": "springboot-simple-pos",
       "title": "Simpos",
       "tech": "Java / Spring Boot",
-      "description": "Retail point-of-sale and multi-store inventory management web application built with Spring Boot 3, MongoDB, and Thymeleaf.",
+      "description": "Point of Sale (POS) and inventory management web application built with Spring Boot 3, MongoDB, Thymeleaf, and Bootstrap.",
       "html_url": "https://github.com/widifirmaan/springboot-simple-pos",
       "homepage": "",
       "images": [
@@ -28,7 +28,7 @@
       "name": "nextjs-velvetsnap-photobox",
       "title": "VelvetSnap - Web Photobooth Kiosk",
       "tech": "Next.js / TypeScript",
-      "description": "Fullstack web photobooth platform and operator dashboard built with Next.js App Router, React, TypeScript, Konva, and SQLite/LibSQL.",
+      "description": "Modern web-based photobooth kiosk platform with live camera capture, customizable templates, and automated photo strip printing.",
       "html_url": "https://github.com/widifirmaan/nextjs-velvetsnap-photobox",
       "homepage": "https://photo.widifirmaan.web.id",
       "images": [
@@ -50,7 +50,7 @@
       "name": "nextjs-pwa-moneymanagement",
       "title": "MoneW - Smart Money Management",
       "tech": "Next.js / TypeScript",
-      "description": "Fullstack personal finance Progressive Web App built with Next.js App Router, React, TypeScript, and SQLite/LibSQL.",
+      "description": "Progressive Web App (PWA) for smart personal finance tracking, expense budgeting, and multi-wallet balance analytics.",
       "html_url": "https://github.com/widifirmaan/nextjs-pwa-moneymanagement",
       "homepage": "https://money.widifirmaan.web.id",
       "images": [
@@ -72,7 +72,7 @@
       "name": "reactjs-coffee-shop-management",
       "title": "Siap Nyafe POS",
       "tech": "React / JavaScript",
-      "description": "Coffee shop point-of-sale, customer self-ordering portal, kitchen display system, and store management application built with React 18, Vite 5, and SQLite.",
+      "description": "Full-featured coffee shop POS and management ERP with self-order catalog, cashier POS, kitchen display system (KDS), and inventory.",
       "html_url": "https://github.com/widifirmaan/reactjs-coffee-shop-management",
       "homepage": "https://siapnyafe.widifirmaan.web.id",
       "images": [
@@ -94,7 +94,7 @@
       "name": "reactjs-tryngo-programming-learning",
       "title": "Tryngo - Interactive Coding & Roadmap Platform",
       "tech": "React / JavaScript",
-      "description": "Interactive programming curriculum, browser code playgrounds, and adaptive quiz platform built with React 19, TypeScript, Vite, Tailwind CSS, Monaco Editor, and Fuse.js.",
+      "description": "Interactive programming learning platform featuring in-browser WebAssembly runtimes, coding playgrounds, and curriculum tracks.",
       "html_url": "https://github.com/widifirmaan/reactjs-tryngo-programming-learning",
       "homepage": "https://tryngo.widifirmaan.web.id",
       "images": [
@@ -116,7 +116,7 @@
       "name": "nextjs-book-games",
       "title": "Book Games - Counseling Gamification Platform",
       "tech": "Next.js / TypeScript",
-      "description": "Interactive student counseling web application and teacher management portal built with Next.js App Router, TypeScript, Tailwind CSS, NextAuth.js, and SQLite/LibSQL.",
+      "description": "Interactive educational gamification workbook and quiz learning platform for teachers and students.",
       "html_url": "https://github.com/widifirmaan/nextjs-book-games",
       "homepage": "https://book-games.widifirmaan.web.id",
       "images": [
@@ -138,7 +138,7 @@
       "name": "bootstrap-portograph-template",
       "title": "Portograph",
       "tech": "HTML5 / Bootstrap",
-      "description": "Responsive Bootstrap 5 studio showcase and booking landing page for wedding photography and videography featuring an embedded Instagram hashtag feed and WhatsApp booking form.",
+      "description": "Elegant wedding photography and cinematic portfolio showcase featuring masonry gallery, GLightbox fullscreen preview, and service packages.",
       "html_url": "https://github.com/widifirmaan/bootstrap-portograph-template",
       "homepage": "https://widifirmaan.web.id/bootstrap-portograph-template/",
       "images": [
@@ -158,7 +158,7 @@
       "name": "bootstrap-javex-template",
       "title": "Javex",
       "tech": "HTML5 / Bootstrap",
-      "description": "Interactive Microsoft Excel learning web template built with Bootstrap 5 featuring structured curriculum modules, practice worksheets, and an evaluation quiz.",
+      "description": "Samsung OneUI-inspired interactive learning web media for Microsoft Excel formulas, video tutorials, exercises, and quizzes.",
       "html_url": "https://github.com/widifirmaan/bootstrap-javex-template",
       "homepage": "https://widifirmaan.web.id/bootstrap-javex-template/",
       "images": [
@@ -178,7 +178,7 @@
       "name": "javascript-aio-tools",
       "title": "JavaScript AIO Tools",
       "tech": "JavaScript / HTML5",
-      "description": "Collection of 23 client-side web utilities for document processing, media editing, cryptography, and developer productivity running directly in the browser.",
+      "description": "All-in-one suite of 20+ client-side developer and productivity utilities (JSON formatter, Base64 encoder, QR generator, file encryptor).",
       "html_url": "https://github.com/widifirmaan/javascript-aio-tools",
       "homepage": "https://tools.widifirmaan.web.id",
       "images": [
